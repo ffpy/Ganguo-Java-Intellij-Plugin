@@ -19,6 +19,14 @@
     </extensions>
 
     <actions>
-        <!-- Add your actions here -->
+        <group id="Ganguo.Menu"
+               text="Ganguo"
+               description="Ganguo Menu">
+            <add-to-group group-id="MainMenu" anchor="last"/>
+            <action id="com.ganguo.plugin.action.AddMsgAction"
+                    class="com.ganguo.plugin.action.AddMsgAction"
+                    text="AddMsg"
+                    description="Add msg to exception_msg.properties and ExceptionMsg.java"/>
+        </group>
     </actions>
 </idea-plugin>
