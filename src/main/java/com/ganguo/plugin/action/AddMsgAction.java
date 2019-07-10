@@ -1,19 +1,16 @@
 package com.ganguo.plugin.action;
 
 import com.ganguo.plugin.ui.AddMsgForm;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.project.DumbAware;
 
 import javax.swing.*;
 
-public class AddMsgAction extends AnAction implements DumbAware {
+public class AddMsgAction extends BaseAction {
 
     private JFrame mFrame;
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void action(AnActionEvent e) {
         mFrame = new JFrame();
 
         mFrame.getContentPane().add(new AddMsgForm(e, () -> {

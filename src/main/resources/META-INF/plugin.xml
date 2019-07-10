@@ -22,11 +22,39 @@
         <group id="Ganguo.Menu"
                text="Ganguo"
                description="Ganguo Menu">
+
             <add-to-group group-id="MainMenu" anchor="last"/>
+
             <action id="com.ganguo.plugin.action.AddMsgAction"
                     class="com.ganguo.plugin.action.AddMsgAction"
                     text="AddMsg"
                     description="Add msg to exception_msg.properties and ExceptionMsg.java"/>
+
+            <action id="com.ganguo.plugin.action.NewService2Action"
+                    class="com.ganguo.plugin.action.NewService2Action"
+                    text="New Service"
+                    description="New service and impl"/>
+
+            <action id="com.ganguo.plugin.action.NewRepositoryAction"
+                    class="com.ganguo.plugin.action.NewRepositoryAction"
+                    text="New Repository"
+                    description="New repository and impl"/>
+
+<!--            <action id="com.ganguo.plugin.action.TestAction"-->
+<!--                    class="com.ganguo.plugin.action.TestAction"-->
+<!--                    text="Test"-->
+<!--                    description="Test"/>-->
+        </group>
+        <group id="Ganguo.New"
+               text="Ganguo"
+               description="Ganguo New" popup="true">
+
+            <add-to-group group-id="NewGroup" anchor="last"/>
+
+            <action id="com.ganguo.plugin.action.NewServiceAction"
+                    class="com.ganguo.plugin.action.NewServiceAction"
+                    text="New service and impl"
+                    description="New Service and ServiceImpl"/>
         </group>
     </actions>
 </idea-plugin>

@@ -4,8 +4,6 @@ import com.ganguo.plugin.utils.CopyPasteUtils;
 import com.ganguo.plugin.utils.MsgUtils;
 import com.ganguo.plugin.utils.PsiUtils;
 import com.ganguo.plugin.utils.SafeProperties;
-import com.intellij.formatting.FormatProcessor;
-import com.intellij.formatting.engine.FormatProcessorUtils;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
@@ -13,21 +11,15 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiEnumConstant;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaToken;
 import com.intellij.psi.PsiParserFacade;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.TokenType;
-import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 
 import javax.swing.*;
@@ -35,9 +27,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -166,7 +155,7 @@ public class AddMsgForm {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             properties.store(bos, null);
             msgFile.setBinaryContent(bos.toByteArray());
-            msgFile.refresh(false, false);
+            msgFile.refresh(true, false);
 
             return true;
         } catch (IOException e) {
@@ -194,7 +183,7 @@ public class AddMsgForm {
             return false;
         }
 
-        PsiElementFactory psiElementFactory = JavaPsiFacade.getElementFactory(project);
+        PsiElementFactory factory = JavaPsiFacade.getElementFactory(project);
 
 
         // Key已存在
@@ -203,10 +192,8 @@ public class AddMsgForm {
 
             PsiDocComment psiDocComment = PsiTreeUtil.findChildOfType(psiField, PsiDocComment.class);
             if (psiDocComment != null) {
-                PsiComment newComment = psiElementFactory.createDocCommentFromText(
-                        "/**\n* " + value + "\n*/", null);
                 WriteCommandAction.runWriteCommandAction(project, () -> {
-                    psiDocComment.replace(newComment);
+                    psiDocComment.replace(PsiUtils.createPsiDocComment(factory, value));
                 });
                 PsiUtils.reformatJavaFile(psiClass);
             }
@@ -214,15 +201,14 @@ public class AddMsgForm {
             return true;
         }
 
-        PsiEnumConstant psiEnumConstant = psiElementFactory.createEnumConstantFromText(key, null);
-        PsiComment psiComment = psiElementFactory.createDocCommentFromText(
-                "/**\n* " + value + "\n*/", null);
+        PsiEnumConstant psiEnumConstant = factory.createEnumConstantFromText(key, null);
 
         PsiElement whiteSpace = PsiParserFacade.SERVICE.getInstance(project)
                 .createWhiteSpaceFromText("\n\n");
 
         WriteCommandAction.runWriteCommandAction(project, () -> {
-            psiEnumConstant.addBefore(psiComment, psiEnumConstant.findElementAt(0));
+            psiEnumConstant.addBefore(PsiUtils.createPsiDocComment(factory, value),
+                    psiEnumConstant.findElementAt(0));
             psiEnumConstant.addBefore(whiteSpace, psiEnumConstant.findElementAt(0));
             psiClass.add(psiEnumConstant);
         });
