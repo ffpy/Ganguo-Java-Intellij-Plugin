@@ -60,7 +60,7 @@ public class NewService2Action extends BaseAction {
         }
 
         if (StringUtils.isEmpty(name)) {
-            MsgUtils.error("名称不能为空");K
+            MsgUtils.error("名称不能为空");
             return;
         }
 
