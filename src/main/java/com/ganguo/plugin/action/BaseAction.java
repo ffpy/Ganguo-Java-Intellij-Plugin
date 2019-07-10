@@ -1,6 +1,6 @@
 package com.ganguo.plugin.action;
 
-import com.ganguo.plugin.utils.MsgUtils;
+import com.ganguo.plugin.util.MsgUtils;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAware;

@@ -1,8 +1,8 @@
 package com.ganguo.plugin.action;
 
-import com.ganguo.plugin.utils.MsgUtils;
-import com.ganguo.plugin.utils.ProjectUtils;
-import com.ganguo.plugin.utils.StringHelper;
+import com.ganguo.plugin.util.MsgUtils;
+import com.ganguo.plugin.util.ProjectUtils;
+import com.ganguo.plugin.util.StringHelper;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;

@@ -1,10 +1,11 @@
 package com.ganguo.plugin.ui;
 
-import com.ganguo.plugin.utils.CopyPasteUtils;
-import com.ganguo.plugin.utils.MsgUtils;
-import com.ganguo.plugin.utils.PsiUtils;
-import com.ganguo.plugin.utils.SafeProperties;
+import com.ganguo.plugin.util.CopyPasteUtils;
+import com.ganguo.plugin.util.MsgUtils;
+import com.ganguo.plugin.util.PsiUtils;
+import com.ganguo.plugin.util.SafeProperties;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -154,8 +155,17 @@ public class AddMsgForm {
             properties.setProperty(key, value);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             properties.store(bos, null);
-            msgFile.setBinaryContent(bos.toByteArray());
-            msgFile.refresh(true, false);
+
+            ApplicationManager.getApplication().runWriteAction(() -> {
+                // TODO 缓存问题
+                try {
+                    msgFile.setBinaryContent(bos.toByteArray());
+                } catch (IOException e) {
+                    MsgUtils.error(e.getMessage());
+                    e.printStackTrace();
+                }
+                msgFile.refresh(true, false);
+            });
 
             return true;
         } catch (IOException e) {
@@ -208,8 +218,8 @@ public class AddMsgForm {
 
         WriteCommandAction.runWriteCommandAction(project, () -> {
             psiEnumConstant.addBefore(PsiUtils.createPsiDocComment(factory, value),
-                    psiEnumConstant.findElementAt(0));
-            psiEnumConstant.addBefore(whiteSpace, psiEnumConstant.findElementAt(0));
+                    psiEnumConstant.getFirstChild());
+            psiEnumConstant.addBefore(whiteSpace, psiEnumConstant.getFirstChild());
             psiClass.add(psiEnumConstant);
         });
 
