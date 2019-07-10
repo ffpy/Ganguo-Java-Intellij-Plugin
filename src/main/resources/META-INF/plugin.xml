@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.ganguo.plugin</id>
-    <name>Plugin display name here</name>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <name>Ganguo Java</name>
+    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">Ganguo</vendor>
 
     <description><![CDATA[
     Enter short description for your plugin here.<br>

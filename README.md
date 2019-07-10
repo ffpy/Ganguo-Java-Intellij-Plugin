@@ -1,6 +1,6 @@
 ## TODO
 -[x] add msg
--[ ] new service&impl
--[ ] new repository&impl
+-[x] new service&impl
+-[x] new repository&impl
 -[ ] new api test
 -[ ] new test method
