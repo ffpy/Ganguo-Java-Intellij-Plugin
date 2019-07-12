@@ -1,0 +1,5 @@
+import ${packageName}.domain.repository.IDbStrategy;
+
+public interface I${name}DbStrategy extends IDbStrategy, I${name}Repository {
+
+}

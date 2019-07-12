@@ -1,0 +1,15 @@
+import ${packageName}.domain.repository.${moduleName}.I${name}DbStrategy;
+import ${packageName}.domain.repository.${moduleName}.I${name}Repository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
+
+@Repository
+@Primary
+public class ${name}Repository implements I${name}Repository {
+
+    @Autowired
+    private I${name}DbStrategy m${name}DbStrategy;
+
+
+}

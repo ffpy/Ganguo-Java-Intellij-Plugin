@@ -1,0 +1,49 @@
+import ${packageName}.BaseTest;
+#if($requestClassName)
+import ${requestClassName};
+#end
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+#if($method != "get")
+import org.springframework.http.MediaType;
+#end
+import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
+
+@RunWith(SpringRunner.class)
+@WebAppConfiguration
+@SpringBootTest
+@Transactional
+@Slf4j
+@Sql({"/sql/user/user_base.sql"})
+public class ${className}Tests extends BaseTest {
+
+    @Test
+    @WithUserDetails(userDetailsServiceBeanName = "userDetailsServiceImpl", value = "openId1")
+    public void successTest() throws Exception {
+#if($requestClassSimpleName)
+        ${requestClassSimpleName} request = new ${requestClassSimpleName}();
+
+#end
+        String response = mMockMvc.perform(
+                MockMvcRequestBuilders.${method}(BASE_HOST + "${url}")#if($method != "get")
+
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mObjectMapper.writeValueAsString(#if($requestClassSimpleName)request#end))#end)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertResponseSuccess(response);
+    }
+}

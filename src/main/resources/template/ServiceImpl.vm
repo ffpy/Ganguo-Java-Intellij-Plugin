@@ -1,0 +1,20 @@
+#if($repositoryClassName)
+import ${repositoryClassName};
+#end
+import lombok.extern.slf4j.Slf4j;
+#if($repositoryClassName)
+import org.springframework.beans.factory.annotation.Autowired;
+#end
+import org.springframework.stereotype.Service;
+
+@Slf4j
+@Service
+public class ${name}ServiceImpl implements ${name}Service {
+
+#if($repositoryClassName)
+    @Autowired
+    private I${name}Repository m${name}Repository;
+
+#end
+
+}

@@ -11,7 +11,7 @@ public class ProjectUtils {
 
     private static final String PACKAGE_NAME_PATH_SEPARATE = "/java/";
     private static final String APPLICATION_FILENAME = "Application.java";
-    private static final String APPLICATION_PROPERTIES_FILENAME = "application.properties";
+    private static final String TEST_APPLICATION_FILENAME = "ApplicationTests.java";
 
     /**
      * 获取项目的根目录
@@ -59,7 +59,7 @@ public class ProjectUtils {
     }
 
     /**
-     * 获取包目录
+     * 获取包目录/src/main/java/com.xxx
      *
      * @param project project
      * @return 包目录
@@ -78,20 +78,50 @@ public class ProjectUtils {
     }
 
     /**
-     * 获取资源目录
+     * 获取测试的包目录/src/test/java/com.xxx
      *
      * @param project project
-     * @return 资源目录
+     * @return 测试的包目录
      */
-    public static VirtualFile getResourceFile(Project project) {
+    public static VirtualFile getTestPackageFile(Project project) {
         return FilenameIndex
-                .getVirtualFilesByName(project, APPLICATION_PROPERTIES_FILENAME,
+                .getVirtualFilesByName(project, TEST_APPLICATION_FILENAME,
                         GlobalSearchScope.projectScope(project))
                 .stream()
                 .findFirst()
                 .map(VirtualFile::getParent)
                 .orElseGet(() -> {
+                    MsgUtils.error("get test package file fail!");
+                    return null;
+                });
+    }
+
+    /**
+     * 获取资源目录/src/main/resource
+     *
+     * @param project project
+     * @return 资源目录
+     */
+    public static VirtualFile getResourceFile(Project project) {
+        return Optional.ofNullable(getRootFile(project))
+                .map(f -> f.findFileByRelativePath("src/main/resources"))
+                .orElseGet(() -> {
                     MsgUtils.error("get resource file fail!");
+                    return null;
+                });
+    }
+
+    /**
+     * 获取测试资源目录/src/test/resource
+     *
+     * @param project project
+     * @return 测试资源目录
+     */
+    public static VirtualFile getTestResourceFile(Project project) {
+        return Optional.ofNullable(getRootFile(project))
+                .map(f -> f.findFileByRelativePath("src/test/resources"))
+                .orElseGet(() -> {
+                    MsgUtils.error("get test resource file fail!");
                     return null;
                 });
     }

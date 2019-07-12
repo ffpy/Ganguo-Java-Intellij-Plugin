@@ -1,0 +1,8 @@
+import ${packageName}.domain.repository.${moduleName}.I${name}DbStrategy;
+import ${packageName}.infrastructure.repository.db.BaseDAO;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class ${name}DAO extends BaseDAO implements I${name}DbStrategy {
+
+}

@@ -110,7 +110,7 @@ public class AddMsgForm {
 
             mOnCancel.run();
 
-            //把key放到粘贴板
+            CopyPasteUtils.putString(value);
             CopyPasteUtils.putString(key);
         } catch (Exception e) {
             MsgUtils.error(e.getMessage());
@@ -144,6 +144,7 @@ public class AddMsgForm {
             // 检查Value是否已存在
             for (Map.Entry<Object, Object> entry : properties.entrySet()) {
                 if (value.equals(entry.getValue())) {
+                    CopyPasteUtils.putString(entry.getValue().toString());
                     CopyPasteUtils.putString(entry.getKey().toString());
                     MsgUtils.info("发现%s已存在，已放入粘贴板", entry.getKey());
                     mOnCancel.run();

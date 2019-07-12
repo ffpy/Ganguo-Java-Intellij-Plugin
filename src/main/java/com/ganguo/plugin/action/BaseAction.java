@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseAction extends AnAction implements DumbAware {
 
-    protected abstract void action(AnActionEvent e);
+    protected abstract void action(AnActionEvent e) throws Exception;
 
     @Override
     @Deprecated
@@ -17,6 +17,7 @@ public abstract class BaseAction extends AnAction implements DumbAware {
         try {
             action(event);
         } catch (Exception e) {
+            e.printStackTrace();
             MsgUtils.error(e.getMessage());
         }
     }

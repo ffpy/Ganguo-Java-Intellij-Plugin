@@ -4,3 +4,5 @@
 -[x] new repository&impl
 -[ ] new api test
 -[ ] new test method
+-[ ] new validation
+-[ ] 在代码中显示msg内容

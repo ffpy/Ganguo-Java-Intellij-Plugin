@@ -11,26 +11,30 @@ public class StringHelper {
     private static final String RIGHT_STR = "}}";
 
     private String mStr;
-    private Map<String, Object> paramMap = new HashMap<>();
+    private Map<String, String> paramMap = new HashMap<>();
 
     public static StringHelper of(String str) {
         return new StringHelper(str);
     }
 
-    public static StringHelper of(String str, Map<String, Object> params) {
+    public static StringHelper of(String str, Map<String, String> params) {
         return of(str).params(params);
+    }
+
+    public static String toString(String str, Map<String, String> params) {
+        return of(str, params).toString();
     }
 
     private StringHelper(String str) {
         this.mStr = Objects.requireNonNull(str);
     }
 
-    public StringHelper param(String name, Object value) {
+    public StringHelper param(String name, String value) {
         paramMap.put(name, value);
         return this;
     }
 
-    public StringHelper params(Map<String, Object> params) {
+    public StringHelper params(Map<String, String> params) {
         paramMap.putAll(params);
         return this;
     }
