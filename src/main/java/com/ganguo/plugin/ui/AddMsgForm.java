@@ -28,6 +28,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
@@ -86,6 +87,11 @@ public class AddMsgForm {
                 return;
             }
 
+            if (!checkKey(key)) {
+                MsgUtils.error("key只能有数字、字母、空格和下划线");
+                return;
+            }
+
             key = key.toUpperCase().replace(' ', '_');
 
             Project project = mEvent.getProject();
@@ -115,6 +121,15 @@ public class AddMsgForm {
         } catch (Exception e) {
             MsgUtils.error(e.getMessage());
         }
+    }
+
+    private boolean checkKey(String key) {
+        for (char ch : key.toCharArray()) {
+            if (!Character.isLetter(ch) && !Character.isDigit(ch) && ch != ' ' && ch != '_') {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

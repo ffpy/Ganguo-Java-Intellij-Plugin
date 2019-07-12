@@ -40,6 +40,11 @@
                     text="New Repository"
                     description="New repository and impl"/>
 
+            <action id="com.ganguo.plugin.action.menu.NewValidationAction"
+                    class="com.ganguo.plugin.action.menu.NewValidationAction"
+                    text="New Validation"
+                    description="New Validation"/>
+
             <!--            <action id="com.ganguo.plugin.action.menu.TestAction"-->
             <!--                    class="com.ganguo.plugin.action.menu.TestAction"-->
             <!--                    text="Test"-->

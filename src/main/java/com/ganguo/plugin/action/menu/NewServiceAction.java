@@ -1,17 +1,16 @@
 package com.ganguo.plugin.action.menu;
 
 import com.ganguo.plugin.action.BaseAction;
+import com.ganguo.plugin.util.DialogUtils;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.MsgUtils;
 import com.ganguo.plugin.util.ProjectUtils;
-import com.ganguo.plugin.util.PsiUtils;
 import com.ganguo.plugin.util.StringHelper;
 import com.ganguo.plugin.util.TemplateUtils;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
@@ -21,7 +20,6 @@ import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -52,33 +50,8 @@ public class NewServiceAction extends BaseAction {
             return;
         }
 
-        String prefix = Messages.showInputDialog("", "请输入前缀", null);
-        if (StringUtils.isEmpty(prefix)) return;
-
-        String moduleName;
-        String name;
-
-        int index = prefix.lastIndexOf(".");
-        if (index == -1) {
-            moduleName = prefix;
-            name = prefix;
-        } else {
-            moduleName = prefix.substring(0, index);
-            name = prefix.substring(index + 1);
-        }
-
-        if (StringUtils.isEmpty(moduleName)) {
-            MsgUtils.error("模块名不能为空");
-            return;
-        }
-
-        if (StringUtils.isEmpty(name)) {
-            MsgUtils.error("名称不能为空");
-            return;
-        }
-
-        moduleName = moduleName.toLowerCase();
-        name = StringUtils.capitalize(name);
+        DialogUtils.ModuleAndName moduleAndName = DialogUtils.getModuleAndName();
+        if (moduleAndName == null) return;
 
         PsiDirectoryFactory directoryFactory = PsiDirectoryFactory.getInstance(project);
 
@@ -87,7 +60,8 @@ public class NewServiceAction extends BaseAction {
         PsiDirectory serviceApiDir = directoryFactory.createDirectory(serviceApiFile);
 
         String repositoryClassName = Arrays.stream(
-                FilenameIndex.getFilesByName(project, "I" + name + "Repository.java",
+                FilenameIndex.getFilesByName(project,
+                        "I" + moduleAndName.getName() + "Repository.java",
                         GlobalSearchScope.projectScope(project)))
                 .findFirst()
                 .map(f -> (PsiJavaFile) f)
@@ -99,7 +73,7 @@ public class NewServiceAction extends BaseAction {
         System.out.println(repositoryClassName);
 
         Map<String, String> params = new HashMap<>();
-        params.put("name", name);
+        params.put("name", moduleAndName.getName());
         params.put("repositoryClassName", repositoryClassName);
 
         PsiFile interFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
@@ -110,18 +84,17 @@ public class NewServiceAction extends BaseAction {
                 TemplateUtils.fromResource("/template/ServiceImpl.vm", params));
         implFile.setName(StringHelper.toString("{name}ServiceImpl.java", params));
 
-        String finalModuleName = moduleName;
         WriteCommandAction.runWriteCommandAction(project, () -> {
-            PsiDirectory modelDir = serviceApiDir.findSubdirectory(finalModuleName);
-            if (modelDir == null) {
-                modelDir = serviceApiDir.createSubdirectory(finalModuleName);
+            PsiDirectory moduleDir = serviceApiDir.findSubdirectory(moduleAndName.getModulePath());
+            if (moduleDir == null) {
+                moduleDir = serviceApiDir.createSubdirectory(moduleAndName.getModulePath());
             }
 
-            PsiUtils.addIfAbsent(modelDir, interFile);
-            PsiUtils.addIfAbsent(modelDir, implFile);
+            FileUtils.addIfAbsent(moduleDir, interFile);
+            FileUtils.addIfAbsent(moduleDir, implFile);
 
             FileUtils.navigateFile(project, Optional
-                    .ofNullable(modelDir.findFile(interFile.getName()))
+                    .ofNullable(moduleDir.findFile(interFile.getName()))
                     .map(PsiFile::getVirtualFile)
                     .orElse(null));
         });

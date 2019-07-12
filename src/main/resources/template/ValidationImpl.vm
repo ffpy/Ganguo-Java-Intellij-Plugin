@@ -1,0 +1,18 @@
+import ${packageName}.infrastructure.validation.BaseConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+public class ${name}ValidatorImpl extends BaseConstraintValidator<${name}, String> {
+
+    @Override
+    public void initialize(${name} constraintAnnotation) {
+
+    }
+
+    /**
+     * 校验
+     */
+    @Override
+    protected boolean validate(String value, ConstraintValidatorContext context) throws Exception {
+        return false;
+    }
+}

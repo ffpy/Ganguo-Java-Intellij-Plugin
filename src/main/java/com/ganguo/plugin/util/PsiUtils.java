@@ -68,19 +68,4 @@ public class PsiUtils {
         return factory.createDocCommentFromText(commentText.toString(), null);
     }
 
-    /**
-     * 如果文件存在则忽略，否则把文件添加到文件夹中
-     *
-     * @param directory 文件夹
-     * @param file      文件
-     * @return true为不存在，false为已存在
-     */
-    public static boolean addIfAbsent(PsiDirectory directory, PsiFile file) {
-        if (directory.findFile(file.getName()) != null) {
-            MsgUtils.info("%s已存在", file.getName());
-            return false;
-        }
-        directory.add(file);
-        return true;
-    }
 }

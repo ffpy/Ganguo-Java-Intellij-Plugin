@@ -22,6 +22,11 @@ public abstract class BaseAction extends AnAction implements DumbAware {
         }
     }
 
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+        e.getPresentation().setEnabled(e.getProject() != null);
+    }
+
     protected boolean noProject(Project project) {
         if (project == null) {
             MsgUtils.error("get project fail!");
