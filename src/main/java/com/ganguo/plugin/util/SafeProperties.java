@@ -208,8 +208,7 @@ public class SafeProperties extends Properties {
         if (header != null)
             writeln(awriter, "#" + header);
         List entrys = context.getCommentOrEntrys();
-        for (Iterator iter = entrys.iterator(); iter.hasNext();) {
-            Object obj = iter.next();
+        for (Object obj : entrys) {
             if (obj.toString() != null) {
                 writeln(awriter, obj.toString());
             }
@@ -236,7 +235,7 @@ public class SafeProperties extends Properties {
      */
     private String saveConvert(String theString, boolean escapeSpace) {
         int len = theString.length();
-        StringBuffer outBuffer = new StringBuffer(len * 2);
+        StringBuilder outBuffer = new StringBuilder(len * 2);
 
         for (int x = 0; x < len; x++) {
             char aChar = theString.charAt(x);
@@ -316,7 +315,7 @@ public class SafeProperties extends Properties {
     }
 
     class PropertiesContext {
-        private List commentOrEntrys = new ArrayList();
+        private List<Object> commentOrEntrys = new ArrayList<>();
 
         public List getCommentOrEntrys() {
             return commentOrEntrys;
@@ -347,11 +346,9 @@ public class SafeProperties extends Properties {
             for (int index = 0; index < commentOrEntrys.size(); index++) {
                 Object obj = commentOrEntrys.get(index);
                 if (obj instanceof PropertyEntry) {
-                    if (obj != null) {
-                        if (key.equals(((PropertyEntry) obj).getKey())) {
-                            commentOrEntrys.remove(obj);
-                            return index;
-                        }
+                    if (key.equals(((PropertyEntry) obj).getKey())) {
+                        commentOrEntrys.remove(obj);
+                        return index;
                     }
                 }
             }
