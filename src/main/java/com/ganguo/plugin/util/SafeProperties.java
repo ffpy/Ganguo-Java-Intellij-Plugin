@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -130,7 +129,7 @@ public class SafeProperties extends Properties {
         int len = theString.length();
         StringBuffer outBuffer = new StringBuffer(len);
 
-        for (int x = 0; x < len;) {
+        for (int x = 0; x < len; ) {
             aChar = theString.charAt(x++);
             if (aChar == '\\') {
                 aChar = theString.charAt(x++);
@@ -207,7 +206,7 @@ public class SafeProperties extends Properties {
         awriter = new BufferedWriter(new OutputStreamWriter(out, "8859_1"));
         if (header != null)
             writeln(awriter, "#" + header);
-        List entrys = context.getCommentOrEntrys();
+        List<Object> entrys = context.getCommentOrEntrys();
         for (Object obj : entrys) {
             if (obj.toString() != null) {
                 writeln(awriter, obj.toString());
@@ -287,16 +286,15 @@ public class SafeProperties extends Properties {
     /**
      * Convert a nibble to a hex character
      *
-     * @param nibble
-     *            the nibble to convert.
+     * @param nibble the nibble to convert.
      */
     private static char toHex(int nibble) {
         return hexDigit[(nibble & 0xF)];
     }
 
     /** A table of hex digits */
-    private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
-            'F' };
+    private static final char[] hexDigit = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
+            'F'};
 
     public synchronized Object put(Object key, Object value) {
         context.putOrUpdate(key.toString(), value.toString());
@@ -317,7 +315,7 @@ public class SafeProperties extends Properties {
     class PropertiesContext {
         private List<Object> commentOrEntrys = new ArrayList<>();
 
-        public List getCommentOrEntrys() {
+        public List<Object> getCommentOrEntrys() {
             return commentOrEntrys;
         }
 
@@ -339,7 +337,7 @@ public class SafeProperties extends Properties {
         public void putOrUpdate(String key, String value) {
             PropertyEntry pe = new PropertyEntry(key, value);
             int index = remove(key);
-            commentOrEntrys.add(index,pe);
+            commentOrEntrys.add(index, pe);
         }
 
         public int remove(String key) {
