@@ -22,6 +22,7 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,8 +58,6 @@ public class NewServiceAction extends BaseAction {
 
         PsiFileFactory fileFactory = PsiFileFactory.getInstance(project);
 
-        PsiDirectory serviceApiDir = directoryFactory.createDirectory(serviceApiFile);
-
         String repositoryClassName = Arrays.stream(
                 FilenameIndex.getFilesByName(project,
                         "I" + moduleAndName.getName() + "Repository.java",
@@ -69,8 +68,6 @@ public class NewServiceAction extends BaseAction {
                         .findFirst()
                         .map(PsiClass::getQualifiedName))
                 .orElse(null);
-
-        System.out.println(repositoryClassName);
 
         Map<String, String> params = new HashMap<>();
         params.put("name", moduleAndName.getName());
@@ -85,18 +82,21 @@ public class NewServiceAction extends BaseAction {
         implFile.setName(StringHelper.toString("{name}ServiceImpl.java", params));
 
         WriteCommandAction.runWriteCommandAction(project, () -> {
-            PsiDirectory moduleDir = serviceApiDir.findSubdirectory(moduleAndName.getModulePath());
-            if (moduleDir == null) {
-                moduleDir = serviceApiDir.createSubdirectory(moduleAndName.getModulePath());
+            try {
+                PsiDirectory moduleDir = directoryFactory.createDirectory(
+                        FileUtils.findOrCreateDirectory(serviceApiFile, moduleAndName.getModulePath()));
+
+                FileUtils.addIfAbsent(moduleDir, interFile);
+                FileUtils.addIfAbsent(moduleDir, implFile);
+
+                FileUtils.navigateFile(project, Optional
+                        .ofNullable(moduleDir.findFile(interFile.getName()))
+                        .map(PsiFile::getVirtualFile)
+                        .orElse(null));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                MsgUtils.error(ex.getMessage());
             }
-
-            FileUtils.addIfAbsent(moduleDir, interFile);
-            FileUtils.addIfAbsent(moduleDir, implFile);
-
-            FileUtils.navigateFile(project, Optional
-                    .ofNullable(moduleDir.findFile(interFile.getName()))
-                    .map(PsiFile::getVirtualFile)
-                    .orElse(null));
         });
     }
 }

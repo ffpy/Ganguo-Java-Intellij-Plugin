@@ -1,5 +1,5 @@
 import ${packageName}.domain.repository.${moduleName}.I${name}DbStrategy;
-import ${packageName}.infrastructure.repository.db.BaseDAO;
+import com.ganguomob.dev.base.infrastructure.repository.db.BaseDAO;
 import org.springframework.stereotype.Repository;
 
 @Repository
