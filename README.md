@@ -1,8 +1,11 @@
 ## TODO
 - [x] add msg
 - [ ] add msg on selection
+- [ ] delete msg both
 - [x] new service&impl
 - [x] new repository&impl
 - [x] new api test
 - [x] new validation
-- [ ] configuration
+- [ ] configure packageName
+- [ ] configure template
+- [ ] generate base DAO method

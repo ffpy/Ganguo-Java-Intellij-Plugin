@@ -1,3 +1,17 @@
+import java.util.List;
+import java.util.Optional;
+
+import ${packageName}.jooq.tables.pojos.${pojoCls};
+
 public interface I${name}Repository {
 
+    Optional<${pojoCls}> findById(Long id);
+
+    List<${pojoCls}> findAll();
+
+    ${pojoCls} insert(${pojoCls} ${pojoName});
+
+    int updateById(${pojoCls} ${pojoName});
+
+    int deleteById(Long id);
 }

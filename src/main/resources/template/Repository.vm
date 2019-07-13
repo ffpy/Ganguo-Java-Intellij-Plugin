@@ -1,8 +1,12 @@
 import ${packageName}.domain.repository.${moduleName}.I${name}DbStrategy;
 import ${packageName}.domain.repository.${moduleName}.I${name}Repository;
+import ${packageName}.jooq.tables.pojos.${pojoCls};
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Primary
@@ -11,5 +15,28 @@ public class ${name}Repository implements I${name}Repository {
     @Autowired
     private I${name}DbStrategy m${name}DbStrategy;
 
+    @Override
+    public Optional<${pojoCls}> findById(Long id) {
+        return m${name}DbStrategy.findById(id);
+    }
 
+    @Override
+    public List<${pojoCls}> findAll() {
+        return m${name}DbStrategy.findAll();
+    }
+
+    @Override
+    public ${pojoCls} insert(${pojoCls} ${pojoName}) {
+        return m${name}DbStrategy.insert(${pojoName});
+    }
+
+    @Override
+    public int updateById(${pojoCls} ${pojoName}) {
+        return m${name}DbStrategy.updateById(${pojoName});
+    }
+
+    @Override
+    public int deleteById(Long id) {
+        return m${name}DbStrategy.deleteById(id);
+    }
 }

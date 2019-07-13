@@ -1,8 +1,49 @@
 import ${packageName}.domain.repository.${moduleName}.I${name}DbStrategy;
 import com.ganguomob.dev.base.infrastructure.repository.db.BaseDAO;
+import ${packageName}.jooq.tables.pojos.${pojoCls};
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.Optional;
+
+import static ${packageName}.jooq.Tables.${table};
 
 @Repository
 public class ${name}DAO extends BaseDAO implements I${name}DbStrategy {
 
+    @Override
+    public Optional<${pojoCls}> findById(Long id) {
+        return mDSLContext.selectFrom(${table})
+                .where(${table}.ID.eq(id))
+                .fetchOptionalInto(${pojoCls}.class);
+    }
+
+    @Override
+    public List<${pojoCls}> findAll() {
+        return mDSLContext.selectFrom(${table})
+                .orderBy(${table}.ID.asc())
+                .fetchInto(${pojoCls}.class);
+    }
+
+    @Override
+    public ${pojoCls} insert(${pojoCls} ${pojoName}) {
+        ${pojoCls}Recore recore = mDSLContext.newRecord(${table}, ${pojoName});
+        record.insert();
+        return record.into(${pojoCls}.class);
+    }
+
+    @Override
+    public int updateById(${pojoCls} ${pojoName}) {
+        ${pojoName}.setUpdatedAt(LocalDateTime.now(ZoneOffset.UTC));
+        return mDSLContext.newRecord(${table}, ${pojoName}).update();
+    }
+
+    @Override
+    public int deleteById(Long id) {
+        return mDSLContext.deleteFrom(${table})
+                .where(${table}.ID.eq(id))
+                .execute();
+    }
 }

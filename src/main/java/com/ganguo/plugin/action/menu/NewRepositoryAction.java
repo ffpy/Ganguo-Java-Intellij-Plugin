@@ -1,9 +1,10 @@
 package com.ganguo.plugin.action.menu;
 
 import com.ganguo.plugin.action.BaseAction;
-import com.ganguo.plugin.ui.dialog.ModuleAndNameDialog;
+import com.ganguo.plugin.ui.dialog.NewRepositoryDialog;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.MsgUtils;
+import com.ganguo.plugin.util.MyStringUtils;
 import com.ganguo.plugin.util.ProjectUtils;
 import com.ganguo.plugin.util.StringHelper;
 import com.ganguo.plugin.util.TemplateUtils;
@@ -16,6 +17,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -35,10 +37,10 @@ public class NewRepositoryAction extends BaseAction {
     @Override
     public void action(@NotNull AnActionEvent e) {
         mEvent = e;
-        new ModuleAndNameDialog("New Repository", this::doAction).show();
+        new NewRepositoryDialog("New Repository", this::doAction).show();
     }
 
-    private boolean doAction(String module, String name) {
+    private boolean doAction(String table, String module, String name) {
         Project project = mEvent.getProject();
 
         if (noProject(project)) return false;
@@ -81,11 +83,16 @@ public class NewRepositoryAction extends BaseAction {
             return false;
         }
 
+        String pojo = StringUtils.capitalize(MyStringUtils.underline2Hump(table.toLowerCase()));
+
         Map<String, String> params = new HashMap<>();
 
         params.put("packageName", packageName);
         params.put("moduleName", module);
         params.put("name", name);
+        params.put("table", table);
+        params.put("pojoCls", pojo + "POJO");
+        params.put("pojoName", MyStringUtils.lowerCaseFirstChar(pojo));
 
         PsiFile repositoryFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
                 TemplateUtils.fromResource("/template/IRepository.vm", params));
