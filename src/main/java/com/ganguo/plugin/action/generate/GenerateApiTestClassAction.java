@@ -5,7 +5,6 @@ import com.ganguo.plugin.util.ElementUtils;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.MsgUtils;
 import com.ganguo.plugin.util.ProjectUtils;
-import com.ganguo.plugin.util.PsiUtils;
 import com.ganguo.plugin.util.TemplateUtils;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -58,12 +57,13 @@ public class GenerateApiTestClassAction extends BaseAction {
 
         String packageName = ((PsiJavaFile) psiFile).getPackageName();
 
-        int index = packageName.indexOf(".api");
+        final String sep = ".controller";
+        int index = packageName.indexOf(sep);
         String moduleName;
         if (index == -1) {
             moduleName = "";
         } else {
-            moduleName = packageName.substring(index + ".api".length())
+            moduleName = packageName.substring(index + sep.length())
                     .replace('.', '/');
             if (moduleName.startsWith("/")) {
                 moduleName = moduleName.substring(1);
@@ -76,7 +76,7 @@ public class GenerateApiTestClassAction extends BaseAction {
         VirtualFile testDirFile;
         try {
             testDirFile = FileUtils.findOrCreateDirectory(
-                    ProjectUtils.getTestPackageFile(project), "controller/api/" + moduleName);
+                    ProjectUtils.getTestPackageFile(project), "controller/" + moduleName);
         } catch (IOException ex) {
             ex.printStackTrace();
             MsgUtils.error("create or get %s fail!", moduleName);
@@ -120,8 +120,6 @@ public class GenerateApiTestClassAction extends BaseAction {
             testDir.add(newFile);
             FileUtils.navigateFile(project, testDirFile.findChild(targetFilename));
         });
-
-        PsiUtils.reformatJavaFile(psiFile);
     }
 
     @Override

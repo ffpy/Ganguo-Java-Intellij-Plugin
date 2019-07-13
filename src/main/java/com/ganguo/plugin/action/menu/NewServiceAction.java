@@ -1,7 +1,7 @@
 package com.ganguo.plugin.action.menu;
 
 import com.ganguo.plugin.action.BaseAction;
-import com.ganguo.plugin.util.DialogUtils;
+import com.ganguo.plugin.ui.dialog.ModuleAndNameDialog;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.MsgUtils;
 import com.ganguo.plugin.util.ProjectUtils;
@@ -35,24 +35,28 @@ public class NewServiceAction extends BaseAction {
 
     public static final String PATH_SERVICE_API = "service/api";
 
+    private AnActionEvent mEvent;
+
     @Override
     public void action(@NotNull AnActionEvent e) {
-        Project project = e.getProject();
+        mEvent = e;
+        new ModuleAndNameDialog("New Service", this::doAction).show();
+    }
 
-        if (noProject(project)) return;
+    private boolean doAction(String module, String name) {
+        Project project = mEvent.getProject();
+
+        if (noProject(project)) return false;
         assert project != null;
 
         VirtualFile packageFile = ProjectUtils.getPackageFile(project);
-        if (packageFile == null) return;
+        if (packageFile == null) return false;
 
         VirtualFile serviceApiFile = packageFile.findFileByRelativePath(PATH_SERVICE_API);
         if (serviceApiFile == null) {
             MsgUtils.error("%s not found", PATH_SERVICE_API);
-            return;
+            return false;
         }
-
-        DialogUtils.ModuleAndName moduleAndName = DialogUtils.getModuleAndName();
-        if (moduleAndName == null) return;
 
         PsiDirectoryFactory directoryFactory = PsiDirectoryFactory.getInstance(project);
 
@@ -60,7 +64,7 @@ public class NewServiceAction extends BaseAction {
 
         String repositoryClassName = Arrays.stream(
                 FilenameIndex.getFilesByName(project,
-                        "I" + moduleAndName.getName() + "Repository.java",
+                        "I" + name + "Repository.java",
                         GlobalSearchScope.projectScope(project)))
                 .findFirst()
                 .map(f -> (PsiJavaFile) f)
@@ -70,7 +74,7 @@ public class NewServiceAction extends BaseAction {
                 .orElse(null);
 
         Map<String, String> params = new HashMap<>();
-        params.put("name", moduleAndName.getName());
+        params.put("name", name);
         params.put("repositoryClassName", repositoryClassName);
 
         PsiFile interFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
@@ -84,7 +88,7 @@ public class NewServiceAction extends BaseAction {
         WriteCommandAction.runWriteCommandAction(project, () -> {
             try {
                 PsiDirectory moduleDir = directoryFactory.createDirectory(
-                        FileUtils.findOrCreateDirectory(serviceApiFile, moduleAndName.getModulePath()));
+                        FileUtils.findOrCreateDirectory(serviceApiFile, module.replace('.', '/')));
 
                 FileUtils.addIfAbsent(moduleDir, interFile);
                 FileUtils.addIfAbsent(moduleDir, implFile);
@@ -98,5 +102,6 @@ public class NewServiceAction extends BaseAction {
                 MsgUtils.error(ex.getMessage());
             }
         });
+        return true;
     }
 }

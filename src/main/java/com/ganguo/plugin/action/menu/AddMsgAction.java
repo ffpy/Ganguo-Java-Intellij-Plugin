@@ -1,7 +1,7 @@
 package com.ganguo.plugin.action.menu;
 
 import com.ganguo.plugin.action.BaseAction;
-import com.ganguo.plugin.ui.AddMsgDialogWrapper;
+import com.ganguo.plugin.ui.dialog.AddMsgDialog;
 import com.ganguo.plugin.util.CopyPasteUtils;
 import com.ganguo.plugin.util.MsgUtils;
 import com.ganguo.plugin.util.PsiUtils;
@@ -39,23 +39,12 @@ public class AddMsgAction extends BaseAction {
 
     @Override
     public void action(AnActionEvent e) {
-        this.mEvent = e;
-        new AddMsgDialogWrapper(this::doAction).show();
+        mEvent = e;
+        new AddMsgDialog(this::doAction).show();
     }
 
     private boolean doAction(String key, String value) {
         try {
-            if (key.isEmpty() || value.isEmpty()) {
-                return false;
-            }
-
-            if (!checkKey(key)) {
-                MsgUtils.error("key只能有数字、字母、空格和下划线");
-                return false;
-            }
-
-            key = key.toUpperCase().replace(' ', '_');
-
             Project project = mEvent.getProject();
             VirtualFile projectFile = Optional.ofNullable(project)
                     .map(Project::getProjectFile)
@@ -81,15 +70,6 @@ public class AddMsgAction extends BaseAction {
             MsgUtils.error(e.getMessage());
         }
         return false;
-    }
-
-    private boolean checkKey(String key) {
-        for (char ch : key.toCharArray()) {
-            if (!Character.isLetter(ch) && !Character.isDigit(ch) && ch != ' ' && ch != '_') {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**

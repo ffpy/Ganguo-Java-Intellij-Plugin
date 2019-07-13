@@ -44,11 +44,6 @@
                     class="com.ganguo.plugin.action.menu.NewValidationAction"
                     text="New Validation"
                     description="New Validation"/>
-
-            <!--            <action id="com.ganguo.plugin.action.menu.TestAction"-->
-            <!--                    class="com.ganguo.plugin.action.menu.TestAction"-->
-            <!--                    text="Test"-->
-            <!--                    description="Test"/>-->
         </group>
 
         <group id="Ganguo.Generate"

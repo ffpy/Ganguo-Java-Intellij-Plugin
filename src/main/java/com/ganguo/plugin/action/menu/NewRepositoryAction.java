@@ -1,7 +1,7 @@
 package com.ganguo.plugin.action.menu;
 
 import com.ganguo.plugin.action.BaseAction;
-import com.ganguo.plugin.util.DialogUtils;
+import com.ganguo.plugin.ui.dialog.ModuleAndNameDialog;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.MsgUtils;
 import com.ganguo.plugin.util.ProjectUtils;
@@ -30,58 +30,62 @@ public class NewRepositoryAction extends BaseAction {
     private static final String PATH_IMPL = "impl";
     private static final String PATH_DB_IMPL = "db/impl";
 
+    private AnActionEvent mEvent;
+
     @Override
     public void action(@NotNull AnActionEvent e) {
-        Project project = e.getProject();
+        mEvent = e;
+        new ModuleAndNameDialog("New Repository", this::doAction).show();
+    }
 
-        if (noProject(project)) return;
+    private boolean doAction(String module, String name) {
+        Project project = mEvent.getProject();
+
+        if (noProject(project)) return false;
         assert project != null;
 
         VirtualFile packageFile = ProjectUtils.getPackageFile(project);
-        if (packageFile == null) return;
+        if (packageFile == null) return false;
 
         PsiDirectoryFactory directoryFactory = PsiDirectoryFactory.getInstance(project);
 
         PsiFileFactory fileFactory = PsiFileFactory.getInstance(project);
 
         String packageName = ProjectUtils.getPackageName(project);
-        if (packageName == null) return;
-
-        DialogUtils.ModuleAndName moduleAndName = DialogUtils.getModuleAndName();
-        if (moduleAndName == null) return;
+        if (packageName == null) return false;
 
         VirtualFile domainRepositoryFile = packageFile.findFileByRelativePath(PATH_DOMAIN_REPOSITORY);
         if (domainRepositoryFile == null) {
             MsgUtils.error("%s not found", PATH_DOMAIN_REPOSITORY);
-            return;
+            return false;
         }
 
         VirtualFile infrastructureRepositoryFile =
                 packageFile.findFileByRelativePath(PATH_INFRASTRUCTURE_REPOSITORY);
         if (infrastructureRepositoryFile == null) {
             MsgUtils.error("%s not found", PATH_INFRASTRUCTURE_REPOSITORY);
-            return;
+            return false;
         }
 
         VirtualFile infrastructureRepositoryImplFile =
                 infrastructureRepositoryFile.findFileByRelativePath(PATH_IMPL);
         if (infrastructureRepositoryImplFile == null) {
             MsgUtils.error("%s/%s not found", PATH_INFRASTRUCTURE_REPOSITORY, PATH_IMPL);
-            return;
+            return false;
         }
 
         VirtualFile infrastructureRepositoryDbImplFile =
                 infrastructureRepositoryFile.findFileByRelativePath(PATH_DB_IMPL);
         if (infrastructureRepositoryDbImplFile == null) {
             MsgUtils.error("%s/%s not found", PATH_INFRASTRUCTURE_REPOSITORY, PATH_DB_IMPL);
-            return;
+            return false;
         }
 
         Map<String, String> params = new HashMap<>();
 
         params.put("packageName", packageName);
-        params.put("moduleName", moduleAndName.getModule());
-        params.put("name", moduleAndName.getName());
+        params.put("moduleName", module);
+        params.put("name", name);
 
         PsiFile repositoryFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
                 TemplateUtils.fromResource("/template/IRepository.vm", params));
@@ -102,7 +106,8 @@ public class NewRepositoryAction extends BaseAction {
         WriteCommandAction.runWriteCommandAction(project, () -> {
             try {
                 PsiDirectory domainRepositoryDir = directoryFactory.createDirectory(
-                        FileUtils.findOrCreateDirectory(domainRepositoryFile, moduleAndName.getModulePath()));
+                        FileUtils.findOrCreateDirectory(domainRepositoryFile,
+                                module.replace('.', '/')));
 
                 PsiDirectory infrastructureRepositoryImplDir = directoryFactory
                         .createDirectory(infrastructureRepositoryImplFile);
@@ -124,5 +129,6 @@ public class NewRepositoryAction extends BaseAction {
                 MsgUtils.error(ex.getMessage());
             }
         });
+        return true;
     }
 }

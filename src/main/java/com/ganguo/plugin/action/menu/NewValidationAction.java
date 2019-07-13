@@ -1,7 +1,7 @@
 package com.ganguo.plugin.action.menu;
 
 import com.ganguo.plugin.action.BaseAction;
-import com.ganguo.plugin.util.DialogUtils;
+import com.ganguo.plugin.ui.dialog.ModuleAndNameDialog;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.MsgUtils;
 import com.ganguo.plugin.util.ProjectUtils;
@@ -25,20 +25,24 @@ public class NewValidationAction extends BaseAction {
 
     private static final String PATH_VALIDATION = "infrastructure/validation/";
 
+    private AnActionEvent mEvent;
+
     @Override
     protected void action(AnActionEvent e) throws Exception {
-        Project project = e.getProject();
-        if (noProject(project)) return;
-        assert project != null;
+        mEvent = e;
+        new ModuleAndNameDialog("New Validation", this::doAction).show();
+    }
 
-        DialogUtils.ModuleAndName moduleAndName = DialogUtils.getModuleAndName();
-        if (moduleAndName == null) return;
+    private boolean doAction(String module, String name) {
+        Project project = mEvent.getProject();
+        if (noProject(project)) return false;
+        assert project != null;
 
         PsiDirectoryFactory directoryFactory = PsiDirectoryFactory.getInstance(project);
         PsiFileFactory fileFactory = PsiFileFactory.getInstance(project);
 
         Map<String, String> params = new HashMap<>();
-        params.put("name", moduleAndName.getName());
+        params.put("name", name);
         params.put("packageName", ProjectUtils.getPackageName(project));
 
         PsiFile validationFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
@@ -52,7 +56,8 @@ public class NewValidationAction extends BaseAction {
         WriteCommandAction.runWriteCommandAction(project, () -> {
             try {
                 PsiDirectory moduleDir = directoryFactory.createDirectory(FileUtils.findOrCreateDirectory(
-                        ProjectUtils.getPackageFile(project), PATH_VALIDATION + moduleAndName.getModulePath()));
+                        ProjectUtils.getPackageFile(project),
+                        PATH_VALIDATION + module.replace('.', '/')));
 
                 FileUtils.addIfAbsent(moduleDir, validationFile);
                 FileUtils.addIfAbsent(moduleDir, validationImplFile);
@@ -71,5 +76,6 @@ public class NewValidationAction extends BaseAction {
                 MsgUtils.error(ex.getMessage());
             }
         });
+        return true;
     }
 }
