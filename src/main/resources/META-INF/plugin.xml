@@ -4,8 +4,7 @@
     <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">Ganguo</vendor>
 
     <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
+    广州甘果Java开发的IDEA插件
     ]]></description>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
@@ -17,6 +16,13 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
     </extensions>
+
+    <application-components>
+        <component>
+            <interface-class>com.ganguo.plugin.component.AppComponent</interface-class>
+            <implementation-class>com.ganguo.plugin.component.AppComponentImpl</implementation-class>
+        </component>
+    </application-components>
 
     <actions>
         <group id="Ganguo.Menu"

@@ -3,11 +3,11 @@ package com.ganguo.plugin.action.menu;
 import com.ganguo.plugin.action.BaseAction;
 import com.ganguo.plugin.ui.dialog.AddMsgDialog;
 import com.ganguo.plugin.util.CopyPasteUtils;
+import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.MsgUtils;
 import com.ganguo.plugin.util.PsiUtils;
 import com.ganguo.plugin.util.SafeProperties;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -25,15 +25,14 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
 public class AddMsgAction extends BaseAction {
 
-    private static final String PATH_MSG_PROPERTIES = "src/main/resources/i18n/exception_msg.properties";
-    private static final String FILENAME_MSG_CLASS = "ExceptionMsg.java";
+    public static final String PATH_MSG_PROPERTIES = "src/main/resources/i18n/exception_msg.properties";
+    public static final String FILENAME_MSG_CLASS = "ExceptionMsg.java";
 
     private AnActionEvent mEvent;
 
@@ -108,21 +107,8 @@ public class AddMsgAction extends BaseAction {
                 }
             }
 
-            // 保存到文件
             properties.setProperty(key, value);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            properties.store(bos, null);
-
-            ApplicationManager.getApplication().runWriteAction(() -> {
-                // TODO 缓存问题
-                try {
-                    msgFile.setBinaryContent(bos.toByteArray());
-                } catch (IOException e) {
-                    MsgUtils.error(e.getMessage());
-                    e.printStackTrace();
-                }
-                msgFile.refresh(true, false);
-            });
+            FileUtils.setContent(msgFile, properties);
 
             return Status.SUCCESS;
         } catch (IOException e) {

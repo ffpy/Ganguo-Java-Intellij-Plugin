@@ -1,5 +1,6 @@
 package com.ganguo.plugin.util;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -7,6 +8,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class FileUtils {
@@ -55,5 +57,35 @@ public class FileUtils {
         }
         directory.add(file);
         return true;
+    }
+
+    /**
+     * 修改文件的内容
+     *
+     * @param file       文件
+     * @param properties 配置文件
+     */
+    public static void setContent(VirtualFile file, SafeProperties properties) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        properties.store(bos, null);
+        setContent(file, bos.toByteArray());
+    }
+
+    /**
+     * 修改文件的内容
+     *
+     * @param file    文件
+     * @param content 内容
+     */
+    public static void setContent(VirtualFile file, byte[] content) {
+        ApplicationManager.getApplication().runWriteAction(() -> {
+            try {
+                file.setBinaryContent(content);
+                file.refresh(true, false);
+            } catch (IOException e) {
+                e.printStackTrace();
+                MsgUtils.error(e.getMessage());
+            }
+        });
     }
 }
