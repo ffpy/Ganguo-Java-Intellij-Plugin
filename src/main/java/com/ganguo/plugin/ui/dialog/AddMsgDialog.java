@@ -1,7 +1,7 @@
 package com.ganguo.plugin.ui.dialog;
 
-import com.ganguo.plugin.ui.AddMsgForm;
-import com.ganguo.plugin.ui.InputLimit;
+import com.ganguo.plugin.ui.form.AddMsgForm;
+import com.ganguo.plugin.ui.utils.InputLimit;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;

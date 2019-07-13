@@ -1,4 +1,4 @@
-package com.ganguo.plugin.ui;
+package com.ganguo.plugin.ui.utils;
 
 import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;

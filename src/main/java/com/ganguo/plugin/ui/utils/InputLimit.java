@@ -1,4 +1,4 @@
-package com.ganguo.plugin.ui;
+package com.ganguo.plugin.ui.utils;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;

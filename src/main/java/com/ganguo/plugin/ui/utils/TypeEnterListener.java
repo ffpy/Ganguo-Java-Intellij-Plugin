@@ -1,4 +1,4 @@
-package com.ganguo.plugin.ui;
+package com.ganguo.plugin.ui.utils;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;

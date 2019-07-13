@@ -1,8 +1,7 @@
 package com.ganguo.plugin.ui.dialog;
 
 import com.ganguo.plugin.ui.BaseForm;
-import com.ganguo.plugin.ui.InputLimit;
-import com.ganguo.plugin.ui.TypeEnterListener;
+import com.ganguo.plugin.ui.utils.TypeEnterListener;
 import com.intellij.openapi.ui.DialogWrapper;
 import org.jetbrains.annotations.Nullable;
 

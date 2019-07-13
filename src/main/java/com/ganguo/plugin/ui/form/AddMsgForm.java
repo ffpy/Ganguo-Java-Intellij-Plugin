@@ -1,4 +1,6 @@
-package com.ganguo.plugin.ui;
+package com.ganguo.plugin.ui.form;
+
+import com.ganguo.plugin.ui.BaseForm;
 
 import javax.swing.*;
 

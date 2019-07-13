@@ -1,8 +1,8 @@
 package com.ganguo.plugin.ui.dialog;
 
-import com.ganguo.plugin.ui.InputLimit;
-import com.ganguo.plugin.ui.InputSameAs;
-import com.ganguo.plugin.ui.NewRepositoryForm;
+import com.ganguo.plugin.ui.utils.InputLimit;
+import com.ganguo.plugin.ui.utils.InputSameAs;
+import com.ganguo.plugin.ui.form.NewRepositoryForm;
 import com.ganguo.plugin.util.MyStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
