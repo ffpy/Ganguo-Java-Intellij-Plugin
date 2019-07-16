@@ -27,6 +27,7 @@ import java.io.IOException;
 
 public class DeleteMsgAction implements IntentionAction {
 
+    private static final String FAMILY_NAME = "Ganguo";
     private static final String FILENAME_MSG = "exception_msg.properties";
 
     @Nls(capitalization = Nls.Capitalization.Sentence)
@@ -40,7 +41,7 @@ public class DeleteMsgAction implements IntentionAction {
     @NotNull
     @Override
     public String getFamilyName() {
-        return "Ganguo";
+        return FAMILY_NAME;
     }
 
     @Override
@@ -59,6 +60,7 @@ public class DeleteMsgAction implements IntentionAction {
         if (StringUtils.isEmpty(lineText)) return;
 
         String[] strs = StringUtils.split(lineText, '=');
+        // 格式不正确，忽略
         if (strs == null || strs.length != 2) return;
 
         String key = strs[0];
@@ -67,6 +69,7 @@ public class DeleteMsgAction implements IntentionAction {
             deleteOnProperties(file.getVirtualFile(), key);
         } catch (IOException e) {
             e.printStackTrace();
+            MsgUtils.error(e.getMessage());
         }
 
         deleteOnClass(project, key);

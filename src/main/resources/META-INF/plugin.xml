@@ -12,6 +12,7 @@
     <!-- uncomment to enable plugin in all products
     <depends>com.intellij.modules.lang</depends>
     -->
+    <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <projectConfigurable instance="com.ganguo.plugin.configurable.ProjectConfigurable"/>
@@ -36,23 +37,31 @@
 
             <action id="com.ganguo.plugin.action.menu.AddMsgAction"
                     class="com.ganguo.plugin.action.menu.AddMsgAction"
-                    text="AddMsg"
-                    description="Add msg to exception_msg.properties and ExceptionMsg.java"/>
+                    text="添加Msg"
+                    description="添加msg到exception_msg.properties和ExceptionMsg.java"/>
 
             <action id="com.ganguo.plugin.action.menu.NewServiceAction"
                     class="com.ganguo.plugin.action.menu.NewServiceAction"
-                    text="New Service"
-                    description="New service and impl"/>
+                    text="生成Service接口及实现类"
+                    description="生成Service接口及实现类"/>
 
             <action id="com.ganguo.plugin.action.menu.NewRepositoryAction"
                     class="com.ganguo.plugin.action.menu.NewRepositoryAction"
-                    text="New Repository"
-                    description="New repository and impl"/>
+                    text="生成Repository接口及实现类"
+                    description="生成Repository接口及实现类"/>
 
             <action id="com.ganguo.plugin.action.menu.NewValidationAction"
                     class="com.ganguo.plugin.action.menu.NewValidationAction"
-                    text="New Validation"
-                    description="New Validation"/>
+                    text="生成Validation注解及实现类"
+                    description="生成Validation注解及实现类"/>
+
+            <action id="com.ganguo.plugin.action.menu.CaseFormatAction"
+                    class="com.ganguo.plugin.action.menu.CaseFormatAction"
+                    text="驼峰-下划线互转"
+                    description="驼峰-下划线互转">
+                <keyboard-shortcut keymap="$default" first-keystroke="shift meta P"/>
+            </action>
+
         </group>
 
         <group id="Ganguo.Generate"
@@ -64,7 +73,7 @@
 
             <action id="com.ganguo.plugin.action.generate.GenerateApiTestClassAction"
                     class="com.ganguo.plugin.action.generate.GenerateApiTestClassAction"
-                    text="生成测试类"
+                    text="生成接口方法测试类"
                     description="Generate Api Test Class"/>
 
         </group>

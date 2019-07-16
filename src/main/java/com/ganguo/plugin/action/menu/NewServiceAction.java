@@ -95,8 +95,15 @@ public class NewServiceAction extends BaseAction {
 
         WriteCommandAction.runWriteCommandAction(project, () -> {
             try {
-                PsiDirectory moduleDir = directoryFactory.createDirectory(
-                        FileUtils.findOrCreateDirectory(serviceApiFile, module.replace('.', '/')));
+                PsiDirectory moduleDir = Optional.ofNullable(
+                        FileUtils.findOrCreateDirectory(serviceApiFile,
+                                module.replace('.', '/')))
+                        .map(directoryFactory::createDirectory)
+                        .orElse(null);
+                if (moduleDir == null) {
+                    MsgUtils.error("get module dir fail");
+                    return;
+                }
 
                 FileUtils.addIfAbsent(moduleDir, interFile);
                 FileUtils.addIfAbsent(moduleDir, implFile);

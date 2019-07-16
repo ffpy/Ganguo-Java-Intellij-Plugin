@@ -30,6 +30,7 @@ public class ProjectConfigurable implements SearchableConfigurable {
 
     public ProjectConfigurable(Project project) {
         mProjectSettingService = ServiceManager.getService(project, ProjectSettingService.class);
+
         mTemplateMap = Arrays.stream(TemplateName.values())
                 .map(this::loadTemplate)
                 .filter(Objects::nonNull)
@@ -44,7 +45,7 @@ public class ProjectConfigurable implements SearchableConfigurable {
     @NotNull
     @Override
     public String getId() {
-        return "Ganguo";
+        return "com.ganguo.plugin";
     }
 
     @Nls(capitalization = Nls.Capitalization.Title)
@@ -73,7 +74,17 @@ public class ProjectConfigurable implements SearchableConfigurable {
 
     @Override
     public void apply() throws ConfigurationException {
-        // packageName
+        applyPackageName();
+        applyTemplate();
+    }
+
+    private void applyTemplate() {
+        Map<TemplateName, String> templateMap = mForm.getTemplateMap();
+        templateMap.forEach(mProjectSettingService::setTemplate);
+        mTemplateMap = templateMap;
+    }
+
+    private void applyPackageName() throws ConfigurationException {
         String packageName = mForm.getPackageNameField().getText();
         if (!PatternUtils.matchPackageName(packageName)) {
             throw new ConfigurationException("包名格式不正确");
@@ -86,11 +97,6 @@ public class ProjectConfigurable implements SearchableConfigurable {
         }
 
         mPackageName = mForm.getPackageNameField().getText();
-
-        // template
-        Map<TemplateName, String> templateMap = mForm.getTemplateMap();
-        templateMap.forEach(mProjectSettingService::setTemplate);
-        mTemplateMap = templateMap;
     }
 
     @Override
@@ -105,8 +111,7 @@ public class ProjectConfigurable implements SearchableConfigurable {
     }
 
     private Item<String> loadTemplate(TemplateName name) {
-        String template = mProjectSettingService.getTemplate(name);
-        return Optional.ofNullable(template)
+        return Optional.ofNullable(mProjectSettingService.getTemplate(name))
                 .map(content -> new Item<>(name, content))
                 .orElse(null);
     }

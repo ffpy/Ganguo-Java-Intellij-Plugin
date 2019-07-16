@@ -86,7 +86,7 @@ public class NewRepositoryAction extends BaseAction {
             return false;
         }
 
-        String pojo = StringUtils.capitalize(MyStringUtils.underline2Hump(table.toLowerCase()));
+        String pojo = StringUtils.capitalize(MyStringUtils.underScoreCase2CamelCase(table.toLowerCase()));
 
         Map<String, String> params = new HashMap<>();
 

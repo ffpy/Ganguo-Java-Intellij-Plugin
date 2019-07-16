@@ -22,7 +22,7 @@ public class MyStringUtils {
      * @param str 字符串
      * @return 转换后的字符串
      */
-    public static String hump2Underline(String str) {
+    public static String camelCase2UnderScoreCase(String str) {
         if (str == null || str.isEmpty()) return str;
         StringBuilder sb = new StringBuilder(str.length());
 
@@ -34,7 +34,7 @@ public class MyStringUtils {
             if (!prevIsUpperCase && isUpperCase) {
                 sb.append('_');
             }
-            sb.append(ch);
+            sb.append(isUpperCase ? Character.toLowerCase(ch) : ch);
 
             prevIsUpperCase = isUpperCase;
         }
@@ -48,7 +48,7 @@ public class MyStringUtils {
      * @param str 字符串
      * @return 转换后的字符串
      */
-    public static String underline2Hump(String str) {
+    public static String underScoreCase2CamelCase(String str) {
         if (str == null || str.isEmpty()) return str;
         StringBuilder sb = new StringBuilder(str.length());
 

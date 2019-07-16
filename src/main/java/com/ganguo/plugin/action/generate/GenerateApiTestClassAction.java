@@ -101,7 +101,7 @@ public class GenerateApiTestClassAction extends BaseAction {
             return;
         }
 
-        RequestBodyClass requestBodyClassName = getRequestBodyClassName(psiMethod);
+        RequestBodyClass requestBodyClassName = getClassNameWithRequestBody(psiMethod);
 
         Map<String, String> params = new HashMap<>();
         params.put("packageName", ProjectUtils.getPackageName(project));
@@ -121,7 +121,7 @@ public class GenerateApiTestClassAction extends BaseAction {
                         params));
         newFile.setName(targetFilename);
 
-        getRequestBodyClassName(psiMethod);
+        getClassNameWithRequestBody(psiMethod);
 
         WriteCommandAction.runWriteCommandAction(project, () -> {
             testDir.add(newFile);
@@ -193,7 +193,7 @@ public class GenerateApiTestClassAction extends BaseAction {
         return (baseUrl + subUrl).replace("//", "/");
     }
 
-    private RequestBodyClass getRequestBodyClassName(PsiMethod psiMethod) {
+    private RequestBodyClass getClassNameWithRequestBody(PsiMethod psiMethod) {
         return Arrays.stream(psiMethod.getParameterList().getParameters())
                 .filter(parameter -> Arrays.stream(parameter.getAnnotations())
                         .anyMatch(anno -> Optional.ofNullable(anno.getQualifiedName())

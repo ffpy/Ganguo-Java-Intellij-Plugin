@@ -22,9 +22,9 @@ public class NewRepositoryDialog extends BaseDialog<NewRepositoryForm, NewReposi
     @Override
     protected void initComponent() {
         new InputSameAs(mForm.getNameField(), mForm.getModuleField(),
-                text -> MyStringUtils.hump2Underline(text).toLowerCase());
+                text -> MyStringUtils.camelCase2UnderScoreCase(text).toLowerCase());
         new InputSameAs(mForm.getNameField(), mForm.getTableField(),
-                text -> MyStringUtils.hump2Underline(text).toUpperCase());
+                text -> MyStringUtils.camelCase2UnderScoreCase(text).toUpperCase());
         mTabletLimit = new InputLimit(mForm.getTableField(), "^([A-Z_][A-Z0-9_]*)?$");
         mModuleLimit = new InputLimit(mForm.getModuleField(), "^([a-zA-Z][\\w.]*)?$");
         mNameLimit = new InputLimit(mForm.getNameField(), "^([a-zA-Z][a-zA-Z\\d]*)?$");

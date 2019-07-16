@@ -21,7 +21,7 @@ public class ModuleAndNameDialog extends BaseDialog<ModuleAndNameForm, ModuleAnd
     @Override
     protected void initComponent() {
         new InputSameAs(mForm.getNameField(), mForm.getModuleField(),
-                text -> MyStringUtils.hump2Underline(text).toLowerCase());
+                text -> MyStringUtils.camelCase2UnderScoreCase(text).toLowerCase());
         mModuleLimit = new InputLimit(mForm.getModuleField(), "^([a-zA-Z][\\w.]*)?$");
         mNameLimit = new InputLimit(mForm.getNameField(), "^([a-zA-Z][a-zA-Z\\d]*)?$");
     }
