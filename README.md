@@ -1,10 +1,13 @@
 ## TODO
 - [x] add msg
-- [x] delete msg on properties
+- [x] 在exception_msg.properties处关联删除msg
 - [x] new service&impl
 - [x] new repository&impl
 - [x] new api test
 - [x] new validation
-- [x] generate base DAO method
-- [ ] configure packageName
-- [ ] configure template
+- [x] DAO模板生成基本方法
+- [x] 可配置包名
+- [x] 可配置模板
+- [ ] 自动实现IRepository接口方法
+- [ ] 驼峰-下划线命名方式互转
+- [ ] sql字段自动用反引号包裹

@@ -1,6 +1,8 @@
 package com.ganguo.plugin.action.menu;
 
 import com.ganguo.plugin.action.BaseAction;
+import com.ganguo.plugin.constant.TemplateName;
+import com.ganguo.plugin.service.ProjectSettingService;
 import com.ganguo.plugin.ui.dialog.NewRepositoryDialog;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.MsgUtils;
@@ -11,6 +13,7 @@ import com.ganguo.plugin.util.TemplateUtils;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -94,20 +97,27 @@ public class NewRepositoryAction extends BaseAction {
         params.put("pojoCls", pojo + "POJO");
         params.put("pojoName", MyStringUtils.lowerCaseFirstChar(pojo));
 
+        ProjectSettingService settingService =
+                ServiceManager.getService(project, ProjectSettingService.class);
+
         PsiFile repositoryFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
-                TemplateUtils.fromResource("/template/IRepository.vm", params));
+                TemplateUtils.fromString(settingService.getTemplate(TemplateName.I_REPOSITORY),
+                        params));
         repositoryFile.setName(StringHelper.toString("I{name}Repository.java", params));
 
         PsiFile dbStrategyFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
-                TemplateUtils.fromResource("/template/IDbStrategy.vm", params));
+                TemplateUtils.fromString(settingService.getTemplate(TemplateName.I_DB_STRATEGY),
+                        params));
         dbStrategyFile.setName(StringHelper.toString("I{name}DbStrategy.java", params));
 
         PsiFile repositoryImplFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
-                TemplateUtils.fromResource("/template/Repository.vm", params));
+                TemplateUtils.fromString(settingService.getTemplate(TemplateName.REPOSITORY),
+                        params));
         repositoryImplFile.setName(StringHelper.toString("{name}Repository.java", params));
 
         PsiFile daoFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
-                TemplateUtils.fromResource("/template/DAO.vm", params));
+                TemplateUtils.fromString(settingService.getTemplate(TemplateName.DAO),
+                        params));
         daoFile.setName(StringHelper.toString("{name}DAO.java", params));
 
         WriteCommandAction.runWriteCommandAction(project, () -> {

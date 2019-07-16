@@ -1,6 +1,8 @@
 package com.ganguo.plugin.action.generate;
 
 import com.ganguo.plugin.action.BaseAction;
+import com.ganguo.plugin.constant.TemplateName;
+import com.ganguo.plugin.service.ProjectSettingService;
 import com.ganguo.plugin.util.ElementUtils;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.MsgUtils;
@@ -10,6 +12,7 @@ import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -110,8 +113,12 @@ public class GenerateApiTestClassAction extends BaseAction {
             params.put("requestClassSimpleName", requestBodyClassName.getSimpleName());
         }
 
+        ProjectSettingService settingService =
+                ServiceManager.getService(project, ProjectSettingService.class);
+
         PsiFile newFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
-                TemplateUtils.fromResource("/template/ApiTestClass.vm", params));
+                TemplateUtils.fromString(settingService.getTemplate(TemplateName.API_TEST_CLASS),
+                        params));
         newFile.setName(targetFilename);
 
         getRequestBodyClassName(psiMethod);

@@ -14,7 +14,10 @@
     -->
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationConfigurable instance="com.ganguo.plugin.Configurable"/>
+        <projectConfigurable instance="com.ganguo.plugin.configurable.ProjectConfigurable"/>
+
+        <projectService serviceInterface="com.ganguo.plugin.service.ProjectSettingService"
+                            serviceImplementation="com.ganguo.plugin.service.ProjectSettingServiceImpl"/>
     </extensions>
 
     <application-components>

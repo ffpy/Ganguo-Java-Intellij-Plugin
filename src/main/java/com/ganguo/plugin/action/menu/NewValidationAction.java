@@ -1,6 +1,8 @@
 package com.ganguo.plugin.action.menu;
 
 import com.ganguo.plugin.action.BaseAction;
+import com.ganguo.plugin.constant.TemplateName;
+import com.ganguo.plugin.service.ProjectSettingService;
 import com.ganguo.plugin.ui.dialog.ModuleAndNameDialog;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.MsgUtils;
@@ -10,6 +12,7 @@ import com.ganguo.plugin.util.TemplateUtils;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
@@ -45,19 +48,24 @@ public class NewValidationAction extends BaseAction {
         params.put("name", name);
         params.put("packageName", ProjectUtils.getPackageName(project));
 
+        ProjectSettingService settingService =
+                ServiceManager.getService(project, ProjectSettingService.class);
+
         PsiFile validationFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
-                TemplateUtils.fromResource("/template/Validation.vm", params));
+                TemplateUtils.fromString(settingService.getTemplate(TemplateName.VALIDATION),
+                        params));
         validationFile.setName(StringHelper.toString("{name}.java", params));
 
         PsiFile validationImplFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
-                TemplateUtils.fromResource("/template/ValidationImpl.vm", params));
+                TemplateUtils.fromString(settingService.getTemplate(TemplateName.VALIDATION_IMPL),
+                        params));
         validationImplFile.setName(StringHelper.toString("{name}ValidatorImpl.java", params));
 
         WriteCommandAction.runWriteCommandAction(project, () -> {
             try {
-                PsiDirectory moduleDir = directoryFactory.createDirectory(FileUtils.findOrCreateDirectory(
-                        ProjectUtils.getPackageFile(project),
-                        PATH_VALIDATION + module.replace('.', '/')));
+                PsiDirectory moduleDir = directoryFactory.createDirectory(
+                        FileUtils.findOrCreateDirectory(ProjectUtils.getPackageFile(project),
+                                PATH_VALIDATION + module.replace('.', '/')));
 
                 FileUtils.addIfAbsent(moduleDir, validationFile);
                 FileUtils.addIfAbsent(moduleDir, validationImplFile);

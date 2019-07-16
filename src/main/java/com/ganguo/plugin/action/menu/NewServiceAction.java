@@ -1,6 +1,8 @@
 package com.ganguo.plugin.action.menu;
 
 import com.ganguo.plugin.action.BaseAction;
+import com.ganguo.plugin.constant.TemplateName;
+import com.ganguo.plugin.service.ProjectSettingService;
 import com.ganguo.plugin.ui.dialog.ModuleAndNameDialog;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.MsgUtils;
@@ -10,6 +12,7 @@ import com.ganguo.plugin.util.TemplateUtils;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
@@ -77,12 +80,17 @@ public class NewServiceAction extends BaseAction {
         params.put("name", name);
         params.put("repositoryClassName", repositoryClassName);
 
+        ProjectSettingService settingService =
+                ServiceManager.getService(project, ProjectSettingService.class);
+
         PsiFile interFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
-                TemplateUtils.fromResource("/template/Service.vm", params));
+                TemplateUtils.fromString(settingService.getTemplate(TemplateName.SERVICE),
+                        params));
         interFile.setName(StringHelper.toString("{name}Service.java", params));
 
         PsiFile implFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
-                TemplateUtils.fromResource("/template/ServiceImpl.vm", params));
+                TemplateUtils.fromString(settingService.getTemplate(TemplateName.SERVICE_IMPL),
+                        params));
         implFile.setName(StringHelper.toString("{name}ServiceImpl.java", params));
 
         WriteCommandAction.runWriteCommandAction(project, () -> {
