@@ -5,6 +5,7 @@ import com.ganguo.plugin.constant.TemplateName;
 import com.ganguo.plugin.service.ProjectSettingService;
 import com.ganguo.plugin.ui.dialog.ModuleAndNameDialog;
 import com.ganguo.plugin.util.FileUtils;
+import com.ganguo.plugin.util.FilenameIndexUtils;
 import com.ganguo.plugin.util.MsgUtils;
 import com.ganguo.plugin.util.ProjectUtils;
 import com.ganguo.plugin.util.StringHelper;
@@ -21,8 +22,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
-import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -70,9 +69,8 @@ public class NewServiceAction extends BaseAction {
         PsiFileFactory fileFactory = PsiFileFactory.getInstance(project);
 
         String repositoryClassName = Arrays.stream(
-                FilenameIndex.getFilesByName(project,
-                        "I" + name + "Repository.java",
-                        GlobalSearchScope.projectScope(project)))
+                FilenameIndexUtils.getFilesByName(project,
+                        "I" + name + "Repository.java"))
                 .findFirst()
                 .map(f -> (PsiJavaFile) f)
                 .flatMap(f -> Arrays.stream(f.getClasses())

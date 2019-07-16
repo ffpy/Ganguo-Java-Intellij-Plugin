@@ -3,6 +3,7 @@ package com.ganguo.plugin.action.intention;
 import com.ganguo.plugin.action.menu.AddMsgAction;
 import com.ganguo.plugin.util.EditorUtils;
 import com.ganguo.plugin.util.FileUtils;
+import com.ganguo.plugin.util.FilenameIndexUtils;
 import com.ganguo.plugin.util.MsgUtils;
 import com.ganguo.plugin.util.SafeProperties;
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -15,8 +16,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.apache.commons.lang3.StringUtils;
@@ -86,8 +85,7 @@ public class DeleteMsgAction implements IntentionAction {
     }
 
     private void deleteOnClass(Project project, String key) {
-        PsiFile[] psiFiles = FilenameIndex.getFilesByName(project, AddMsgAction.FILENAME_MSG_CLASS,
-                GlobalSearchScope.projectScope(project));
+        PsiFile[] psiFiles = FilenameIndexUtils.getFilesByName(project, AddMsgAction.FILENAME_MSG_CLASS);
         if (psiFiles.length == 0) {
             MsgUtils.error("find %s fail!", AddMsgAction.FILENAME_MSG_CLASS);
             return;

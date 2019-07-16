@@ -106,8 +106,11 @@ public class GenerateApiTestClassAction extends BaseAction {
 
         RequestBodyClass requestBodyClassName = getClassNameWithRequestBody(psiMethod);
 
+        ProjectSettingService settingService =
+                ServiceManager.getService(project, ProjectSettingService.class);
+
         Map<String, String> params = new HashMap<>();
-        params.put("packageName", ProjectUtils.getPackageName(project));
+        params.put("packageName", settingService.getPackageName());
         params.put("className", className);
         params.put("method", getMethod(psiMethod));
         params.put("url", getUrl(psiFile, psiMethod));
@@ -115,9 +118,6 @@ public class GenerateApiTestClassAction extends BaseAction {
             params.put("requestClassName", requestBodyClassName.getName());
             params.put("requestClassSimpleName", requestBodyClassName.getSimpleName());
         }
-
-        ProjectSettingService settingService =
-                ServiceManager.getService(project, ProjectSettingService.class);
 
         PsiFile newFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
                 TemplateUtils.fromString(settingService.getTemplate(TemplateName.API_TEST_CLASS),

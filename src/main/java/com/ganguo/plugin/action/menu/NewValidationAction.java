@@ -51,12 +51,12 @@ public class NewValidationAction extends BaseAction {
         PsiDirectoryFactory directoryFactory = PsiDirectoryFactory.getInstance(project);
         PsiFileFactory fileFactory = PsiFileFactory.getInstance(project);
 
-        Map<String, String> params = new HashMap<>();
-        params.put("name", name);
-        params.put("packageName", ProjectUtils.getPackageName(project));
-
         ProjectSettingService settingService =
                 ServiceManager.getService(project, ProjectSettingService.class);
+
+        Map<String, String> params = new HashMap<>();
+        params.put("name", name);
+        params.put("packageName", settingService.getPackageName());
 
         PsiFile validationFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
                 TemplateUtils.fromString(settingService.getTemplate(TemplateName.VALIDATION),

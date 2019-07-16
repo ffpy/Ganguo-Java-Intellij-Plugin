@@ -4,6 +4,7 @@ import com.ganguo.plugin.action.BaseAction;
 import com.ganguo.plugin.ui.dialog.AddMsgDialog;
 import com.ganguo.plugin.util.CopyPasteUtils;
 import com.ganguo.plugin.util.FileUtils;
+import com.ganguo.plugin.util.FilenameIndexUtils;
 import com.ganguo.plugin.util.MsgUtils;
 import com.ganguo.plugin.util.PsiUtils;
 import com.ganguo.plugin.util.SafeProperties;
@@ -129,8 +130,7 @@ public class AddMsgAction extends BaseAction {
      * 添加到Class文件
      */
     private Status add2Class(Project project, String key, String value) {
-        PsiFile[] psiFiles = FilenameIndex.getFilesByName(project, FILENAME_MSG_CLASS,
-                GlobalSearchScope.projectScope(project));
+        PsiFile[] psiFiles = FilenameIndexUtils.getFilesByName(project, FILENAME_MSG_CLASS);
         if (psiFiles.length == 0) {
             MsgUtils.error("find %s fail!", FILENAME_MSG_CLASS);
             return Status.FAIL;

@@ -63,7 +63,10 @@ public class NewRepositoryAction extends BaseAction {
 
         PsiFileFactory fileFactory = PsiFileFactory.getInstance(project);
 
-        String packageName = ProjectUtils.getPackageName(project);
+        ProjectSettingService settingService =
+                ServiceManager.getService(project, ProjectSettingService.class);
+
+        String packageName = settingService.getPackageName();
         if (packageName == null) return false;
 
         VirtualFile domainRepositoryFile = packageFile.findFileByRelativePath(PATH_DOMAIN_REPOSITORY);
@@ -103,9 +106,6 @@ public class NewRepositoryAction extends BaseAction {
         params.put("table", table);
         params.put("pojoCls", pojo + "POJO");
         params.put("pojoName", MyStringUtils.lowerCaseFirstChar(pojo));
-
-        ProjectSettingService settingService =
-                ServiceManager.getService(project, ProjectSettingService.class);
 
         PsiFile repositoryFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
                 TemplateUtils.fromString(settingService.getTemplate(TemplateName.I_REPOSITORY),
