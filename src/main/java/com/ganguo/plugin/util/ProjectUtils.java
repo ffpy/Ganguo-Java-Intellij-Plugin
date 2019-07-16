@@ -52,10 +52,7 @@ public class ProjectUtils {
                             .replace('/', '.')
                             .replace('\\', '.');
                 })
-                .orElseGet(() -> {
-                    MsgUtils.error("get packageName fail!");
-                    return "";
-                });
+                .orElse(null);
     }
 
     /**

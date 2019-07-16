@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 public class ProjectConfigurable implements SearchableConfigurable {
 
-    private ConfigurationForm mForm;
+    private final ConfigurationForm mForm;
     private final ProjectSettingService mProjectSettingService;
     private Map<TemplateName, String> mTemplateMap;
     private String mPackageName;

@@ -27,7 +27,11 @@ public class ProjectSettingServiceImpl implements ProjectSettingService {
     public String getPackageName() {
         String packageName = mProperties.getValue(KEY_PACKAGE_NAME);
         if (StringUtils.isEmpty(packageName)) {
-            packageName = ProjectUtils.getPackageName(mProject);
+            try {
+                packageName = ProjectUtils.getPackageName(mProject);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return packageName;
     }
