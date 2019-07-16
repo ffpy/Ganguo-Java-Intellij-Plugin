@@ -37,10 +37,12 @@ public class WrapBackquoteAction extends BaseReplaceAction {
     private boolean isAllLowerCase(StringBuilder str) {
         if (str.length() == 0) return false;
 
-        if (!Character.isLetter(str.charAt(0))) return false;
+        if (Character.isDigit(str.charAt(0))) return false;
 
         for (int i = 0; i < str.length(); i++) {
             char ch = str.charAt(i);
+            if (ch == '_') continue;
+
             if (!Character.isLetterOrDigit(ch)) return false;
             if (Character.isLetter(ch) && Character.isUpperCase(ch)) return false;
         }
