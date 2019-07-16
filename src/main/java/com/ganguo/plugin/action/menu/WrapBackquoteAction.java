@@ -10,26 +10,37 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 public class WrapBackquoteAction extends BaseReplaceAction {
 
     /** 单词分隔字符 */
-    private static final String SEP_CHARS = " ,.;()=";
+    private static final String SEP_CHARS = " ,.;()=\r\n\t";
 
     @Override
     protected String replace(AnActionEvent e, String text) throws Exception {
         StringBuilder newText = new StringBuilder(text.length());
         StringBuilder word = new StringBuilder();
+        // 是否位于单引号内，用于忽略单引号包含的文本单词
+        boolean isInSingleQuote = false;
+        char prevChar = 0;
 
         for (int i = 0; i < text.length(); i++) {
             char ch = text.charAt(i);
 
+            if (ch == '\'') {
+                if (prevChar != '\\') {
+                    isInSingleQuote = !isInSingleQuote;
+                }
+            }
+
             if (isSepChar(ch)) {
-                appendWord(newText, word);
+                appendWord(newText, word, isInSingleQuote);
                 newText.append(ch);
                 word.delete(0, word.length());
             } else {
                 word.append(ch);
             }
+
+            prevChar = ch;
         }
 
-        appendWord(newText, word);
+        appendWord(newText, word, isInSingleQuote);
         String newTextStr = newText.toString();
 
         return newTextStr.equals(text) ? null : newTextStr;
@@ -50,8 +61,8 @@ public class WrapBackquoteAction extends BaseReplaceAction {
         return true;
     }
 
-    private void appendWord(StringBuilder text, StringBuilder word) {
-        if (isAllLowerCase(word) && !SqlUtils.isMysqlKeyword(word.toString())) {
+    private void appendWord(StringBuilder text, StringBuilder word, boolean isInSingleQuote) {
+        if (!isInSingleQuote && isAllLowerCase(word) && !SqlUtils.isMysqlKeyword(word.toString())) {
             text.append('`').append(word).append('`');
         } else {
             text.append(word);

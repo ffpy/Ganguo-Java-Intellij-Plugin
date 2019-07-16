@@ -38,10 +38,12 @@ public class ConfigurationForm implements BaseForm {
     }
 
     private void addTab(EditorFactory factory, FileType fileType, Map.Entry<TemplateName, String> entry) {
-        Document document = factory.createDocument(entry.getValue());
-        Editor editor = factory.createEditor(document, null, fileType, false);
-        mEditorMap.put(entry.getKey(), editor);
-        EventQueue.invokeLater(() -> mTabPane.addTab(entry.getKey().getName(), editor.getComponent()));
+        EventQueue.invokeLater(() -> {
+            Document document = factory.createDocument(entry.getValue());
+            Editor editor = factory.createEditor(document, null, fileType, false);
+            mEditorMap.put(entry.getKey(), editor);
+            mTabPane.addTab(entry.getKey().getName(), editor.getComponent());
+        });
     }
 
     public Map<TemplateName, String> getTemplateMap() {

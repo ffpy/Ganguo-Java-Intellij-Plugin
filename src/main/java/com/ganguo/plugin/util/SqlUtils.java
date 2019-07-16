@@ -16,19 +16,16 @@ public class SqlUtils {
             "char", "varchar", "tinyblob", "tinytext", "blob", "text", "mediumblob",
             "mediumtext", "longblob", "longtext",
 
-            // 语句
-            "select", "insert", "delete", "update", "table", "create", "drop", "alter",
-            "create", "view", "index", "procedure", "trigger", "schema", "domain",
-            "grant", "deny", "revoke", "commit", "rollback", "transaction", "ignore", "key",
-
             // 函数
             "ascii", "ord", "conv", "bin", "oct", "hex", "concat", "length", "octet_length",
             "char_length", "character_length", "locate", "left", "right", "substring", "mid",
             "ltrim", "rtrim", "trim", "space", "replace", "repeat", "reverse", "abs", "mod",
             "floor", "ceiling", "round", "exp", "log", "log10", "pow", "power", "dayofweek",
             "weekday", "dayofmonth", "dayofyear", "year", "hour", "date_format", "time_format",
-            "now", "from_unixtime", "unix_timestamp", "sec_to_time", "time_to_sec"
+            "now", "from_unixtime", "unix_timestamp", "sec_to_time", "time_to_sec",
 
+            // 字符集
+            "utf8", "utf8mb4", "utf8mb4_unicode_ci",
     };
 
     private static Set<String> MySqlKeywordSet = new HashSet<>();
