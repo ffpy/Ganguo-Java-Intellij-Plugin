@@ -1,6 +1,7 @@
 package com.ganguo.plugin.action.menu;
 
 import com.ganguo.plugin.action.BaseReplaceAction;
+import com.ganguo.plugin.util.SqlUtils;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 
 /**
@@ -50,7 +51,7 @@ public class WrapBackquoteAction extends BaseReplaceAction {
     }
 
     private void appendWord(StringBuilder text, StringBuilder word) {
-        if (isAllLowerCase(word)) {
+        if (isAllLowerCase(word) && !SqlUtils.isMysqlKeyword(word.toString())) {
             text.append('`').append(word).append('`');
         } else {
             text.append(word);
