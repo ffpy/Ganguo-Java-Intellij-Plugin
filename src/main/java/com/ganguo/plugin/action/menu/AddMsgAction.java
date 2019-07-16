@@ -29,6 +29,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * 添加Msg
+ */
 public class AddMsgAction extends BaseAction {
 
     public static final String PATH_MSG_PROPERTIES = "src/main/resources/i18n/exception_msg.properties";
@@ -39,7 +42,11 @@ public class AddMsgAction extends BaseAction {
     @Override
     public void action(AnActionEvent e) {
         mEvent = e;
-        new AddMsgDialog(this::doAction).show();
+        try {
+            new AddMsgDialog(this::doAction).show();
+        } finally {
+            mEvent = null;
+        }
     }
 
     private boolean doAction(String key, String value) {

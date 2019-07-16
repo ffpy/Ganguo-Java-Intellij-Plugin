@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * 创建校验注解及校验类
+ */
 public class NewValidationAction extends BaseAction {
 
     private static final String PATH_VALIDATION = "infrastructure/validation/";
@@ -33,7 +36,11 @@ public class NewValidationAction extends BaseAction {
     @Override
     protected void action(AnActionEvent e) throws Exception {
         mEvent = e;
-        new ModuleAndNameDialog("New Validation", this::doAction).show();
+        try {
+            new ModuleAndNameDialog("New Validation", this::doAction).show();
+        } finally {
+            mEvent = null;
+        }
     }
 
     private boolean doAction(String module, String name) {

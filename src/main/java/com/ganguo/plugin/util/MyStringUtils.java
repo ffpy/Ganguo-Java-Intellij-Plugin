@@ -36,7 +36,7 @@ public class MyStringUtils {
             }
             sb.append(isUpperCase ? Character.toLowerCase(ch) : ch);
 
-            prevIsUpperCase = isUpperCase;
+            prevIsUpperCase = !Character.isLetterOrDigit(ch) || isUpperCase;
         }
 
         return sb.toString();

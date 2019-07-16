@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 位于顶部菜单栏
+ * 创建Service接口及实现类
  */
 public class NewServiceAction extends BaseAction {
 
@@ -43,7 +43,11 @@ public class NewServiceAction extends BaseAction {
     @Override
     public void action(@NotNull AnActionEvent e) {
         mEvent = e;
-        new ModuleAndNameDialog("New Service", this::doAction).show();
+        try {
+            new ModuleAndNameDialog("New Service", this::doAction).show();
+        } finally {
+            mEvent = null;
+        }
     }
 
     private boolean doAction(String module, String name) {

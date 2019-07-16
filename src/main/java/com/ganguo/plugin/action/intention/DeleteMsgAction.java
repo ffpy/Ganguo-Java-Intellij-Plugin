@@ -25,6 +25,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
+/**
+ * 删除Msg
+ */
 public class DeleteMsgAction implements IntentionAction {
 
     private static final String FAMILY_NAME = "Ganguo";

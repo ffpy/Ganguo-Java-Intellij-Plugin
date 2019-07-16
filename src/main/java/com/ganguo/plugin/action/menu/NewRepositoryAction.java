@@ -28,6 +28,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * 创建Repository接口及实现类
+ */
 public class NewRepositoryAction extends BaseAction {
 
     private static final String PATH_DOMAIN_REPOSITORY = "domain/repository";
@@ -40,7 +43,11 @@ public class NewRepositoryAction extends BaseAction {
     @Override
     public void action(@NotNull AnActionEvent e) {
         mEvent = e;
-        new NewRepositoryDialog("New Repository", this::doAction).show();
+        try {
+            new NewRepositoryDialog("New Repository", this::doAction).show();
+        } finally {
+            mEvent = null;
+        }
     }
 
     private boolean doAction(String table, String module, String name) {

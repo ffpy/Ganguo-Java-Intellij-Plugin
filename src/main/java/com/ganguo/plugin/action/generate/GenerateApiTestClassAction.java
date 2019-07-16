@@ -34,6 +34,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * 生成Api接口方法测试类
+ */
 public class GenerateApiTestClassAction extends BaseAction {
 
     @Override

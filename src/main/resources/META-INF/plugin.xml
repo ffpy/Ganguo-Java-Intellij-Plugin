@@ -52,14 +52,21 @@
 
             <action id="com.ganguo.plugin.action.menu.NewValidationAction"
                     class="com.ganguo.plugin.action.menu.NewValidationAction"
-                    text="生成Validation注解及实现类"
-                    description="生成Validation注解及实现类"/>
+                    text="生成校验注解及校验类"
+                    description="生成校验注解及校验类"/>
 
             <action id="com.ganguo.plugin.action.menu.CaseFormatAction"
                     class="com.ganguo.plugin.action.menu.CaseFormatAction"
                     text="驼峰-下划线互转"
                     description="驼峰-下划线互转">
-                <keyboard-shortcut keymap="$default" first-keystroke="shift meta P"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="shift meta MINUS"/>
+            </action>
+
+            <action id="com.ganguo.plugin.action.menu.WrapBackquoteAction"
+                    class="com.ganguo.plugin.action.menu.WrapBackquoteAction"
+                    text="SQL字段用反引号包裹"
+                    description="SQL字段用反引号包裹">
+                <keyboard-shortcut keymap="$default" first-keystroke="shift meta BACK_QUOTE"/>
             </action>
 
         </group>
@@ -77,5 +84,7 @@
                     description="Generate Api Test Class"/>
 
         </group>
+
     </actions>
+
 </idea-plugin>
