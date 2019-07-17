@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 public class FileUtils {
@@ -42,7 +43,15 @@ public class FileUtils {
     }
 
     public static void navigateFile(Project project, VirtualFile file) {
+        if (file == null) return;
         new OpenFileDescriptor(project, file).navigate(true);
+    }
+
+    public static void navigateFile(Project project, PsiDirectory directory, String filename) {
+        navigateFile(project, Optional.ofNullable(directory)
+                .map(dir -> dir.findFile(filename))
+                .map(PsiFile::getVirtualFile)
+                .orElse(null));
     }
 
     /**

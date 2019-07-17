@@ -111,10 +111,7 @@ public class NewServiceAction extends BaseAction {
                 FileUtils.addIfAbsent(moduleDir, interFile);
                 FileUtils.addIfAbsent(moduleDir, implFile);
 
-                FileUtils.navigateFile(project, Optional
-                        .ofNullable(moduleDir.findFile(interFile.getName()))
-                        .map(PsiFile::getVirtualFile)
-                        .orElse(null));
+                FileUtils.navigateFile(project, moduleDir, interFile.getName());
             } catch (IOException ex) {
                 log.error(ex.getMessage(), ex);
             }

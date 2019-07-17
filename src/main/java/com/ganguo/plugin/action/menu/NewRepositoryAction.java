@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * 创建Repository接口及实现类
@@ -145,10 +144,7 @@ public class NewRepositoryAction extends BaseAction {
                 FileUtils.addIfAbsent(infrastructureRepositoryImplDir, repositoryImplFile);
                 FileUtils.addIfAbsent(infrastructureRepositoryDbImplDir, daoFile);
 
-                FileUtils.navigateFile(project, Optional.ofNullable(
-                        domainRepositoryDir.findFile(repositoryFile.getName()))
-                        .map(PsiFile::getVirtualFile)
-                        .orElse(null));
+                FileUtils.navigateFile(project, domainRepositoryDir, repositoryFile.getName());
             } catch (IOException ex) {
                 log.error(ex.getMessage(), ex);
             }

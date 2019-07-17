@@ -78,15 +78,8 @@ public class NewValidationAction extends BaseAction {
                 FileUtils.addIfAbsent(moduleDir, validationFile);
                 FileUtils.addIfAbsent(moduleDir, validationImplFile);
 
-                FileUtils.navigateFile(project, Optional
-                        .ofNullable(moduleDir.findFile(validationFile.getName()))
-                        .map(PsiFile::getVirtualFile)
-                        .orElse(null));
-
-                FileUtils.navigateFile(project, Optional
-                        .ofNullable(moduleDir.findFile(validationImplFile.getName()))
-                        .map(PsiFile::getVirtualFile)
-                        .orElse(null));
+                FileUtils.navigateFile(project, moduleDir, validationFile.getName());
+                FileUtils.navigateFile(project, moduleDir, validationImplFile.getName());
             } catch (IOException ex) {
                 log.error(ex.getMessage(), ex);
             }
