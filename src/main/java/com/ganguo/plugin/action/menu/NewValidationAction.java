@@ -5,7 +5,6 @@ import com.ganguo.plugin.constant.TemplateName;
 import com.ganguo.plugin.service.ProjectSettingService;
 import com.ganguo.plugin.ui.dialog.ModuleAndNameDialog;
 import com.ganguo.plugin.util.FileUtils;
-import com.ganguo.plugin.util.MsgUtils;
 import com.ganguo.plugin.util.ProjectUtils;
 import com.ganguo.plugin.util.StringHelper;
 import com.ganguo.plugin.util.TemplateUtils;
@@ -18,6 +17,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,6 +27,7 @@ import java.util.Optional;
 /**
  * 创建校验注解及校验类
  */
+@Slf4j
 public class NewValidationAction extends BaseAction {
 
     private static final String PATH_VALIDATION = "infrastructure/validation/";
@@ -87,8 +88,7 @@ public class NewValidationAction extends BaseAction {
                         .map(PsiFile::getVirtualFile)
                         .orElse(null));
             } catch (IOException ex) {
-                ex.printStackTrace();
-                MsgUtils.error(ex.getMessage());
+                log.error(ex.getMessage(), ex);
             }
         });
         return true;

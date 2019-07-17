@@ -22,9 +22,8 @@ import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiParserFacade;
 import com.intellij.psi.javadoc.PsiDocComment;
-import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.Map;
@@ -33,6 +32,7 @@ import java.util.Optional;
 /**
  * 添加Msg
  */
+@Slf4j
 public class AddMsgAction extends BaseAction {
 
     public static final String PATH_MSG_PROPERTIES = "src/main/resources/i18n/exception_msg.properties";
@@ -59,7 +59,7 @@ public class AddMsgAction extends BaseAction {
                     .map(VirtualFile::getParent)
                     .orElse(null);
             if (projectFile == null) {
-                MsgUtils.error("project file not found!");
+                log.error("project file not found");
                 return false;
             }
 
@@ -74,7 +74,7 @@ public class AddMsgAction extends BaseAction {
 
             return true;
         } catch (Exception e) {
-            MsgUtils.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return false;
     }
@@ -86,7 +86,7 @@ public class AddMsgAction extends BaseAction {
         // 获取配置文件
         VirtualFile msgFile = projectFile.findFileByRelativePath(PATH_MSG_PROPERTIES);
         if (msgFile == null || !msgFile.exists()) {
-            MsgUtils.error("%s not found!", PATH_MSG_PROPERTIES);
+            log.error("{} not found!", PATH_MSG_PROPERTIES);
             return Status.FAIL;
         }
 
@@ -120,8 +120,7 @@ public class AddMsgAction extends BaseAction {
 
             return Status.SUCCESS;
         } catch (IOException e) {
-            e.printStackTrace();
-            MsgUtils.error("read %s fail!", PATH_MSG_PROPERTIES);
+            log.error("read {} fail", PATH_MSG_PROPERTIES, e);
         }
         return Status.FAIL;
     }
@@ -132,14 +131,14 @@ public class AddMsgAction extends BaseAction {
     private Status add2Class(Project project, String key, String value) {
         PsiFile[] psiFiles = FilenameIndexUtils.getFilesByName(project, FILENAME_MSG_CLASS);
         if (psiFiles.length == 0) {
-            MsgUtils.error("find %s fail!", FILENAME_MSG_CLASS);
+            log.error("find {} fail", FILENAME_MSG_CLASS);
             return Status.FAIL;
         }
         PsiFile psiFile = psiFiles[0];
 
         PsiClass psiClass = PsiTreeUtil.findChildOfType(psiFile, PsiClass.class);
         if (psiClass == null) {
-            MsgUtils.error("find class fail!");
+            log.error("find class fail");
             return Status.FAIL;
         }
 

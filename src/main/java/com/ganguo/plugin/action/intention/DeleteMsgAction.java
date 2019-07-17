@@ -4,7 +4,6 @@ import com.ganguo.plugin.action.menu.AddMsgAction;
 import com.ganguo.plugin.util.EditorUtils;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.FilenameIndexUtils;
-import com.ganguo.plugin.util.MsgUtils;
 import com.ganguo.plugin.util.SafeProperties;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -18,6 +17,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +27,7 @@ import java.io.IOException;
 /**
  * 删除Msg
  */
+@Slf4j
 public class DeleteMsgAction implements IntentionAction {
 
     private static final String FAMILY_NAME = "Ganguo";
@@ -70,8 +71,7 @@ public class DeleteMsgAction implements IntentionAction {
         try {
             deleteOnProperties(file.getVirtualFile(), key);
         } catch (IOException e) {
-            e.printStackTrace();
-            MsgUtils.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
 
         deleteOnClass(project, key);
@@ -87,14 +87,14 @@ public class DeleteMsgAction implements IntentionAction {
     private void deleteOnClass(Project project, String key) {
         PsiFile[] psiFiles = FilenameIndexUtils.getFilesByName(project, AddMsgAction.FILENAME_MSG_CLASS);
         if (psiFiles.length == 0) {
-            MsgUtils.error("find %s fail!", AddMsgAction.FILENAME_MSG_CLASS);
+            log.error("find {} fail!", AddMsgAction.FILENAME_MSG_CLASS);
             return;
         }
         PsiFile psiFile = psiFiles[0];
 
         PsiClass psiClass = PsiTreeUtil.findChildOfType(psiFile, PsiClass.class);
         if (psiClass == null) {
-            MsgUtils.error("find class fail!");
+            log.error("find class fail!");
             return;
         }
 

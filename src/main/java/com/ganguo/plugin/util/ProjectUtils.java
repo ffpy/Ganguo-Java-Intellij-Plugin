@@ -2,9 +2,11 @@ package com.ganguo.plugin.util;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
+@Slf4j
 public class ProjectUtils {
 
     private static final String PACKAGE_NAME_PATH_SEPARATE = "/java/";
@@ -23,7 +25,7 @@ public class ProjectUtils {
                 .map(VirtualFile::getParent)
                 .map(VirtualFile::getParent)
                 .orElseGet(() -> {
-                    MsgUtils.error("get root file fail!");
+                    log.error("get root file fail!");
                     return null;
                 });
     }
@@ -48,7 +50,10 @@ public class ProjectUtils {
                             .replace('/', '.')
                             .replace('\\', '.');
                 })
-                .orElse(null);
+                .orElseGet(() -> {
+                    log.error("get packageName fail!");
+                    return null;
+                });
     }
 
     /**
@@ -63,7 +68,7 @@ public class ProjectUtils {
                 .findFirst()
                 .map(VirtualFile::getParent)
                 .orElseGet(() -> {
-                    MsgUtils.error("get package file fail!");
+                    log.error("get package file fail!");
                     return null;
                 });
     }
@@ -80,7 +85,7 @@ public class ProjectUtils {
                 .findFirst()
                 .map(VirtualFile::getParent)
                 .orElseGet(() -> {
-                    MsgUtils.error("get test package file fail!");
+                    log.error("get test package file fail!");
                     return null;
                 });
     }
@@ -95,7 +100,7 @@ public class ProjectUtils {
         return Optional.ofNullable(getRootFile(project))
                 .map(f -> f.findFileByRelativePath("src/main/resources"))
                 .orElseGet(() -> {
-                    MsgUtils.error("get resource file fail!");
+                    log.error("get resource file fail!");
                     return null;
                 });
     }
@@ -110,7 +115,7 @@ public class ProjectUtils {
         return Optional.ofNullable(getRootFile(project))
                 .map(f -> f.findFileByRelativePath("src/test/resources"))
                 .orElseGet(() -> {
-                    MsgUtils.error("get test resource file fail!");
+                    log.error("get test resource file fail!");
                     return null;
                 });
     }

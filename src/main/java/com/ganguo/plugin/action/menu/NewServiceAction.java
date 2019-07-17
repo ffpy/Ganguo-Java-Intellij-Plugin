@@ -6,7 +6,6 @@ import com.ganguo.plugin.service.ProjectSettingService;
 import com.ganguo.plugin.ui.dialog.ModuleAndNameDialog;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.FilenameIndexUtils;
-import com.ganguo.plugin.util.MsgUtils;
 import com.ganguo.plugin.util.ProjectUtils;
 import com.ganguo.plugin.util.StringHelper;
 import com.ganguo.plugin.util.TemplateUtils;
@@ -22,6 +21,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -33,6 +33,7 @@ import java.util.Optional;
 /**
  * 创建Service接口及实现类
  */
+@Slf4j
 public class NewServiceAction extends BaseAction {
 
     public static final String PATH_SERVICE_API = "service/api";
@@ -60,7 +61,7 @@ public class NewServiceAction extends BaseAction {
 
         VirtualFile serviceApiFile = packageFile.findFileByRelativePath(PATH_SERVICE_API);
         if (serviceApiFile == null) {
-            MsgUtils.error("%s not found", PATH_SERVICE_API);
+            log.error("{} not found", PATH_SERVICE_API);
             return false;
         }
 
@@ -103,7 +104,7 @@ public class NewServiceAction extends BaseAction {
                         .map(directoryFactory::createDirectory)
                         .orElse(null);
                 if (moduleDir == null) {
-                    MsgUtils.error("get module dir fail");
+                    log.error("get module dir fail");
                     return;
                 }
 
@@ -115,8 +116,7 @@ public class NewServiceAction extends BaseAction {
                         .map(PsiFile::getVirtualFile)
                         .orElse(null));
             } catch (IOException ex) {
-                ex.printStackTrace();
-                MsgUtils.error(ex.getMessage());
+                log.error(ex.getMessage(), ex);
             }
         });
         return true;

@@ -8,6 +8,9 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -116,21 +119,11 @@ public class ProjectConfigurable implements SearchableConfigurable {
                 .orElse(null);
     }
 
+    @Getter
+    @AllArgsConstructor
+    @ToString
     private class Item<T> {
         private TemplateName name;
         private T content;
-
-        public Item(TemplateName name, T content) {
-            this.name = name;
-            this.content = content;
-        }
-
-        public TemplateName getName() {
-            return name;
-        }
-
-        public T getContent() {
-            return content;
-        }
     }
 }

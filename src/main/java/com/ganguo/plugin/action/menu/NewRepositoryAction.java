@@ -5,7 +5,6 @@ import com.ganguo.plugin.constant.TemplateName;
 import com.ganguo.plugin.service.ProjectSettingService;
 import com.ganguo.plugin.ui.dialog.NewRepositoryDialog;
 import com.ganguo.plugin.util.FileUtils;
-import com.ganguo.plugin.util.MsgUtils;
 import com.ganguo.plugin.util.MyStringUtils;
 import com.ganguo.plugin.util.ProjectUtils;
 import com.ganguo.plugin.util.StringHelper;
@@ -20,6 +19,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,6 +31,7 @@ import java.util.Optional;
 /**
  * 创建Repository接口及实现类
  */
+@Slf4j
 public class NewRepositoryAction extends BaseAction {
 
     private static final String PATH_DOMAIN_REPOSITORY = "domain/repository";
@@ -71,28 +72,28 @@ public class NewRepositoryAction extends BaseAction {
 
         VirtualFile domainRepositoryFile = packageFile.findFileByRelativePath(PATH_DOMAIN_REPOSITORY);
         if (domainRepositoryFile == null) {
-            MsgUtils.error("%s not found", PATH_DOMAIN_REPOSITORY);
+            log.error("{} not found", PATH_DOMAIN_REPOSITORY);
             return false;
         }
 
         VirtualFile infrastructureRepositoryFile =
                 packageFile.findFileByRelativePath(PATH_INFRASTRUCTURE_REPOSITORY);
         if (infrastructureRepositoryFile == null) {
-            MsgUtils.error("%s not found", PATH_INFRASTRUCTURE_REPOSITORY);
+            log.error("{} not found", PATH_INFRASTRUCTURE_REPOSITORY);
             return false;
         }
 
         VirtualFile infrastructureRepositoryImplFile =
                 infrastructureRepositoryFile.findFileByRelativePath(PATH_IMPL);
         if (infrastructureRepositoryImplFile == null) {
-            MsgUtils.error("%s/%s not found", PATH_INFRASTRUCTURE_REPOSITORY, PATH_IMPL);
+            log.error("{}/{} not found", PATH_INFRASTRUCTURE_REPOSITORY, PATH_IMPL);
             return false;
         }
 
         VirtualFile infrastructureRepositoryDbImplFile =
                 infrastructureRepositoryFile.findFileByRelativePath(PATH_DB_IMPL);
         if (infrastructureRepositoryDbImplFile == null) {
-            MsgUtils.error("%s/%s not found", PATH_INFRASTRUCTURE_REPOSITORY, PATH_DB_IMPL);
+            log.error("{}/{} not found", PATH_INFRASTRUCTURE_REPOSITORY, PATH_DB_IMPL);
             return false;
         }
 
@@ -149,8 +150,7 @@ public class NewRepositoryAction extends BaseAction {
                         .map(PsiFile::getVirtualFile)
                         .orElse(null));
             } catch (IOException ex) {
-                ex.printStackTrace();
-                MsgUtils.error(ex.getMessage());
+                log.error(ex.getMessage(), ex);
             }
         });
         return true;

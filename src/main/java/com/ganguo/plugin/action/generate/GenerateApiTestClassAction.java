@@ -5,7 +5,6 @@ import com.ganguo.plugin.constant.TemplateName;
 import com.ganguo.plugin.service.ProjectSettingService;
 import com.ganguo.plugin.util.ElementUtils;
 import com.ganguo.plugin.util.FileUtils;
-import com.ganguo.plugin.util.MsgUtils;
 import com.ganguo.plugin.util.ProjectUtils;
 import com.ganguo.plugin.util.TemplateUtils;
 import com.intellij.lang.java.JavaLanguage;
@@ -25,6 +24,10 @@ import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +40,7 @@ import java.util.Optional;
 /**
  * 生成Api接口方法测试类
  */
+@Slf4j
 public class GenerateApiTestClassAction extends BaseAction {
 
     @Override
@@ -85,7 +89,7 @@ public class GenerateApiTestClassAction extends BaseAction {
                     ProjectUtils.getTestPackageFile(project), "controller/" + moduleName);
         } catch (IOException ex) {
             ex.printStackTrace();
-            MsgUtils.error("create or get %s fail!", moduleName);
+            log.error("create or get {} fail!", moduleName);
             return;
         }
 
@@ -208,21 +212,11 @@ public class GenerateApiTestClassAction extends BaseAction {
                 .orElse(null);
     }
 
+    @Getter
+    @AllArgsConstructor
+    @ToString
     private class RequestBodyClass {
         private final String name;
         private final String simpleName;
-
-        public RequestBodyClass(String name, String simpleName) {
-            this.name = name;
-            this.simpleName = simpleName;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getSimpleName() {
-            return simpleName;
-        }
     }
 }

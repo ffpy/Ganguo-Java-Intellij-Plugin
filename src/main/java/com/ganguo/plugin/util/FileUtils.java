@@ -6,11 +6,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+@Slf4j
 public class FileUtils {
 
     /**
@@ -83,8 +85,7 @@ public class FileUtils {
                 file.setBinaryContent(content);
                 file.refresh(true, false);
             } catch (IOException e) {
-                e.printStackTrace();
-                MsgUtils.error(e.getMessage());
+                log.error(e.getMessage(), e);
             }
         });
     }
