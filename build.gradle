@@ -15,6 +15,9 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
+    // lib
+    compile fileTree(dir: 'lib', includes: ['*jar'])
+
     // lombok
     compile "org.projectlombok:lombok:1.18.4"
     annotationProcessor "org.projectlombok:lombok:1.18.4"

@@ -38,21 +38,14 @@ public class AddMsgAction extends BaseAction {
     public static final String PATH_MSG_PROPERTIES = "src/main/resources/i18n/exception_msg.properties";
     public static final String FILENAME_MSG_CLASS = "ExceptionMsg.java";
 
-    private AnActionEvent mEvent;
-
     @Override
     public void action(AnActionEvent e) {
-        mEvent = e;
-        try {
-            new AddMsgDialog(this::doAction).show();
-        } finally {
-            mEvent = null;
-        }
+        new AddMsgDialog(e, this::doAction).show();
     }
 
-    private boolean doAction(String key, String value) {
+    private boolean doAction(AnActionEvent event, String key, String value) {
         try {
-            Project project = mEvent.getProject();
+            Project project = event.getProject();
             VirtualFile projectFile = Optional.ofNullable(project)
                     .map(Project::getProjectFile)
                     .map(VirtualFile::getParent)
