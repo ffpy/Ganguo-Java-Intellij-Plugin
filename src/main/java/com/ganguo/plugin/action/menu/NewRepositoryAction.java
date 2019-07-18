@@ -38,20 +38,13 @@ public class NewRepositoryAction extends BaseAction {
     private static final String PATH_IMPL = "impl";
     private static final String PATH_DB_IMPL = "db/impl";
 
-    private AnActionEvent mEvent;
-
     @Override
     public void action(@NotNull AnActionEvent e) {
-        mEvent = e;
-        try {
-            new NewRepositoryDialog("New Repository", this::doAction).show();
-        } finally {
-            mEvent = null;
-        }
+        new NewRepositoryDialog(e, "New Repository", this::doAction).show();
     }
 
-    private boolean doAction(String table, String module, String name) {
-        Project project = mEvent.getProject();
+    private boolean doAction(AnActionEvent event, String table, String module, String name) {
+        Project project = event.getProject();
 
         if (noProject(project)) return false;
         assert project != null;

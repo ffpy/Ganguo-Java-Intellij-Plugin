@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * 创建校验注解及校验类
@@ -32,20 +31,13 @@ public class NewValidationAction extends BaseAction {
 
     private static final String PATH_VALIDATION = "infrastructure/validation/";
 
-    private AnActionEvent mEvent;
-
     @Override
     protected void action(AnActionEvent e) throws Exception {
-        mEvent = e;
-        try {
-            new ModuleAndNameDialog("New Validation", this::doAction).show();
-        } finally {
-            mEvent = null;
-        }
+        new ModuleAndNameDialog(e, "New Validation", this::doAction).show();
     }
 
-    private boolean doAction(String module, String name) {
-        Project project = mEvent.getProject();
+    private boolean doAction(AnActionEvent event, String module, String name) {
+        Project project = event.getProject();
         if (noProject(project)) return false;
         assert project != null;
 

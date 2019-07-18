@@ -4,6 +4,7 @@ import com.ganguo.plugin.ui.utils.InputLimit;
 import com.ganguo.plugin.ui.utils.InputSameAs;
 import com.ganguo.plugin.ui.form.NewRepositoryForm;
 import com.ganguo.plugin.util.MyStringUtils;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,9 +15,11 @@ public class NewRepositoryDialog extends BaseDialog<NewRepositoryForm, NewReposi
     private InputLimit mModuleLimit;
     private InputLimit mNameLimit;
     private InputLimit mTabletLimit;
+    private AnActionEvent mEvent;
 
-    public NewRepositoryDialog(String title, Action action) {
+    public NewRepositoryDialog(AnActionEvent e, String title, Action action) {
         super(title, new NewRepositoryForm(), action);
+        mEvent = e;
     }
 
     @Override
@@ -46,7 +49,7 @@ public class NewRepositoryDialog extends BaseDialog<NewRepositoryForm, NewReposi
                 mTabletLimit.getMatcher().test(table) &&
                 mModuleLimit.getMatcher().test(module) &&
                 mNameLimit.getMatcher().test(name) &&
-                mAction.apply(table, module, name)) {
+                mAction.apply(mEvent, table, module, name)) {
             super.doOKAction();
         }
     }
@@ -56,10 +59,11 @@ public class NewRepositoryDialog extends BaseDialog<NewRepositoryForm, NewReposi
         /**
          * 执行OK动作
          *
+         * @param event AnActionEvent
          * @param table  表名
          * @param module 模块名
          * @param name   名称
          */
-        boolean apply(String table, String module, String name);
+        boolean apply(AnActionEvent event, String table, String module, String name);
     }
 }

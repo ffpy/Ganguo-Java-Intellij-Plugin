@@ -38,20 +38,13 @@ public class NewServiceAction extends BaseAction {
 
     public static final String PATH_SERVICE_API = "service/api";
 
-    private AnActionEvent mEvent;
-
     @Override
     public void action(@NotNull AnActionEvent e) {
-        mEvent = e;
-        try {
-            new ModuleAndNameDialog("New Service", this::doAction).show();
-        } finally {
-            mEvent = null;
-        }
+        new ModuleAndNameDialog(e, "New Service", this::doAction).show();
     }
 
-    private boolean doAction(String module, String name) {
-        Project project = mEvent.getProject();
+    private boolean doAction(AnActionEvent event, String module, String name) {
+        Project project = event.getProject();
 
         if (noProject(project)) return false;
         assert project != null;

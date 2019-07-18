@@ -4,6 +4,7 @@ import com.ganguo.plugin.ui.utils.InputLimit;
 import com.ganguo.plugin.ui.utils.InputSameAs;
 import com.ganguo.plugin.ui.form.ModuleAndNameForm;
 import com.ganguo.plugin.util.MyStringUtils;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,9 +14,11 @@ public class ModuleAndNameDialog extends BaseDialog<ModuleAndNameForm, ModuleAnd
 
     private InputLimit mModuleLimit;
     private InputLimit mNameLimit;
+    private AnActionEvent mEvent;
 
-    public ModuleAndNameDialog(String title, Action action) {
+    public ModuleAndNameDialog(AnActionEvent e, String title, Action action) {
         super(title, new ModuleAndNameForm(), action);
+        mEvent = e;
     }
 
     @Override
@@ -39,7 +42,7 @@ public class ModuleAndNameDialog extends BaseDialog<ModuleAndNameForm, ModuleAnd
 
         if (!name.isEmpty() &&
                 mModuleLimit.getMatcher().test(module) && mNameLimit.getMatcher().test(name) &&
-                mAction.apply(module, name)) {
+                mAction.apply(mEvent, module, name)) {
             super.doOKAction();
         }
     }
@@ -49,9 +52,10 @@ public class ModuleAndNameDialog extends BaseDialog<ModuleAndNameForm, ModuleAnd
         /**
          * 执行OK动作
          *
+         * @param event AnActionEvent
          * @param module 模块名
          * @param name   名称
          */
-        boolean apply(String module, String name);
+        boolean apply(AnActionEvent event, String module, String name);
     }
 }
