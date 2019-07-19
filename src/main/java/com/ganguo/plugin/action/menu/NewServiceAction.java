@@ -47,6 +47,9 @@ public class NewServiceAction extends NewAction {
                 .isPresent();
     }
 
+    /**
+     * 写入对应文件
+     */
     @Func
     private void writeFile(Project project, PsiDirectory moduleDir, PsiFile interFile, PsiFile implFile) {
         WriteCommandAction.runWriteCommandAction(project, () -> {
@@ -57,11 +60,17 @@ public class NewServiceAction extends NewAction {
         });
     }
 
+    /**
+     * Service所在的文件夹
+     */
     @Var
     private VirtualFile serviceApiFile(VirtualFile packageFile) {
         return packageFile.findFileByRelativePath(PATH_SERVICE_API);
     }
 
+    /**
+     * Service对应的IRepository类名
+     */
     @Var
     private String repositoryClassName(Project project, String name) {
         return Arrays.stream(
@@ -74,6 +83,9 @@ public class NewServiceAction extends NewAction {
                 .orElse(null);
     }
 
+    /**
+     * 模板参数
+     */
     @Var
     private Map<String, String> params(String name, @Nla String repositoryClassName) {
         Map<String, String> params = new HashMap<>();
@@ -82,18 +94,27 @@ public class NewServiceAction extends NewAction {
         return params;
     }
 
+    /**
+     * Service接口文件
+     */
     @Var
     private PsiFile interFile(Context context) {
         return context.exec("createJavaFile", PsiFile.class,
                 TemplateName.SERVICE, "{name}Service").get();
     }
 
+    /**
+     * Service实现类文件
+     */
     @Var
     private PsiFile implFile(Context context) {
         return context.exec("createJavaFile", PsiFile.class,
                 TemplateName.SERVICE_IMPL, "{name}ServiceImpl").get();
     }
 
+    /**
+     * 所在模块文件夹
+     */
     @Var
     private PsiDirectory moduleDir(Context context) {
         return context.exec("createModuleDir", PsiDirectory.class, PATH_SERVICE_API).get();

@@ -39,6 +39,9 @@ public class NewValidationAction extends NewAction {
                 .isPresent();
     }
 
+    /**
+     * 写入对应文件
+     */
     @Func
     private void writeFile(Project project, PsiDirectory moduleDir,
                            PsiFile validationFile, PsiFile validationImplFile) {
@@ -51,6 +54,9 @@ public class NewValidationAction extends NewAction {
         });
     }
 
+    /**
+     * 模板参数
+     */
     @Var
     private Map<String, String> params(String name, String packageName) {
         Map<String, String> params = new HashMap<>();
@@ -59,18 +65,27 @@ public class NewValidationAction extends NewAction {
         return params;
     }
 
+    /**
+     * 校验注解文件
+     */
     @Var
     private PsiFile validationFile(Context context) {
         return context.exec("createJavaFile", PsiFile.class,
                 TemplateName.VALIDATION, "{name}").get();
     }
 
+    /**
+     * 注解实现文件
+     */
     @Var
     private PsiFile validationImplFile(Context context) {
         return context.exec("createJavaFile", PsiFile.class,
                 TemplateName.VALIDATION_IMPL, "{name}ValidatorImpl").get();
     }
 
+    /**
+     * 所在模块的文件夹
+     */
     @Var
     private PsiDirectory moduleDir(Context context) {
         return context.exec("createModuleDir", PsiDirectory.class, Paths.VALIDATION).get();

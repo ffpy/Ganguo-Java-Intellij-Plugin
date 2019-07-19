@@ -66,6 +66,9 @@ public class DeleteMsgAction extends BaseIntentionAction {
         deleteOnClass(project, key);
     }
 
+    /**
+     * 从exception_msg.properties文件中删除
+     */
     private void deleteOnProperties(VirtualFile file, String key) throws IOException {
         SafeProperties properties = new SafeProperties();
         properties.load(file.getInputStream());
@@ -73,6 +76,9 @@ public class DeleteMsgAction extends BaseIntentionAction {
         FileUtils.setContent(file, properties);
     }
 
+    /**
+     * 从ExceptionMsg.java文件中删除
+     */
     private void deleteOnClass(Project project, String key) {
         PsiFile[] psiFiles = FilenameIndexUtils.getFilesByName(project, Filenames.MSG_CLASS);
         if (psiFiles.length == 0) {

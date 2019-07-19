@@ -46,6 +46,9 @@ public class NewRepositoryAction extends NewAction {
                 .isPresent();
     }
 
+    /**
+     * 写入对应的文件
+     */
     @Func
     private void writeFile(Project project, PsiDirectory domainDir, PsiDirectory infrastructureImplDir,
                            PsiDirectory infrastructureDbImplDir, PsiFile repositoryFile,
@@ -60,11 +63,17 @@ public class NewRepositoryAction extends NewAction {
         });
     }
 
+    /**
+     * 表的POJO名称
+     */
     @Var
     private String pojo(String table) {
         return StringUtils.capitalize(MyStringUtils.underScoreCase2CamelCase(table.toLowerCase()));
     }
 
+    /**
+     * 模板参数
+     */
     @Var
     private Map<String, String> params(String packageName, String module, String name, String table, String pojo) {
         Map<String, String> params = new HashMap<>();
@@ -79,35 +88,53 @@ public class NewRepositoryAction extends NewAction {
         return params;
     }
 
+    /**
+     * IRepository接口文件
+     */
     @Var
     private PsiFile repositoryFile(Context context) {
         return context.exec("createJavaFile", PsiFile.class,
                 TemplateName.I_REPOSITORY, "I{name}Repository").get();
     }
 
+    /**
+     * IDbStrategy接口文件
+     */
     @Var
     private PsiFile dbStrategyFile(Context context) {
         return context.exec("createJavaFile", PsiFile.class,
                 TemplateName.I_DB_STRATEGY, "I{name}DbStrategy").get();
     }
 
+    /**
+     * Repository文件
+     */
     @Var
     private PsiFile repositoryImplFile(Context context) {
         return context.exec("createJavaFile", PsiFile.class,
                 TemplateName.REPOSITORY, "{name}Repository").get();
     }
 
+    /**
+     * DAO文件
+     */
     @Var
     private PsiFile daoFile(Context context) {
         return context.exec("createJavaFile", PsiFile.class,
                 TemplateName.DAO, "{name}DAO").get();
     }
 
+    /**
+     * domain文件夹
+     */
     @Var
     private PsiDirectory domainDir(Context context) {
         return context.exec("createModuleDir", PsiDirectory.class, Paths.DOMAIN_REPOSITORY).get();
     }
 
+    /**
+     * Repository所在的文件夹
+     */
     @Var
     private PsiDirectory infrastructureImplDir(PsiDirectoryFactory directoryFactory,
                                                VirtualFile packageFile) {
@@ -116,6 +143,9 @@ public class NewRepositoryAction extends NewAction {
                 .orElse(null);
     }
 
+    /**
+     * DAO所在的文件夹
+     */
     @Var
     private PsiDirectory infrastructureDbImplDir(PsiDirectoryFactory directoryFactory,
                                                  VirtualFile packageFile) {

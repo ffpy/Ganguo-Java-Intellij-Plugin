@@ -1,12 +1,15 @@
 package com.ganguo.plugin.util;
 
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
+import org.apache.commons.beanutils.ConvertUtils;
+
+import java.util.Objects;
+import java.util.Optional;
 
 public class PsiUtils {
 
@@ -68,4 +71,22 @@ public class PsiUtils {
         return factory.createDocCommentFromText(commentText.toString(), null);
     }
 
+    public static <T> T getAnnotationValue(PsiAnnotation annotation, String name, Class<T> type) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(type);
+
+        return Optional.ofNullable(annotation)
+                .map(anno -> anno.findAttributeValue(name))
+                .map(PsiElement::getText)
+                .map(text -> {
+                    // 字符串类型的会有双引号包围，要去掉，如value = "xiaoming"，则text="\"xiaoming\""
+                    if (type == String.class && text.length() >= 2) {
+                        text = text.substring(1, text.length() - 1);
+                    }
+                    //noinspection unchecked
+                    return (T) ConvertUtils.convert(text, type);
+                })
+                .orElse(null);
+
+    }
 }

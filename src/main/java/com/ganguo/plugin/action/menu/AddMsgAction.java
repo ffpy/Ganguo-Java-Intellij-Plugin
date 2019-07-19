@@ -64,11 +64,17 @@ public class AddMsgAction extends BaseAction {
         return true;
     }
 
+    /**
+     * exception_msg.properties文件
+     */
     @Var
     private VirtualFile msgFile(VirtualFile rootFile) {
         return rootFile.findFileByRelativePath(Paths.MSG_PROPERTIES);
     }
 
+    /**
+     * msg的properties对象
+     */
     @Var
     private SafeProperties properties(VirtualFile msgFile) {
         return ApplicationManager.getApplication().runReadAction((Computable<SafeProperties>) () -> {
@@ -82,6 +88,9 @@ public class AddMsgAction extends BaseAction {
         });
     }
 
+    /**
+     * 添加到exception_msg.properties中
+     */
     @Func
     private Status add2Properties(VirtualFile msgFile, SafeProperties properties, String key, String value) {
         // 检查Value是否已存在
@@ -116,6 +125,12 @@ public class AddMsgAction extends BaseAction {
         return Status.FAIL;
     }
 
+    /**
+     * ExceptionMsg.java的Class文件对象
+     *
+     * @param project
+     * @return
+     */
     @Var
     private PsiClass msgClass(Project project) {
         return Arrays.stream(FilenameIndexUtils.getFilesByName(project, Filenames.MSG_CLASS))
@@ -124,6 +139,9 @@ public class AddMsgAction extends BaseAction {
                 .orElse(null);
     }
 
+    /**
+     * 添加到到ExceptionMsg.java中
+     */
     @Func
     private Status add2Class(Project project, PsiClass msgClass, PsiElementFactory elementFactory,
                              String key, String value) {
@@ -159,6 +177,9 @@ public class AddMsgAction extends BaseAction {
         return Status.SUCCESS;
     }
 
+    /**
+     * 把Key和Value放到粘贴板
+     */
     @Func
     private void paste(String key, String value) {
         CopyPasteUtils.putString(value);

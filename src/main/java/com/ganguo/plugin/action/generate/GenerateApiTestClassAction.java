@@ -4,6 +4,7 @@ import com.ganguo.plugin.action.BaseAction;
 import com.ganguo.plugin.constant.TemplateName;
 import com.ganguo.plugin.util.ElementUtils;
 import com.ganguo.plugin.util.FileUtils;
+import com.ganguo.plugin.util.PsiUtils;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -49,6 +50,20 @@ public class GenerateApiTestClassAction extends BaseAction {
                 .execVoid("doAction");
     }
 
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+        boolean enabled = Optional.ofNullable(e.getData(LangDataKeys.PSI_FILE))
+                .map(PsiFile::getVirtualFile)
+                .map(VirtualFile::getPath)
+                .map(path -> path.endsWith("Controller.java"))
+                .filter(Boolean::booleanValue)
+                .map(it -> e.getData(LangDataKeys.PSI_ELEMENT))
+                .map(ElementUtils::isMethodElement)
+                .orElse(false);
+
+        e.getPresentation().setEnabled(enabled);
+    }
+
     @Func
     protected void doAction(Context context, Project project,
                             VirtualFile testDirFile, PsiDirectory testDir) {
@@ -64,11 +79,17 @@ public class GenerateApiTestClassAction extends BaseAction {
         });
     }
 
+    /**
+     * 当前文件
+     */
     @Var
     private PsiJavaFile curFile(AnActionEvent event) {
         return (PsiJavaFile) event.getData(LangDataKeys.PSI_FILE);
     }
 
+    /**
+     * 当前方法
+     */
     @Var
     private PsiMethod curMethod(AnActionEvent event) {
         PsiElement psiElement = event.getData(LangDataKeys.PSI_ELEMENT);
@@ -78,11 +99,17 @@ public class GenerateApiTestClassAction extends BaseAction {
         return (PsiMethod) psiElement;
     }
 
+    /**
+     * 当前文件的包名
+     */
     @Var
     private String curPackageName(PsiJavaFile curFile) {
         return curFile.getPackageName();
     }
 
+    /**
+     * 模块名
+     */
     @Var
     private String moduleName(String curPackageName) {
         final String sep = ".controller";
@@ -100,6 +127,9 @@ public class GenerateApiTestClassAction extends BaseAction {
         return moduleName;
     }
 
+    /**
+     * 接口测试文件夹
+     */
     @Var
     private VirtualFile testDirFile(String moduleName, VirtualFile testPackageFile) {
         try {
@@ -110,25 +140,34 @@ public class GenerateApiTestClassAction extends BaseAction {
         return null;
     }
 
+    /**
+     * 接口测试文件夹
+     */
     @Var
     private PsiDirectory testDir(PsiDirectoryFactory directoryFactory, VirtualFile testDirFile) {
         return directoryFactory.createDirectory(testDirFile);
     }
 
+    /**
+     * 测试类类名
+     */
     @Var
     private String className(PsiMethod curMethod) {
         return StringUtils.capitalize(curMethod.getName());
     }
 
+    /**
+     * 模板参数
+     */
     @Var
     private Map<String, String> params(String packageName, String className, PsiMethod curMethod,
-                                       PsiJavaFile curFile) {
+                                       String httpMethod, String url) {
         Map<String, String> params = new HashMap<>(8);
 
         params.put("packageName", packageName);
         params.put("className", className);
-        params.put("method", getHttpMethod(curMethod));
-        params.put("url", getUrl(curFile, curMethod));
+        params.put("method", httpMethod);
+        params.put("url", url);
 
         RequestBodyClass requestBodyClassName = getClassNameWithRequestBody(curMethod);
         if (requestBodyClassName != null) {
@@ -139,50 +178,37 @@ public class GenerateApiTestClassAction extends BaseAction {
         return params;
     }
 
+    /**
+     * 测试类名
+     */
     @Var
     private String targetFilename(String className) {
         return className + "Tests";
     }
 
+    /**
+     * 创建测试类文件
+     */
     @Func
     private PsiFile createNewFile(Context context, String targetFilename) {
         return context.exec("createJavaFile", PsiFile.class,
                 TemplateName.API_TEST_CLASS, targetFilename).get();
     }
 
+    /**
+     * 已存在的测试类文件
+     */
     @Var
     private VirtualFile targetFile(VirtualFile testDirFile, String targetFilename) {
         return testDirFile.findFileByRelativePath(targetFilename + ".java");
     }
 
-    @Func
-    private boolean checkTargetFileExists(Project project, @Nla VirtualFile targetFile) {
-        boolean exists = Optional.ofNullable(targetFile)
-                .map(VirtualFile::exists)
-                .orElse(false);
-        // 文件已存在则跳转
-        if (exists) {
-            FileUtils.navigateFile(project, targetFile);
-        }
-        return exists;
-    }
-
-    @Override
-    public void update(@NotNull AnActionEvent e) {
-        boolean enabled = Optional.ofNullable(e.getData(LangDataKeys.PSI_FILE))
-                .map(PsiFile::getVirtualFile)
-                .map(VirtualFile::getPath)
-                .map(path -> path.endsWith("Controller.java"))
-                .filter(Boolean::booleanValue)
-                .map(it -> e.getData(LangDataKeys.PSI_ELEMENT))
-                .map(ElementUtils::isMethodElement)
-                .orElse(false);
-
-        e.getPresentation().setEnabled(enabled);
-    }
-
-    private String getHttpMethod(PsiMethod psiMethod) {
-        for (PsiAnnotation annotation : psiMethod.getAnnotations()) {
+    /**
+     * 接口的Http方法
+     */
+    @Var
+    private String httpMethod(PsiMethod curMethod) {
+        for (PsiAnnotation annotation : curMethod.getAnnotations()) {
             String qualifiedName = annotation.getQualifiedName();
             if (qualifiedName == null) continue;
 
@@ -199,21 +225,22 @@ public class GenerateApiTestClassAction extends BaseAction {
         return null;
     }
 
-    private String getUrl(PsiFile psiFile, PsiMethod psiMethod) {
-        String baseUrl = Arrays.stream(((PsiJavaFile) psiFile).getClasses())
+    /**
+     * 接口URL
+     */
+    @Var
+    private String url(PsiJavaFile curFile, PsiMethod curMethod) {
+        String baseUrl = Arrays.stream(curFile.getClasses())
                 .findFirst()
                 .flatMap(cls -> Arrays.stream(cls.getAnnotations())
                         .filter(anno -> Optional.ofNullable(anno.getQualifiedName())
                                 .map(name -> name.endsWith("RequestMapping"))
                                 .orElse(false))
                         .findFirst())
-                .map(anno -> anno.findAttributeValue("value"))
-                .map(PsiElement::getText)
-                .filter(StringUtils::isNotEmpty)
-                .map(url -> url.substring(1, url.length() - 1))
+                .map(anno -> PsiUtils.getAnnotationValue(anno, "value", String.class))
                 .orElse("");
 
-        String subUrl = Arrays.stream(psiMethod.getAnnotations())
+        String subUrl = Arrays.stream(curMethod.getAnnotations())
                 .filter(anno -> Optional.ofNullable(anno.getQualifiedName())
                         .map(name -> name.endsWith("GetMapping") ||
                                 name.endsWith("PostMapping") ||
@@ -221,16 +248,32 @@ public class GenerateApiTestClassAction extends BaseAction {
                                 name.endsWith("DeleteMapping"))
                         .orElse(false))
                 .findFirst()
-                .flatMap(anno -> Optional.ofNullable(anno.findAttributeValue("value"))
-                        .map(PsiElement::getText)
-                        .filter(StringUtils::isNotEmpty)
-                        .map(url -> url.substring(1, url.length() - 1)))
+                .map(anno -> PsiUtils.getAnnotationValue(anno, "value", String.class))
                 .orElse("");
 
 
         return (baseUrl + subUrl).replace("//", "/");
     }
 
+    /**
+     * 检查测试类是否已存在，如果存在则跳转
+     *
+     * @return true为存在，false为不存在
+     */
+    @Func
+    private boolean checkTargetFileExists(Project project, @Nla VirtualFile targetFile) {
+        boolean exists = Optional.ofNullable(targetFile)
+                .map(VirtualFile::exists)
+                .orElse(false);
+        if (exists) {
+            FileUtils.navigateFile(project, targetFile);
+        }
+        return exists;
+    }
+
+    /**
+     * 获取标注有@RequestBody的参数的类名
+     */
     private RequestBodyClass getClassNameWithRequestBody(PsiMethod psiMethod) {
         return Arrays.stream(psiMethod.getParameterList().getParameters())
                 .filter(parameter -> Arrays.stream(parameter.getAnnotations())
