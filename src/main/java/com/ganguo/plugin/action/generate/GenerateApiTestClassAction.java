@@ -31,8 +31,10 @@ import org.dependcode.dependcode.anno.Var;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -41,6 +43,11 @@ import java.util.Optional;
  */
 @Slf4j
 public class GenerateApiTestClassAction extends BaseAction {
+
+    private static final String METHOD_GET = "get";
+    private static final String METHOD_POST = "post";
+    private static final String METHOD_PUT = "put";
+    private static final String METHOD_DELETE = "delete";
 
     @Override
     protected void action(AnActionEvent e) {
@@ -160,9 +167,9 @@ public class GenerateApiTestClassAction extends BaseAction {
      * 模板参数
      */
     @Var
-    private Map<String, String> params(String packageName, String className, PsiMethod curMethod,
+    private Map<String, Object> params(String packageName, String className, PsiMethod curMethod,
                                        String httpMethod, String url) {
-        Map<String, String> params = new HashMap<>(8);
+        Map<String, Object> params = new HashMap<>(8);
 
         params.put("packageName", packageName);
         params.put("className", className);
@@ -173,6 +180,10 @@ public class GenerateApiTestClassAction extends BaseAction {
         if (requestBodyClassName != null) {
             params.put("requestClassName", requestBodyClassName.getName());
             params.put("requestClassSimpleName", requestBodyClassName.getSimpleName());
+        }
+
+        if (METHOD_GET.equals(httpMethod)) {
+            params.put("params", getQueryParams(curMethod));
         }
 
         return params;
@@ -213,13 +224,13 @@ public class GenerateApiTestClassAction extends BaseAction {
             if (qualifiedName == null) continue;
 
             if (qualifiedName.endsWith("GetMapping")) {
-                return "get";
+                return METHOD_GET;
             } else if (qualifiedName.endsWith("PostMapping")) {
-                return "post";
+                return METHOD_POST;
             } else if (qualifiedName.endsWith("PutMapping")) {
-                return "put";
+                return METHOD_PUT;
             } else if (qualifiedName.endsWith("DeleteMapping")) {
-                return "delete";
+                return METHOD_DELETE;
             }
         }
         return null;
@@ -274,8 +285,8 @@ public class GenerateApiTestClassAction extends BaseAction {
     /**
      * 获取标注有@RequestBody的参数的类名
      */
-    private RequestBodyClass getClassNameWithRequestBody(PsiMethod psiMethod) {
-        return Arrays.stream(psiMethod.getParameterList().getParameters())
+    private RequestBodyClass getClassNameWithRequestBody(PsiMethod method) {
+        return Arrays.stream(method.getParameterList().getParameters())
                 .filter(parameter -> Arrays.stream(parameter.getAnnotations())
                         .anyMatch(anno -> Optional.ofNullable(anno.getQualifiedName())
                                 .map(name -> name.endsWith("RequestBody"))
@@ -284,6 +295,30 @@ public class GenerateApiTestClassAction extends BaseAction {
                 .map(PsiParameter::getType)
                 .map(type -> new RequestBodyClass(type.getCanonicalText(), type.getPresentableText()))
                 .orElse(null);
+    }
+
+    /**
+     * 获取GET方法的参数列表
+     */
+    private List<String> getQueryParams(PsiMethod method) {
+        PsiParameter[] parameters = method.getParameterList().getParameters();
+        List<String> params = new ArrayList<>(parameters.length);
+        Arrays.stream(parameters)
+                .filter(param -> {
+                    String simpleName = param.getType().getPresentableText();
+                    return !"HttpSession".equals(simpleName) &&
+                            !"HttpServletRequest".equals(simpleName) &&
+                            !"HttpServletResponse".equals(simpleName);
+                })
+                .forEach(param -> {
+                    if ("Pageable".equals(param.getType().getPresentableText())) {
+                        params.add("page");
+                        params.add("size");
+                    } else {
+                        params.add(param.getName());
+                    }
+                });
+        return params;
     }
 
     @Getter

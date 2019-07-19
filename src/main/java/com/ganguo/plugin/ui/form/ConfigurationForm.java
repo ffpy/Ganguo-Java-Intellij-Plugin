@@ -1,17 +1,22 @@
 package com.ganguo.plugin.ui.form;
 
 import com.ganguo.plugin.constant.TemplateName;
+import com.ganguo.plugin.service.ProjectSettingService;
 import com.ganguo.plugin.ui.BaseForm;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.ui.Messages;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -20,6 +25,7 @@ public class ConfigurationForm implements BaseForm {
     private JPanel mainPanel;
     private JTextField mPackageNameField;
     private JTabbedPane mTabPane;
+    private JButton mResetButton;
     private Map<TemplateName, Editor> mEditorMap = new HashMap<>();
     private EditorFactory mEditorFactory;
 
@@ -35,6 +41,10 @@ public class ConfigurationForm implements BaseForm {
         if (mTabPane.getTabCount() > 0) {
             mTabPane.setSelectedIndex(0);
         }
+    }
+
+    public void onReset(ActionListener listener) {
+        mResetButton.addActionListener(Objects.requireNonNull(listener));
     }
 
     private void addTab(EditorFactory factory, FileType fileType, Map.Entry<TemplateName, String> entry) {

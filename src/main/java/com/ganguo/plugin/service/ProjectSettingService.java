@@ -12,4 +12,6 @@ public interface ProjectSettingService {
     String getTemplate(TemplateName name);
 
     void setTemplate(TemplateName name, @Nullable String content);
+
+    void reset();
 }

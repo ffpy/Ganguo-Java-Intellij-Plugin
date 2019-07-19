@@ -20,7 +20,7 @@ public class TemplateUtils {
         velocityEngine.init();
     }
 
-    public static String fromString(String template, Map<String, String> params) {
+    public static String fromString(String template, Map<String, Object> params) {
         VelocityContext context = new VelocityContext();
         params.forEach(context::put);
         StringWriter writer = new StringWriter();

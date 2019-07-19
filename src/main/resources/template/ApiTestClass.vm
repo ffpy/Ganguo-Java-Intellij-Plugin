@@ -37,7 +37,14 @@ public class ${className}Tests extends BaseTest {
                 MockMvcRequestBuilders.${method}(BASE_HOST + "${url}")#if($method != "get")
 
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mObjectMapper.writeValueAsString(#if($requestClassSimpleName)request#end))#end)
+                        .content(mObjectMapper.writeValueAsString(#if($requestClassSimpleName)request#end)))#end#if($params.size() == 0))#end
+
+#if($method == "get")
+    #foreach($param in $params)
+                .param("${param}", "")#if($velocityCount==$params.size()))#end
+
+    #end
+#end
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn()

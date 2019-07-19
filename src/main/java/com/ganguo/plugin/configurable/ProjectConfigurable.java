@@ -8,6 +8,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -34,15 +35,29 @@ public class ProjectConfigurable implements SearchableConfigurable {
     public ProjectConfigurable(Project project) {
         mProjectSettingService = ServiceManager.getService(project, ProjectSettingService.class);
 
+        initTemplateMap();
+
+        mForm = new ConfigurationForm(mTemplateMap);
+        mPackageName = mProjectSettingService.getPackageName();
+
+        mForm.onReset(e -> {
+            if (Messages.showYesNoDialog("确认恢复默认设置？", "提示",
+                    "确定", "取消", null) == Messages.YES) {
+                mProjectSettingService.reset();
+                mPackageName = mProjectSettingService.getPackageName();
+                initTemplateMap();
+                reset();
+            }
+        });
+    }
+
+    private void initTemplateMap() {
         mTemplateMap = Arrays.stream(TemplateName.values())
                 .map(this::loadTemplate)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(Item::getName, Item::getContent, (u, v) -> {
                     throw new IllegalStateException("Duplicate key");
                 }, TreeMap::new));
-
-        mForm = new ConfigurationForm(mTemplateMap);
-        mPackageName = mProjectSettingService.getPackageName();
     }
 
     @NotNull

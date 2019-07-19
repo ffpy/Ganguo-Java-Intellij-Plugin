@@ -9,6 +9,7 @@ import com.sun.istack.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ProjectSettingServiceImpl implements ProjectSettingService {
 
@@ -65,6 +66,13 @@ public class ProjectSettingServiceImpl implements ProjectSettingService {
         } else {
             mProperties.setValue(getTemplateKey(name), template);
         }
+    }
+
+    @Override
+    public void reset() {
+        setPackageName(null);
+        Arrays.stream(TemplateName.values())
+                .forEach(name -> setTemplate(name, null));
     }
 
     private String getTemplateKey(TemplateName name) {

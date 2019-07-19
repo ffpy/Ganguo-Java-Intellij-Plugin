@@ -87,8 +87,8 @@ public class NewServiceAction extends NewAction {
      * 模板参数
      */
     @Var
-    private Map<String, String> params(String name, @Nla String repositoryClassName) {
-        Map<String, String> params = new HashMap<>();
+    private Map<String, Object> params(String name, @Nla String repositoryClassName) {
+        Map<String, Object> params = new HashMap<>();
         params.put("name", name);
         params.put("repositoryClassName", repositoryClassName);
         return params;

@@ -75,8 +75,8 @@ public class NewRepositoryAction extends NewAction {
      * 模板参数
      */
     @Var
-    private Map<String, String> params(String packageName, String module, String name, String table, String pojo) {
-        Map<String, String> params = new HashMap<>();
+    private Map<String, Object> params(String packageName, String module, String name, String table, String pojo) {
+        Map<String, Object> params = new HashMap<>();
 
         params.put("packageName", packageName);
         params.put("moduleName", module);
