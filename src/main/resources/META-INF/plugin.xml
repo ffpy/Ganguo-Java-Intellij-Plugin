@@ -83,6 +83,11 @@
                     text="生成接口方法测试类"
                     description="Generate Api Test Class"/>
 
+            <action id="com.ganguo.plugin.action.generate.GenerateRepositoryMethodAction"
+                    class="com.ganguo.plugin.action.generate.GenerateRepositoryMethodAction"
+                    text="实现此方法"
+                    description="实现此方法"/>
+
         </group>
 
     </actions>

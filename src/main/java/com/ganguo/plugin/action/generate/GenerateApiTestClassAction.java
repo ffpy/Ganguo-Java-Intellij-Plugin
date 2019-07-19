@@ -1,6 +1,5 @@
 package com.ganguo.plugin.action.generate;
 
-import com.ganguo.plugin.action.BaseAction;
 import com.ganguo.plugin.constant.TemplateName;
 import com.ganguo.plugin.util.ElementUtils;
 import com.ganguo.plugin.util.FileUtils;
@@ -28,7 +27,6 @@ import org.dependcode.dependcode.Context;
 import org.dependcode.dependcode.anno.Func;
 import org.dependcode.dependcode.anno.Nla;
 import org.dependcode.dependcode.anno.Var;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,7 +40,7 @@ import java.util.Optional;
  * 生成Api接口方法测试类
  */
 @Slf4j
-public class GenerateApiTestClassAction extends BaseAction {
+public class GenerateApiTestClassAction extends BaseGenerateAction {
 
     private static final String METHOD_GET = "get";
     private static final String METHOD_POST = "post";
@@ -58,17 +56,8 @@ public class GenerateApiTestClassAction extends BaseAction {
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        boolean enabled = Optional.ofNullable(e.getData(LangDataKeys.PSI_FILE))
-                .map(PsiFile::getVirtualFile)
-                .map(VirtualFile::getPath)
-                .map(path -> path.endsWith("Controller.java"))
-                .filter(Boolean::booleanValue)
-                .map(it -> e.getData(LangDataKeys.PSI_ELEMENT))
-                .map(ElementUtils::isMethodElement)
-                .orElse(false);
-
-        e.getPresentation().setEnabled(enabled);
+    protected boolean isShow(AnActionEvent e) {
+        return checkShow(e, "^.*Controller.java$", ElementUtils::isMethodElement);
     }
 
     @Func
