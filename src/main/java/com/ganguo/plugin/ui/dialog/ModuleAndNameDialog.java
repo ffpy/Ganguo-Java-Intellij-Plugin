@@ -1,8 +1,8 @@
 package com.ganguo.plugin.ui.dialog;
 
+import com.ganguo.plugin.ui.form.ModuleAndNameForm;
 import com.ganguo.plugin.ui.utils.InputLimit;
 import com.ganguo.plugin.ui.utils.InputSameAs;
-import com.ganguo.plugin.ui.form.ModuleAndNameForm;
 import com.ganguo.plugin.util.MyStringUtils;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.apache.commons.lang3.StringUtils;
@@ -15,16 +15,24 @@ public class ModuleAndNameDialog extends BaseDialog<ModuleAndNameForm, ModuleAnd
     private InputLimit mModuleLimit;
     private InputLimit mNameLimit;
     private AnActionEvent mEvent;
+    private boolean mModuleSameAsName;
 
     public ModuleAndNameDialog(AnActionEvent e, String title, Action action) {
+        this(e, title, true, action);
+    }
+
+    public ModuleAndNameDialog(AnActionEvent e, String title, boolean moduleSameAsName, Action action) {
         super(title, new ModuleAndNameForm(), action);
         mEvent = e;
+        mModuleSameAsName = moduleSameAsName;
     }
 
     @Override
     protected void initComponent() {
-        new InputSameAs(mForm.getNameField(), mForm.getModuleField(),
-                text -> MyStringUtils.camelCase2UnderScoreCase(text).toLowerCase());
+        if (mModuleSameAsName) {
+            new InputSameAs(mForm.getNameField(), mForm.getModuleField(),
+                    text -> MyStringUtils.camelCase2UnderScoreCase(text).toLowerCase());
+        }
         mModuleLimit = new InputLimit(mForm.getModuleField(), "^([a-zA-Z][\\w.]*)?$");
         mNameLimit = new InputLimit(mForm.getNameField(), "^([a-zA-Z][a-zA-Z\\d]*)?$");
     }
@@ -32,7 +40,7 @@ public class ModuleAndNameDialog extends BaseDialog<ModuleAndNameForm, ModuleAnd
     @Nullable
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return mForm.getNameField();
+        return mModuleSameAsName ? mForm.getNameField() : mForm.getModuleField();
     }
 
     @Override
@@ -52,7 +60,7 @@ public class ModuleAndNameDialog extends BaseDialog<ModuleAndNameForm, ModuleAnd
         /**
          * 执行OK动作
          *
-         * @param event AnActionEvent
+         * @param event  AnActionEvent
          * @param module 模块名
          * @param name   名称
          */

@@ -1,42 +1,34 @@
 package com.ganguo.plugin.action.menu;
 
-import com.ganguo.plugin.action.BaseAction;
+import com.ganguo.plugin.constant.Paths;
 import com.ganguo.plugin.constant.TemplateName;
-import com.ganguo.plugin.service.ProjectSettingService;
 import com.ganguo.plugin.ui.dialog.NewRepositoryDialog;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.MyStringUtils;
-import com.ganguo.plugin.util.ProjectUtils;
-import com.ganguo.plugin.util.StringHelper;
-import com.ganguo.plugin.util.TemplateUtils;
-import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.dependcode.dependcode.CodeContextBuilder;
+import org.dependcode.dependcode.Context;
+import org.dependcode.dependcode.anno.Func;
+import org.dependcode.dependcode.anno.Var;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 创建Repository接口及实现类
  */
 @Slf4j
-public class NewRepositoryAction extends BaseAction {
-
-    private static final String PATH_DOMAIN_REPOSITORY = "domain/repository";
-    private static final String PATH_INFRASTRUCTURE_REPOSITORY = "infrastructure/repository";
-    private static final String PATH_IMPL = "impl";
-    private static final String PATH_DB_IMPL = "db/impl";
+public class NewRepositoryAction extends NewAction {
 
     @Override
     public void action(@NotNull AnActionEvent e) {
@@ -44,53 +36,37 @@ public class NewRepositoryAction extends BaseAction {
     }
 
     private boolean doAction(AnActionEvent event, String table, String module, String name) {
-        Project project = event.getProject();
+        return CodeContextBuilder.of(this)
+                .put("event", event)
+                .put("table", table)
+                .put("module", module)
+                .put("name", name)
+                .build()
+                .execVoid("writeFile")
+                .isPresent();
+    }
 
-        if (noProject(project)) return false;
-        assert project != null;
+    @Func
+    private void writeFile(Project project, PsiDirectory domainDir, PsiDirectory infrastructureImplDir,
+                           PsiDirectory infrastructureDbImplDir, PsiFile repositoryFile,
+                           PsiFile dbStrategyFile, PsiFile repositoryImplFile, PsiFile daoFile) {
+        WriteCommandAction.runWriteCommandAction(project, () -> {
+            FileUtils.addIfAbsent(domainDir, repositoryFile);
+            FileUtils.addIfAbsent(domainDir, dbStrategyFile);
+            FileUtils.addIfAbsent(infrastructureImplDir, repositoryImplFile);
+            FileUtils.addIfAbsent(infrastructureDbImplDir, daoFile);
 
-        VirtualFile packageFile = ProjectUtils.getPackageFile(project);
-        if (packageFile == null) return false;
+            FileUtils.navigateFile(project, domainDir, repositoryFile.getName());
+        });
+    }
 
-        PsiDirectoryFactory directoryFactory = PsiDirectoryFactory.getInstance(project);
+    @Var
+    private String pojo(String table) {
+        return StringUtils.capitalize(MyStringUtils.underScoreCase2CamelCase(table.toLowerCase()));
+    }
 
-        PsiFileFactory fileFactory = PsiFileFactory.getInstance(project);
-
-        ProjectSettingService settingService =
-                ServiceManager.getService(project, ProjectSettingService.class);
-
-        String packageName = settingService.getPackageName();
-        if (packageName == null) return false;
-
-        VirtualFile domainRepositoryFile = packageFile.findFileByRelativePath(PATH_DOMAIN_REPOSITORY);
-        if (domainRepositoryFile == null) {
-            log.error("{} not found", PATH_DOMAIN_REPOSITORY);
-            return false;
-        }
-
-        VirtualFile infrastructureRepositoryFile =
-                packageFile.findFileByRelativePath(PATH_INFRASTRUCTURE_REPOSITORY);
-        if (infrastructureRepositoryFile == null) {
-            log.error("{} not found", PATH_INFRASTRUCTURE_REPOSITORY);
-            return false;
-        }
-
-        VirtualFile infrastructureRepositoryImplFile =
-                infrastructureRepositoryFile.findFileByRelativePath(PATH_IMPL);
-        if (infrastructureRepositoryImplFile == null) {
-            log.error("{}/{} not found", PATH_INFRASTRUCTURE_REPOSITORY, PATH_IMPL);
-            return false;
-        }
-
-        VirtualFile infrastructureRepositoryDbImplFile =
-                infrastructureRepositoryFile.findFileByRelativePath(PATH_DB_IMPL);
-        if (infrastructureRepositoryDbImplFile == null) {
-            log.error("{}/{} not found", PATH_INFRASTRUCTURE_REPOSITORY, PATH_DB_IMPL);
-            return false;
-        }
-
-        String pojo = StringUtils.capitalize(MyStringUtils.underScoreCase2CamelCase(table.toLowerCase()));
-
+    @Var
+    private Map<String, String> params(String packageName, String module, String name, String table, String pojo) {
         Map<String, String> params = new HashMap<>();
 
         params.put("packageName", packageName);
@@ -100,48 +76,51 @@ public class NewRepositoryAction extends BaseAction {
         params.put("pojoCls", pojo + "POJO");
         params.put("pojoName", MyStringUtils.lowerCaseFirstChar(pojo));
 
-        PsiFile repositoryFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
-                TemplateUtils.fromString(settingService.getTemplate(TemplateName.I_REPOSITORY),
-                        params));
-        repositoryFile.setName(StringHelper.toString("I{name}Repository.java", params));
+        return params;
+    }
 
-        PsiFile dbStrategyFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
-                TemplateUtils.fromString(settingService.getTemplate(TemplateName.I_DB_STRATEGY),
-                        params));
-        dbStrategyFile.setName(StringHelper.toString("I{name}DbStrategy.java", params));
+    @Var
+    private PsiFile repositoryFile(Context context) {
+        return context.exec("createJavaFile", PsiFile.class,
+                TemplateName.I_REPOSITORY, "I{name}Repository").get();
+    }
 
-        PsiFile repositoryImplFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
-                TemplateUtils.fromString(settingService.getTemplate(TemplateName.REPOSITORY),
-                        params));
-        repositoryImplFile.setName(StringHelper.toString("{name}Repository.java", params));
+    @Var
+    private PsiFile dbStrategyFile(Context context) {
+        return context.exec("createJavaFile", PsiFile.class,
+                TemplateName.I_DB_STRATEGY, "I{name}DbStrategy").get();
+    }
 
-        PsiFile daoFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
-                TemplateUtils.fromString(settingService.getTemplate(TemplateName.DAO),
-                        params));
-        daoFile.setName(StringHelper.toString("{name}DAO.java", params));
+    @Var
+    private PsiFile repositoryImplFile(Context context) {
+        return context.exec("createJavaFile", PsiFile.class,
+                TemplateName.REPOSITORY, "{name}Repository").get();
+    }
 
-        WriteCommandAction.runWriteCommandAction(project, () -> {
-            try {
-                PsiDirectory domainRepositoryDir = directoryFactory.createDirectory(
-                        FileUtils.findOrCreateDirectory(domainRepositoryFile,
-                                module.replace('.', '/')));
+    @Var
+    private PsiFile daoFile(Context context) {
+        return context.exec("createJavaFile", PsiFile.class,
+                TemplateName.DAO, "{name}DAO").get();
+    }
 
-                PsiDirectory infrastructureRepositoryImplDir = directoryFactory
-                        .createDirectory(infrastructureRepositoryImplFile);
+    @Var
+    private PsiDirectory domainDir(Context context) {
+        return context.exec("createModuleDir", PsiDirectory.class, Paths.DOMAIN_REPOSITORY).get();
+    }
 
-                PsiDirectory infrastructureRepositoryDbImplDir = directoryFactory
-                        .createDirectory(infrastructureRepositoryDbImplFile);
+    @Var
+    private PsiDirectory infrastructureImplDir(PsiDirectoryFactory directoryFactory,
+                                               VirtualFile packageFile) {
+        return Optional.ofNullable(packageFile.findFileByRelativePath(Paths.INFRASTRUCTURE_IMPL))
+                .map(directoryFactory::createDirectory)
+                .orElse(null);
+    }
 
-                FileUtils.addIfAbsent(domainRepositoryDir, repositoryFile);
-                FileUtils.addIfAbsent(domainRepositoryDir, dbStrategyFile);
-                FileUtils.addIfAbsent(infrastructureRepositoryImplDir, repositoryImplFile);
-                FileUtils.addIfAbsent(infrastructureRepositoryDbImplDir, daoFile);
-
-                FileUtils.navigateFile(project, domainRepositoryDir, repositoryFile.getName());
-            } catch (IOException ex) {
-                log.error(ex.getMessage(), ex);
-            }
-        });
-        return true;
+    @Var
+    private PsiDirectory infrastructureDbImplDir(PsiDirectoryFactory directoryFactory,
+                                                 VirtualFile packageFile) {
+        return Optional.ofNullable(packageFile.findFileByRelativePath(Paths.INFRASTRUCTURE_DB_IMPL))
+                .map(directoryFactory::createDirectory)
+                .orElse(null);
     }
 }

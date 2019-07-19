@@ -2,24 +2,17 @@ package com.ganguo.plugin.action.generate;
 
 import com.ganguo.plugin.action.BaseAction;
 import com.ganguo.plugin.constant.TemplateName;
-import com.ganguo.plugin.service.ProjectSettingService;
 import com.ganguo.plugin.util.ElementUtils;
 import com.ganguo.plugin.util.FileUtils;
-import com.ganguo.plugin.util.ProjectUtils;
-import com.ganguo.plugin.util.TemplateUtils;
-import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
@@ -29,6 +22,11 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.dependcode.dependcode.CodeContextBuilder;
+import org.dependcode.dependcode.Context;
+import org.dependcode.dependcode.anno.Func;
+import org.dependcode.dependcode.anno.Nla;
+import org.dependcode.dependcode.anno.Var;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -45,95 +43,128 @@ public class GenerateApiTestClassAction extends BaseAction {
 
     @Override
     protected void action(AnActionEvent e) {
-        Project project = e.getProject();
-        if (project == null) {
+        CodeContextBuilder.of(this)
+                .put("event", e)
+                .build()
+                .execVoid("doAction");
+    }
+
+    @Func
+    protected void doAction(Context context, Project project,
+                            VirtualFile testDirFile, PsiDirectory testDir) {
+        if (context.exec("checkTargetFileExists", Boolean.class).get()) {
             return;
         }
 
-        PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
-        if (psiFile == null) {
-            return;
-        }
+        PsiFile newFile = context.exec("createNewFile", PsiFile.class).get();
 
-        PsiElement psiElement = e.getData(LangDataKeys.PSI_ELEMENT);
+        WriteCommandAction.runWriteCommandAction(project, () -> {
+            testDir.add(newFile);
+            FileUtils.navigateFile(project, testDirFile, newFile.getName());
+        });
+    }
+
+    @Var
+    private PsiJavaFile curFile(AnActionEvent event) {
+        return (PsiJavaFile) event.getData(LangDataKeys.PSI_FILE);
+    }
+
+    @Var
+    private PsiMethod curMethod(AnActionEvent event) {
+        PsiElement psiElement = event.getData(LangDataKeys.PSI_ELEMENT);
         if (!ElementUtils.isMethodElement(psiElement)) {
-            return;
+            return null;
         }
-        PsiMethod psiMethod = (PsiMethod) psiElement;
+        return (PsiMethod) psiElement;
+    }
 
-        String methodName = psiMethod.getName();
+    @Var
+    private String curPackageName(PsiJavaFile curFile) {
+        return curFile.getPackageName();
+    }
 
-        String className = StringUtils.capitalize(methodName);
-
-        String packageName = ((PsiJavaFile) psiFile).getPackageName();
-
+    @Var
+    private String moduleName(String curPackageName) {
         final String sep = ".controller";
-        int index = packageName.indexOf(sep);
+        int index = curPackageName.indexOf(sep);
         String moduleName;
         if (index == -1) {
             moduleName = "";
         } else {
-            moduleName = packageName.substring(index + sep.length())
+            moduleName = curPackageName.substring(index + sep.length())
                     .replace('.', '/');
             if (moduleName.startsWith("/")) {
                 moduleName = moduleName.substring(1);
             }
         }
+        return moduleName;
+    }
 
-        PsiDirectoryFactory directoryFactory = PsiDirectoryFactory.getInstance(project);
-        PsiFileFactory fileFactory = PsiFileFactory.getInstance(project);
-
-        VirtualFile testDirFile;
+    @Var
+    private VirtualFile testDirFile(String moduleName, VirtualFile testPackageFile) {
         try {
-            testDirFile = FileUtils.findOrCreateDirectory(
-                    ProjectUtils.getTestPackageFile(project), "controller/" + moduleName);
+            return FileUtils.findOrCreateDirectory(testPackageFile, "controller/" + moduleName);
         } catch (IOException ex) {
-            ex.printStackTrace();
-            log.error("create or get {} fail!", moduleName);
-            return;
+            log.error("create or get {} fail!", moduleName, ex);
         }
+        return null;
+    }
 
-        PsiDirectory testDir = directoryFactory.createDirectory(testDirFile);
+    @Var
+    private PsiDirectory testDir(PsiDirectoryFactory directoryFactory, VirtualFile testDirFile) {
+        return directoryFactory.createDirectory(testDirFile);
+    }
 
-        String targetFilename = className + "Tests.java";
-        VirtualFile targetFile = testDirFile.findFileByRelativePath(targetFilename);
+    @Var
+    private String className(PsiMethod curMethod) {
+        return StringUtils.capitalize(curMethod.getName());
+    }
 
-        Boolean targetFileExists = Optional.ofNullable(targetFile)
-                .map(VirtualFile::exists)
-                .orElse(false);
+    @Var
+    private Map<String, String> params(String packageName, String className, PsiMethod curMethod,
+                                       PsiJavaFile curFile) {
+        Map<String, String> params = new HashMap<>(8);
 
-        // 文件已存在则跳转
-        if (targetFileExists) {
-            new OpenFileDescriptor(project, targetFile).navigate(true);
-            return;
-        }
-
-        RequestBodyClass requestBodyClassName = getClassNameWithRequestBody(psiMethod);
-
-        ProjectSettingService settingService =
-                ServiceManager.getService(project, ProjectSettingService.class);
-
-        Map<String, String> params = new HashMap<>();
-        params.put("packageName", settingService.getPackageName());
+        params.put("packageName", packageName);
         params.put("className", className);
-        params.put("method", getMethod(psiMethod));
-        params.put("url", getUrl(psiFile, psiMethod));
+        params.put("method", getHttpMethod(curMethod));
+        params.put("url", getUrl(curFile, curMethod));
+
+        RequestBodyClass requestBodyClassName = getClassNameWithRequestBody(curMethod);
         if (requestBodyClassName != null) {
             params.put("requestClassName", requestBodyClassName.getName());
             params.put("requestClassSimpleName", requestBodyClassName.getSimpleName());
         }
 
-        PsiFile newFile = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
-                TemplateUtils.fromString(settingService.getTemplate(TemplateName.API_TEST_CLASS),
-                        params));
-        newFile.setName(targetFilename);
+        return params;
+    }
 
-        getClassNameWithRequestBody(psiMethod);
+    @Var
+    private String targetFilename(String className) {
+        return className + "Tests";
+    }
 
-        WriteCommandAction.runWriteCommandAction(project, () -> {
-            testDir.add(newFile);
-            FileUtils.navigateFile(project, testDirFile.findChild(targetFilename));
-        });
+    @Func
+    private PsiFile createNewFile(Context context, String targetFilename) {
+        return context.exec("createJavaFile", PsiFile.class,
+                TemplateName.API_TEST_CLASS, targetFilename).get();
+    }
+
+    @Var
+    private VirtualFile targetFile(VirtualFile testDirFile, String targetFilename) {
+        return testDirFile.findFileByRelativePath(targetFilename + ".java");
+    }
+
+    @Func
+    private boolean checkTargetFileExists(Project project, @Nla VirtualFile targetFile) {
+        boolean exists = Optional.ofNullable(targetFile)
+                .map(VirtualFile::exists)
+                .orElse(false);
+        // 文件已存在则跳转
+        if (exists) {
+            FileUtils.navigateFile(project, targetFile);
+        }
+        return exists;
     }
 
     @Override
@@ -150,7 +181,7 @@ public class GenerateApiTestClassAction extends BaseAction {
         e.getPresentation().setEnabled(enabled);
     }
 
-    private String getMethod(PsiMethod psiMethod) {
+    private String getHttpMethod(PsiMethod psiMethod) {
         for (PsiAnnotation annotation : psiMethod.getAnnotations()) {
             String qualifiedName = annotation.getQualifiedName();
             if (qualifiedName == null) continue;

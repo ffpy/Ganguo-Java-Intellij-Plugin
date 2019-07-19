@@ -1,6 +1,8 @@
 package com.ganguo.plugin.action.menu;
 
 import com.ganguo.plugin.action.BaseAction;
+import com.ganguo.plugin.constant.Filenames;
+import com.ganguo.plugin.constant.Paths;
 import com.ganguo.plugin.ui.dialog.AddMsgDialog;
 import com.ganguo.plugin.util.CopyPasteUtils;
 import com.ganguo.plugin.util.FileUtils;
@@ -9,25 +11,29 @@ import com.ganguo.plugin.util.MsgUtils;
 import com.ganguo.plugin.util.PsiUtils;
 import com.ganguo.plugin.util.SafeProperties;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiEnumConstant;
 import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiParserFacade;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.util.PsiTreeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.dependcode.dependcode.CodeContextBuilder;
+import org.dependcode.dependcode.CodeContextImpl;
+import org.dependcode.dependcode.anno.Func;
+import org.dependcode.dependcode.anno.Var;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * 添加Msg
@@ -35,139 +41,128 @@ import java.util.Optional;
 @Slf4j
 public class AddMsgAction extends BaseAction {
 
-    public static final String PATH_MSG_PROPERTIES = "src/main/resources/i18n/exception_msg.properties";
-    public static final String FILENAME_MSG_CLASS = "ExceptionMsg.java";
-
     @Override
     public void action(AnActionEvent e) {
         new AddMsgDialog(e, this::doAction).show();
     }
 
     private boolean doAction(AnActionEvent event, String key, String value) {
-        try {
-            Project project = event.getProject();
-            VirtualFile projectFile = Optional.ofNullable(project)
-                    .map(Project::getProjectFile)
-                    .map(VirtualFile::getParent)
-                    .map(VirtualFile::getParent)
-                    .orElse(null);
-            if (projectFile == null) {
-                log.error("project file not found");
-                return false;
-            }
+        CodeContextImpl context = CodeContextBuilder.of(this)
+                .put("event", event)
+                .put("key", key)
+                .put("value", value)
+                .build();
 
-            Status status = add2Properties(projectFile, key, value);
-            if (status == Status.FAIL) return false;
-            if (status == Status.EXISTS) return true;
+        Status status = context.exec("add2Properties", Status.class).get();
+        if (status == Status.FAIL) return false;
+        if (status == Status.EXISTS) return true;
 
-            if (add2Class(project, key, value) == Status.FAIL) return false;
+        status = context.exec("add2Class", Status.class).get();
+        if (status == Status.FAIL) return false;
 
-            CopyPasteUtils.putString(value);
-            CopyPasteUtils.putString(key);
-
-            return true;
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return false;
+        context.execVoid("paste");
+        return true;
     }
 
-    /**
-     * 添加到配置文件
-     */
-    private Status add2Properties(VirtualFile projectFile, String key, String value) {
-        // 获取配置文件
-        VirtualFile msgFile = projectFile.findFileByRelativePath(PATH_MSG_PROPERTIES);
-        if (msgFile == null || !msgFile.exists()) {
-            log.error("{} not found!", PATH_MSG_PROPERTIES);
-            return Status.FAIL;
+    @Var
+    private VirtualFile msgFile(VirtualFile rootFile) {
+        return rootFile.findFileByRelativePath(Paths.MSG_PROPERTIES);
+    }
+
+    @Var
+    private SafeProperties properties(VirtualFile msgFile) {
+        return ApplicationManager.getApplication().runReadAction((Computable<SafeProperties>) () -> {
+            SafeProperties properties = new SafeProperties();
+            try {
+                properties.load(msgFile.getInputStream());
+            } catch (IOException e) {
+                log.error("read {} fail", Paths.MSG_PROPERTIES, e);
+            }
+            return properties;
+        });
+    }
+
+    @Func
+    private Status add2Properties(VirtualFile msgFile, SafeProperties properties, String key, String value) {
+        // 检查Value是否已存在
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            if (value.equals(entry.getValue())) {
+                CopyPasteUtils.putString(entry.getValue().toString());
+                CopyPasteUtils.putString(entry.getKey().toString());
+
+                MsgUtils.info("发现%s已存在，已放入粘贴板", entry.getValue());
+
+                return Status.EXISTS;
+            }
         }
 
+        // 检查Key是否已存在
+        if (properties.containsKey(key)) {
+            int result = Messages.showYesNoDialog(key + "已存在，是否覆盖？",
+                    "提示", "覆盖", "取消", null);
+            if (result != Messages.YES) {
+                return Status.FAIL;
+            }
+        }
+
+        properties.setProperty(key, value);
         try {
-            SafeProperties properties = new SafeProperties();
-            properties.load(msgFile.getInputStream());
-
-            // 检查Value是否已存在
-            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-                if (value.equals(entry.getValue())) {
-                    CopyPasteUtils.putString(entry.getValue().toString());
-                    CopyPasteUtils.putString(entry.getKey().toString());
-
-                    MsgUtils.info("发现%s已存在，已放入粘贴板", entry.getValue());
-
-                    return Status.EXISTS;
-                }
-            }
-
-            // 检查Key是否已存在
-            if (properties.containsKey(key)) {
-                int result = Messages.showYesNoDialog(key + "已存在，是否覆盖？",
-                        "提示", "覆盖", "取消", null);
-                if (result != Messages.YES) {
-                    return Status.FAIL;
-                }
-            }
-
-            properties.setProperty(key, value);
             FileUtils.setContent(msgFile, properties);
-
             return Status.SUCCESS;
         } catch (IOException e) {
-            log.error("read {} fail", PATH_MSG_PROPERTIES, e);
+            log.error("write {} fail", Paths.MSG_PROPERTIES, e);
         }
+
         return Status.FAIL;
     }
 
-    /**
-     * 添加到Class文件
-     */
-    private Status add2Class(Project project, String key, String value) {
-        PsiFile[] psiFiles = FilenameIndexUtils.getFilesByName(project, FILENAME_MSG_CLASS);
-        if (psiFiles.length == 0) {
-            log.error("find {} fail", FILENAME_MSG_CLASS);
-            return Status.FAIL;
-        }
-        PsiFile psiFile = psiFiles[0];
+    @Var
+    private PsiClass msgClass(Project project) {
+        return Arrays.stream(FilenameIndexUtils.getFilesByName(project, Filenames.MSG_CLASS))
+                .findFirst()
+                .map(file -> PsiTreeUtil.findChildOfType(file, PsiClass.class))
+                .orElse(null);
+    }
 
-        PsiClass psiClass = PsiTreeUtil.findChildOfType(psiFile, PsiClass.class);
-        if (psiClass == null) {
-            log.error("find class fail");
-            return Status.FAIL;
-        }
-
-        PsiElementFactory factory = JavaPsiFacade.getElementFactory(project);
-
-
+    @Func
+    private Status add2Class(Project project, PsiClass msgClass, PsiElementFactory elementFactory,
+                             String key, String value) {
         // Key已存在
-        PsiField psiField = psiClass.findFieldByName(key, false);
+        PsiField psiField = msgClass.findFieldByName(key, false);
         if (psiField != null) {
 
             PsiDocComment psiDocComment = PsiTreeUtil.findChildOfType(psiField, PsiDocComment.class);
             if (psiDocComment != null) {
                 WriteCommandAction.runWriteCommandAction(project, () -> {
-                    psiDocComment.replace(PsiUtils.createPsiDocComment(factory, value));
+                    psiDocComment.replace(PsiUtils.createPsiDocComment(elementFactory, value));
                 });
-                PsiUtils.reformatJavaFile(psiClass);
+                PsiUtils.reformatJavaFile(msgClass);
             }
 
             return Status.EXISTS;
         }
 
-        PsiEnumConstant psiEnumConstant = factory.createEnumConstantFromText(key, null);
+        PsiEnumConstant psiEnumConstant = elementFactory.createEnumConstantFromText(key, null);
 
         PsiElement whiteSpace = PsiParserFacade.SERVICE.getInstance(project)
                 .createWhiteSpaceFromText("\n\n");
 
         WriteCommandAction.runWriteCommandAction(project, () -> {
-            psiEnumConstant.addBefore(PsiUtils.createPsiDocComment(factory, value),
+            psiEnumConstant.addBefore(PsiUtils.createPsiDocComment(elementFactory, value),
                     psiEnumConstant.getFirstChild());
             psiEnumConstant.addBefore(whiteSpace, psiEnumConstant.getFirstChild());
-            psiClass.add(psiEnumConstant);
+            msgClass.add(psiEnumConstant);
         });
 
-        PsiUtils.reformatJavaFile(psiClass);
+        PsiUtils.reformatJavaFile(msgClass);
 
         return Status.SUCCESS;
+    }
+
+    @Func
+    private void paste(String key, String value) {
+        CopyPasteUtils.putString(value);
+        CopyPasteUtils.putString(key);
     }
 
     private enum Status {

@@ -3,6 +3,7 @@ package com.ganguo.plugin.util;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
@@ -36,7 +37,15 @@ public class FileUtils {
             if (f != null) {
                 file = f;
             } else {
-                file = file.createChildDirectory(base, name);
+                VirtualFile finalFile = file;
+                file = ApplicationManager.getApplication().runWriteAction((Computable<VirtualFile>) () -> {
+                    try {
+                        return finalFile.createChildDirectory(base, name);
+                    } catch (IOException e) {
+                        log.error(e.getMessage(), e);
+                    }
+                    return null;
+                });
             }
         }
         return file;
@@ -45,6 +54,12 @@ public class FileUtils {
     public static void navigateFile(Project project, VirtualFile file) {
         if (file == null) return;
         new OpenFileDescriptor(project, file).navigate(true);
+    }
+
+    public static void navigateFile(Project project, VirtualFile directory, String filename) {
+        navigateFile(project, Optional.ofNullable(directory)
+                .map(dir -> dir.findChild(filename))
+                .orElse(null));
     }
 
     public static void navigateFile(Project project, PsiDirectory directory, String filename) {

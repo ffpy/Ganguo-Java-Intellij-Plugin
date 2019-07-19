@@ -1,11 +1,10 @@
 package com.ganguo.plugin.action.intention;
 
-import com.ganguo.plugin.action.menu.AddMsgAction;
+import com.ganguo.plugin.constant.Filenames;
 import com.ganguo.plugin.util.EditorUtils;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.FilenameIndexUtils;
 import com.ganguo.plugin.util.SafeProperties;
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -28,10 +27,7 @@ import java.io.IOException;
  * 删除Msg
  */
 @Slf4j
-public class DeleteMsgAction implements IntentionAction {
-
-    private static final String FAMILY_NAME = "Ganguo";
-    private static final String FILENAME_MSG = "exception_msg.properties";
+public class DeleteMsgAction extends BaseIntentionAction {
 
     @Nls(capitalization = Nls.Capitalization.Sentence)
     @NotNull
@@ -40,16 +36,9 @@ public class DeleteMsgAction implements IntentionAction {
         return "删除Msg";
     }
 
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return FAMILY_NAME;
-    }
-
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        if (!FILENAME_MSG.equals(file.getName())) return false;
+        if (!Filenames.MSG_PROPERTIES.equals(file.getName())) return false;
 
         String lineText = EditorUtils.getCurLineText(editor).trim();
 
@@ -85,9 +74,9 @@ public class DeleteMsgAction implements IntentionAction {
     }
 
     private void deleteOnClass(Project project, String key) {
-        PsiFile[] psiFiles = FilenameIndexUtils.getFilesByName(project, AddMsgAction.FILENAME_MSG_CLASS);
+        PsiFile[] psiFiles = FilenameIndexUtils.getFilesByName(project, Filenames.MSG_CLASS);
         if (psiFiles.length == 0) {
-            log.error("find {} fail!", AddMsgAction.FILENAME_MSG_CLASS);
+            log.error("find {} fail!", Filenames.MSG_CLASS);
             return;
         }
         PsiFile psiFile = psiFiles[0];
