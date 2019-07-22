@@ -20,6 +20,7 @@ import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.dependcode.dependcode.anno.Func;
 import org.dependcode.dependcode.anno.Ignore;
+import org.dependcode.dependcode.anno.Nla;
 import org.dependcode.dependcode.anno.Var;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,7 +93,7 @@ public abstract class BaseAction extends AnAction implements DumbAware {
 
     @Func
     private PsiFile createJavaFile(PsiFileFactory fileFactory, ProjectSettingService settingService,
-                                   Map<String, Object> params,
+                                   @Nla Map<String, Object> params,
                                    @Ignore TemplateName templateName, String filename) {
         PsiFile file = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
                 TemplateUtils.fromString(settingService.getTemplate(templateName), params));

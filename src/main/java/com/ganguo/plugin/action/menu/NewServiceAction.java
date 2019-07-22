@@ -13,8 +13,8 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import lombok.extern.slf4j.Slf4j;
-import org.dependcode.dependcode.CodeContextBuilder;
 import org.dependcode.dependcode.Context;
+import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.anno.Func;
 import org.dependcode.dependcode.anno.Nla;
 import org.dependcode.dependcode.anno.Var;
@@ -38,7 +38,7 @@ public class NewServiceAction extends NewAction {
     }
 
     private boolean doAction(AnActionEvent event, String module, String name) {
-        return CodeContextBuilder.of(this)
+        return ContextBuilder.of(this)
                 .put("event", event)
                 .put("module", module)
                 .put("name", name)

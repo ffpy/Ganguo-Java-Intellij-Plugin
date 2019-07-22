@@ -14,8 +14,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.dependcode.dependcode.CodeContextBuilder;
 import org.dependcode.dependcode.Context;
+import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.anno.Func;
 import org.dependcode.dependcode.anno.Var;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +36,7 @@ public class NewRepositoryAction extends NewAction {
     }
 
     private boolean doAction(AnActionEvent event, String table, String module, String name) {
-        return CodeContextBuilder.of(this)
+        return ContextBuilder.of(this)
                 .put("event", event)
                 .put("table", table)
                 .put("module", module)

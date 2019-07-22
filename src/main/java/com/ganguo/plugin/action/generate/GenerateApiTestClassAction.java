@@ -9,32 +9,21 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaFile;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiParameter;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.dependcode.dependcode.CodeContextBuilder;
 import org.dependcode.dependcode.Context;
+import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.anno.Func;
 import org.dependcode.dependcode.anno.Nla;
 import org.dependcode.dependcode.anno.Var;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 生成Api接口方法测试类
@@ -49,7 +38,7 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
 
     @Override
     protected void action(AnActionEvent e) {
-        CodeContextBuilder.of(this)
+        ContextBuilder.of(this)
                 .put("event", e)
                 .build()
                 .execVoid("doAction");
