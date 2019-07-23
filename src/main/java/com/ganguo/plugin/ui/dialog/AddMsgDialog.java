@@ -15,10 +15,10 @@ public class AddMsgDialog extends BaseDialog<AddMsgForm, AddMsgDialog.Action> {
     public AddMsgDialog(AnActionEvent e, Action action) {
         super("Add Msg", new AddMsgForm(), action);
         mEvent = e;
+        initComponent();
     }
 
-    @Override
-    protected void initComponent() {
+    private void initComponent() {
         mKeyLimit = new InputLimit(mForm.getKeyField(), "^[\\w ]*$");
         setOkOnEnter(mForm.getValueField());
     }

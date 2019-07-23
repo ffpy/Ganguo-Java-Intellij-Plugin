@@ -20,10 +20,10 @@ public class NewRepositoryDialog extends BaseDialog<NewRepositoryForm, NewReposi
     public NewRepositoryDialog(AnActionEvent e, String title, Action action) {
         super(title, new NewRepositoryForm(), action);
         mEvent = e;
+        initComponent();
     }
 
-    @Override
-    protected void initComponent() {
+    private void initComponent() {
         new InputSameAs(mForm.getNameField(), mForm.getModuleField(),
                 text -> MyStringUtils.camelCase2UnderScoreCase(text).toLowerCase());
         new InputSameAs(mForm.getNameField(), mForm.getTableField(),

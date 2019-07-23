@@ -35,7 +35,9 @@ public class StringHelper {
     }
 
     public StringHelper params(Map<String, Object> params) {
-        paramMap.putAll(params);
+        if (params != null && !params.isEmpty()) {
+            paramMap.putAll(params);
+        }
         return this;
     }
 

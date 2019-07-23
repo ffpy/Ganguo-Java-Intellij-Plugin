@@ -22,7 +22,9 @@ public class TemplateUtils {
 
     public static String fromString(String template, Map<String, Object> params) {
         VelocityContext context = new VelocityContext();
-        params.forEach(context::put);
+        if (params != null) {
+            params.forEach(context::put);
+        }
         StringWriter writer = new StringWriter();
         velocityEngine.evaluate(context, writer, "", template);
         return writer.toString();

@@ -24,11 +24,7 @@ public abstract class BaseDialog<T extends BaseForm, A extends DialogAction> ext
 
         setOKButtonText("确定");
         setCancelButtonText("取消");
-
-        initComponent();
     }
-
-    protected abstract void initComponent();
 
     @Nullable
     @Override

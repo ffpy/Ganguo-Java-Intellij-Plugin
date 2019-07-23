@@ -25,10 +25,10 @@ public class ModuleAndNameDialog extends BaseDialog<ModuleAndNameForm, ModuleAnd
         super(title, new ModuleAndNameForm(), action);
         mEvent = e;
         mModuleSameAsName = moduleSameAsName;
+        initComponent();
     }
 
-    @Override
-    protected void initComponent() {
+    private void initComponent() {
         if (mModuleSameAsName) {
             new InputSameAs(mForm.getNameField(), mForm.getModuleField(),
                     text -> MyStringUtils.camelCase2UnderScoreCase(text).toLowerCase());
