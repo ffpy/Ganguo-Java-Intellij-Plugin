@@ -5,11 +5,15 @@ import com.ganguo.plugin.util.ElementUtils;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.PsiUtils;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiJavaFile;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiParameter;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +27,12 @@ import org.dependcode.dependcode.anno.Nla;
 import org.dependcode.dependcode.anno.Var;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * 生成Api接口方法测试类
@@ -40,6 +49,7 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
     protected void action(AnActionEvent e) {
         ContextBuilder.of(this)
                 .put("event", e)
+                .importAll(JavaFileContext.getContext())
                 .build()
                 .execVoid("doAction");
     }
@@ -62,34 +72,6 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
             testDir.add(newFile);
             FileUtils.navigateFile(project, testDirFile, newFile.getName());
         });
-    }
-
-    /**
-     * 当前文件
-     */
-    @Var
-    private PsiJavaFile curFile(AnActionEvent event) {
-        return (PsiJavaFile) event.getData(LangDataKeys.PSI_FILE);
-    }
-
-    /**
-     * 当前方法
-     */
-    @Var
-    private PsiMethod curMethod(AnActionEvent event) {
-        PsiElement psiElement = event.getData(LangDataKeys.PSI_ELEMENT);
-        if (!ElementUtils.isMethodElement(psiElement)) {
-            return null;
-        }
-        return (PsiMethod) psiElement;
-    }
-
-    /**
-     * 当前文件的包名
-     */
-    @Var
-    private String curPackageName(PsiJavaFile curFile) {
-        return curFile.getPackageName();
     }
 
     /**
