@@ -26,14 +26,19 @@ public abstract class BaseGenerateAction extends BaseAction {
     }
 
     protected boolean checkShow(AnActionEvent e, String pattern, Predicate<PsiElement> elementChecker) {
-        PsiJavaFile curFile = (PsiJavaFile) e.getData(LangDataKeys.PSI_FILE);
+        PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
+        if (!(psiFile instanceof PsiJavaFile)) {
+            return false;
+        }
 
-        String qualifiedName = Optional.ofNullable(curFile)
+        PsiJavaFile curFile = (PsiJavaFile) psiFile;
+
+        String qualifiedName = Optional.of(curFile)
                 .flatMap(file -> Arrays.stream(file.getClasses()).findFirst())
                 .map(PsiClass::getQualifiedName)
                 .orElse(null);
 
-        return Optional.ofNullable(curFile)
+        return Optional.of(curFile)
                 .map(PsiFile::getVirtualFile)
                 .map(VirtualFile::getName)
                 .filter(name -> name.matches(pattern))
