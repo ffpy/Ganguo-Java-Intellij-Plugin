@@ -5,11 +5,13 @@ import com.ganguo.plugin.ui.utils.InputLimit;
 import com.ganguo.plugin.ui.utils.InputSameAs;
 import com.ganguo.plugin.util.MyStringUtils;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+@Slf4j
 public class ModuleAndNameDialog extends BaseDialog<ModuleAndNameForm, ModuleAndNameDialog.Action> {
 
     private InputLimit mModuleLimit;
@@ -48,10 +50,15 @@ public class ModuleAndNameDialog extends BaseDialog<ModuleAndNameForm, ModuleAnd
         String module = mForm.getModuleField().getText().trim();
         String name = StringUtils.capitalize(mForm.getNameField().getText().trim());
 
-        if (!name.isEmpty() &&
-                mModuleLimit.getMatcher().test(module) && mNameLimit.getMatcher().test(name) &&
-                mAction.apply(mEvent, module, name)) {
-            super.doOKAction();
+        try {
+            if (!name.isEmpty() &&
+                    mModuleLimit.getMatcher().test(module) && mNameLimit.getMatcher().test(name) &&
+                    mAction.apply(mEvent, module, name)) {
+                super.doOKAction();
+
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
     }
 

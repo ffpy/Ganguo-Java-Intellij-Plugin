@@ -4,7 +4,12 @@ import com.ganguo.plugin.action.BaseAction;
 import com.ganguo.plugin.constant.Filenames;
 import com.ganguo.plugin.constant.Paths;
 import com.ganguo.plugin.ui.dialog.AddMsgDialog;
-import com.ganguo.plugin.util.*;
+import com.ganguo.plugin.util.CopyPasteUtils;
+import com.ganguo.plugin.util.FileUtils;
+import com.ganguo.plugin.util.FilenameIndexUtils;
+import com.ganguo.plugin.util.MsgUtils;
+import com.ganguo.plugin.util.PsiUtils;
+import com.ganguo.plugin.util.SafeProperties;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -12,12 +17,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementFactory;
+import com.intellij.psi.PsiEnumConstant;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiParserFacade;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.util.PsiTreeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.dependcode.dependcode.Context;
 import org.dependcode.dependcode.ContextBuilder;
+import org.dependcode.dependcode.anno.Depend;
 import org.dependcode.dependcode.anno.Func;
 import org.dependcode.dependcode.anno.Var;
 
@@ -117,9 +128,6 @@ public class AddMsgAction extends BaseAction {
 
     /**
      * ExceptionMsg.java的Class文件对象
-     *
-     * @param project
-     * @return
      */
     @Var
     private PsiClass msgClass(Project project) {
@@ -133,8 +141,11 @@ public class AddMsgAction extends BaseAction {
      * 添加到到ExceptionMsg.java中
      */
     @Func
-    private Status add2Class(Project project, PsiClass msgClass, PsiElementFactory elementFactory,
-                             String key, String value) {
+    private Status add2Class(@Depend("project") Project project,
+                             @Depend("msgClass") PsiClass msgClass,
+                             @Depend("elementFactory") PsiElementFactory elementFactory,
+                             @Depend("key") String key,
+                             @Depend("value") String value) {
         // Key已存在
         PsiField psiField = msgClass.findFieldByName(key, false);
         if (psiField != null) {

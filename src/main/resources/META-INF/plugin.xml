@@ -31,7 +31,7 @@
     <actions>
         <group id="Ganguo.Menu"
                text="Ganguo"
-               description="Ganguo Menu">
+               description="Ganguo">
 
             <add-to-group group-id="MainMenu" anchor="last"/>
 
@@ -73,7 +73,7 @@
 
         <group id="Ganguo.Generate"
                text="Ganguo"
-               description="Ganguo Generate"
+               description="Ganguo"
                popup="true">
 
             <add-to-group group-id="GenerateGroup" anchor="last"/>
@@ -81,7 +81,12 @@
             <action id="com.ganguo.plugin.action.generate.GenerateApiTestClassAction"
                     class="com.ganguo.plugin.action.generate.GenerateApiTestClassAction"
                     text="生成接口方法测试类"
-                    description="Generate Api Test Class"/>
+                    description="生成接口方法测试类"/>
+
+            <action id="com.ganguo.plugin.action.generate.GenerateRepositoryMethodAction"
+                    class="com.ganguo.plugin.action.generate.GenerateRepositoryMethodAction"
+                    text="实现此方法"
+                    description="实现此方法"/>
 
         </group>
 

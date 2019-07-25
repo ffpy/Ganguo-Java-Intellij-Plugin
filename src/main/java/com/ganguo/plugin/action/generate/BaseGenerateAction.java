@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 public abstract class BaseGenerateAction extends BaseAction {
 
@@ -25,7 +24,7 @@ public abstract class BaseGenerateAction extends BaseAction {
         e.getPresentation().setEnabled(isShow(e));
     }
 
-    protected boolean checkShow(AnActionEvent e, String pattern, Predicate<PsiElement> elementChecker) {
+    protected boolean isMethodOfClass(AnActionEvent e, String pattern) {
         PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
         if (!(psiFile instanceof PsiJavaFile)) {
             return false;

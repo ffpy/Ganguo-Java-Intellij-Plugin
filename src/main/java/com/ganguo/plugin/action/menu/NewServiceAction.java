@@ -1,6 +1,9 @@
 package com.ganguo.plugin.action.menu;
 
+import com.ganguo.plugin.action.BaseAction;
 import com.ganguo.plugin.constant.TemplateName;
+import com.ganguo.plugin.context.JavaFileContext;
+import com.ganguo.plugin.context.NewContext;
 import com.ganguo.plugin.ui.dialog.ModuleAndNameDialog;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.FilenameIndexUtils;
@@ -13,8 +16,8 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import lombok.extern.slf4j.Slf4j;
-import org.dependcode.dependcode.Context;
 import org.dependcode.dependcode.ContextBuilder;
+import org.dependcode.dependcode.FuncAction;
 import org.dependcode.dependcode.anno.Func;
 import org.dependcode.dependcode.anno.Nla;
 import org.dependcode.dependcode.anno.Var;
@@ -28,7 +31,7 @@ import java.util.Map;
  * 创建Service接口及实现类
  */
 @Slf4j
-public class NewServiceAction extends NewAction {
+public class NewServiceAction extends BaseAction {
 
     private static final String PATH_SERVICE_API = "service/api";
 
@@ -42,6 +45,8 @@ public class NewServiceAction extends NewAction {
                 .put("event", event)
                 .put("module", module)
                 .put("name", name)
+                .importAll(NewContext.getContext())
+                .importThose(JavaFileContext.getContext(), "createJavaFile")
                 .build()
                 .execVoid("writeFile")
                 .isPresent();
@@ -98,25 +103,23 @@ public class NewServiceAction extends NewAction {
      * Service接口文件
      */
     @Var
-    private PsiFile interFile(Context context) {
-        return context.exec("createJavaFile", PsiFile.class,
-                TemplateName.SERVICE, "{name}Service").get();
+    private PsiFile interFile(FuncAction<PsiFile> createJavaFile) {
+        return createJavaFile.get(TemplateName.SERVICE, "{name}Service");
     }
 
     /**
      * Service实现类文件
      */
     @Var
-    private PsiFile implFile(Context context) {
-        return context.exec("createJavaFile", PsiFile.class,
-                TemplateName.SERVICE_IMPL, "{name}ServiceImpl").get();
+    private PsiFile implFile(FuncAction<PsiFile> createJavaFile) {
+        return createJavaFile.get(TemplateName.SERVICE_IMPL, "{name}ServiceImpl");
     }
 
     /**
      * 所在模块文件夹
      */
     @Var
-    private PsiDirectory moduleDir(Context context) {
-        return context.exec("createModuleDir", PsiDirectory.class, PATH_SERVICE_API).get();
+    private PsiDirectory moduleDir(FuncAction<PsiDirectory> createModuleDir) {
+        return createModuleDir.get(PATH_SERVICE_API);
     }
 }

@@ -1,7 +1,7 @@
 package com.ganguo.plugin.action.generate;
 
 import com.ganguo.plugin.constant.TemplateName;
-import com.ganguo.plugin.util.ElementUtils;
+import com.ganguo.plugin.context.JavaFileContext;
 import com.ganguo.plugin.util.FileUtils;
 import com.ganguo.plugin.util.PsiUtils;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -20,8 +20,8 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.dependcode.dependcode.Context;
 import org.dependcode.dependcode.ContextBuilder;
+import org.dependcode.dependcode.FuncAction;
 import org.dependcode.dependcode.anno.Func;
 import org.dependcode.dependcode.anno.Nla;
 import org.dependcode.dependcode.anno.Var;
@@ -56,17 +56,17 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
 
     @Override
     protected boolean isShow(AnActionEvent e) {
-        return checkShow(e, "^.*Controller.java$", ElementUtils::isMethodElement);
+        return isMethodOfClass(e, "^.*Controller.java$");
     }
 
     @Func
-    protected void doAction(Context context, Project project,
-                            VirtualFile testDirFile, PsiDirectory testDir) {
-        if (context.exec("checkTargetFileExists", Boolean.class).get()) {
+    protected void doAction(Project project, VirtualFile testDirFile, PsiDirectory testDir,
+                            FuncAction<Boolean> checkTargetFileExists, FuncAction<PsiFile> createNewFile) {
+        if (checkTargetFileExists.get()) {
             return;
         }
 
-        PsiFile newFile = context.exec("createNewFile", PsiFile.class).get();
+        PsiFile newFile = createNewFile.get();
 
         WriteCommandAction.runWriteCommandAction(project, () -> {
             testDir.add(newFile);
@@ -161,9 +161,8 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
      * 创建测试类文件
      */
     @Func
-    private PsiFile createNewFile(Context context, String targetFilename) {
-        return context.exec("createJavaFile", PsiFile.class,
-                TemplateName.API_TEST_CLASS, targetFilename).get();
+    private PsiFile createNewFile(String targetFilename, FuncAction<PsiFile> createJavaFile) {
+        return createJavaFile.get(TemplateName.API_TEST_CLASS, targetFilename);
     }
 
     /**
