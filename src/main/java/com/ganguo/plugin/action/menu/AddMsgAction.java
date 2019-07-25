@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiEnumConstant;
 import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiJavaParserFacade;
 import com.intellij.psi.PsiParserFacade;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -141,11 +142,8 @@ public class AddMsgAction extends BaseAction {
      * 添加到到ExceptionMsg.java中
      */
     @Func
-    private Status add2Class(@Depend("project") Project project,
-                             @Depend("msgClass") PsiClass msgClass,
-                             @Depend("elementFactory") PsiElementFactory elementFactory,
-                             @Depend("key") String key,
-                             @Depend("value") String value) {
+    private Status add2Class(Project project, PsiClass msgClass, PsiElementFactory elementFactory,
+                             String key, String value) {
         // Key已存在
         PsiField psiField = msgClass.findFieldByName(key, false);
         if (psiField != null) {
@@ -165,6 +163,7 @@ public class AddMsgAction extends BaseAction {
 
         PsiElement whiteSpace = PsiParserFacade.SERVICE.getInstance(project)
                 .createWhiteSpaceFromText("\n\n");
+
 
         WriteCommandAction.runWriteCommandAction(project, () -> {
             psiEnumConstant.addBefore(PsiUtils.createPsiDocComment(elementFactory, value),
