@@ -1,6 +1,6 @@
 ## 安装
 1. 下载最新版的插件文件
-2. 打开IntelliJ IDEA，选择File->Setting->Plugin->Install Plugin from Disk，
+2. 打开IntelliJ IDEA，选择Intellij IDEA->Preferences->Plugin->Install Plugin from Disk，
 选择下载的插件文件
 3. 重启IDEA
 
