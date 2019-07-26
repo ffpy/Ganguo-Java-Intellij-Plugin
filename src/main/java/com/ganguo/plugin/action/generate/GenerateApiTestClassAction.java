@@ -49,7 +49,7 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
     protected void action(AnActionEvent e) {
         ContextBuilder.of(this)
                 .put("event", e)
-                .importAll(JavaFileContext.getContext())
+                .importFrom(JavaFileContext.getContext())
                 .build()
                 .execVoid("doAction");
     }

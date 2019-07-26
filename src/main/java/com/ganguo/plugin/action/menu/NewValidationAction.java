@@ -37,8 +37,8 @@ public class NewValidationAction extends BaseAction {
                 .put("event", event)
                 .put("module", module)
                 .put("name", name)
-                .importAll(NewContext.getContext())
-                .importThose(JavaFileContext.getContext(), "createJavaFile")
+                .importFrom(NewContext.getContext())
+                .importFrom(JavaFileContext.getContext())
                 .build()
                 .execVoid("writeFile")
                 .isPresent();

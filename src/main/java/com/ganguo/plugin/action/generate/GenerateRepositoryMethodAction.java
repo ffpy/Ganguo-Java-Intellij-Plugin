@@ -40,7 +40,7 @@ public class GenerateRepositoryMethodAction extends BaseGenerateAction {
     protected void action(AnActionEvent e) throws Exception {
         ContextBuilder.of(this)
                 .put("event", e)
-                .importAll(JavaFileContext.getContext())
+                .importFrom(JavaFileContext.getContext())
                 .build()
                 .execVoid("doAction");
     }

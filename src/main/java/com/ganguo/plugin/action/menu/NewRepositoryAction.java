@@ -41,9 +41,9 @@ public class NewRepositoryAction extends BaseAction {
                 .put("table", table)
                 .put("module", module)
                 .put("name", name)
-                .importAll(NewContext.getContext())
-                .importAll(RepositoryContext.getContext())
-                .importThose(JavaFileContext.getContext(), "createJavaFile")
+                .importFrom(NewContext.getContext())
+                .importFrom(RepositoryContext.getContext())
+                .importFrom(JavaFileContext.getContext())
                 .build()
                 .execVoid("writeFile")
                 .isPresent();
