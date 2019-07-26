@@ -3,10 +3,14 @@ plugins {
     id 'org.jetbrains.intellij' version '0.4.9'
 }
 
-group 'com.ganguo'
-version '1.0-SNAPSHOT'
+def ideaVersionExternalDefinition = System.getenv("IDEA_VERSION")
+def ideaVersion = ideaVersionExternalDefinition ? ideaVersionExternalDefinition : ideaVersion
 
-sourceCompatibility = 1.8
+group = pluginGroup
+version = pluginVersion
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 compileJava {
     options.compilerArgs << '-parameters'
@@ -25,6 +29,25 @@ repositories {
     mavenCentral()
 }
 
+intellij {
+    version ideaVersion
+    println "Building for IntelliJ version: ${version}"
+
+    pluginName pluginName
+    updateSinceUntilBuild true
+    sameSinceUntilBuild false
+    sandboxDirectory = "${rootProject.projectDir}/idea-sandbox/idea-${ideaVersion}"
+
+    plugins 'coverage'
+}
+
+patchPluginXml {
+    version pluginVersion
+    pluginDescription(file(descriptionFile).text)
+    changeNotes(file(changesFile).text)
+}
+
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
@@ -39,17 +62,7 @@ dependencies {
 
     // logback
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-    
+
     // commons
     compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
-}
-
-// See https://github.com/JetBrains/gradle-intellij-plugin/
-intellij {
-    version '2019.1.3'
-}
-patchPluginXml {
-    changeNotes """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
 }
