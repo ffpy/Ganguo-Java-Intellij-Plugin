@@ -86,3 +86,4 @@ $RECYCLE.BIN/
 *.lnk
 
 .gradle/
+idea-sandbox/
