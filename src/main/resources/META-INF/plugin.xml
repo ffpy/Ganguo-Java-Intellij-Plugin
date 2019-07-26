@@ -3,9 +3,7 @@
     <name>Ganguo Java</name>
     <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">Ganguo</vendor>
 
-    <description><![CDATA[
-    广州甘果Java开发的IDEA插件
-    ]]></description>
+    <description><![CDATA[ Description will be added by gradle build ]]></description>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
@@ -15,16 +13,16 @@
     <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectConfigurable instance="com.ganguo.plugin.configurable.ProjectConfigurable"/>
+        <projectConfigurable instance="com.ganguo.java.plugin.configurable.ProjectConfigurable"/>
 
-        <projectService serviceInterface="com.ganguo.plugin.service.ProjectSettingService"
-                        serviceImplementation="com.ganguo.plugin.service.ProjectSettingServiceImpl"/>
+        <projectService serviceInterface="com.ganguo.java.plugin.service.ProjectSettingService"
+                        serviceImplementation="com.ganguo.java.plugin.service.ProjectSettingServiceImpl"/>
     </extensions>
 
     <application-components>
         <component>
-            <interface-class>com.ganguo.plugin.component.AppComponent</interface-class>
-            <implementation-class>com.ganguo.plugin.component.AppComponentImpl</implementation-class>
+            <interface-class>com.ganguo.java.plugin.component.AppComponent</interface-class>
+            <implementation-class>com.ganguo.java.plugin.component.AppComponentImpl</implementation-class>
         </component>
     </application-components>
 
@@ -35,35 +33,35 @@
 
             <add-to-group group-id="MainMenu" anchor="last"/>
 
-            <action id="com.ganguo.plugin.action.menu.AddMsgAction"
-                    class="com.ganguo.plugin.action.menu.AddMsgAction"
+            <action id="com.ganguo.java.plugin.action.menu.AddMsgAction"
+                    class="com.ganguo.java.plugin.action.menu.AddMsgAction"
                     text="添加Msg"
                     description="添加msg到exception_msg.properties和ExceptionMsg.java"/>
 
-            <action id="com.ganguo.plugin.action.menu.NewServiceAction"
-                    class="com.ganguo.plugin.action.menu.NewServiceAction"
+            <action id="com.ganguo.java.plugin.action.menu.NewServiceAction"
+                    class="com.ganguo.java.plugin.action.menu.NewServiceAction"
                     text="生成Service接口及实现类"
                     description="生成Service接口及实现类"/>
 
-            <action id="com.ganguo.plugin.action.menu.NewRepositoryAction"
-                    class="com.ganguo.plugin.action.menu.NewRepositoryAction"
+            <action id="com.ganguo.java.plugin.action.menu.NewRepositoryAction"
+                    class="com.ganguo.java.plugin.action.menu.NewRepositoryAction"
                     text="生成Repository接口及实现类"
                     description="生成Repository接口及实现类"/>
 
-            <action id="com.ganguo.plugin.action.menu.NewValidationAction"
-                    class="com.ganguo.plugin.action.menu.NewValidationAction"
+            <action id="com.ganguo.java.plugin.action.menu.NewValidationAction"
+                    class="com.ganguo.java.plugin.action.menu.NewValidationAction"
                     text="生成校验注解及校验类"
                     description="生成校验注解及校验类"/>
 
-            <action id="com.ganguo.plugin.action.menu.CaseFormatAction"
-                    class="com.ganguo.plugin.action.menu.CaseFormatAction"
+            <action id="com.ganguo.java.plugin.action.menu.CaseFormatAction"
+                    class="com.ganguo.java.plugin.action.menu.CaseFormatAction"
                     text="驼峰-下划线互转"
                     description="驼峰-下划线互转">
                 <keyboard-shortcut keymap="$default" first-keystroke="shift meta MINUS"/>
             </action>
 
-            <action id="com.ganguo.plugin.action.menu.WrapBackquoteAction"
-                    class="com.ganguo.plugin.action.menu.WrapBackquoteAction"
+            <action id="com.ganguo.java.plugin.action.menu.WrapBackquoteAction"
+                    class="com.ganguo.java.plugin.action.menu.WrapBackquoteAction"
                     text="SQL字段用反引号包裹"
                     description="SQL字段用反引号包裹">
                 <keyboard-shortcut keymap="$default" first-keystroke="shift meta BACK_QUOTE"/>
@@ -78,18 +76,20 @@
 
             <add-to-group group-id="GenerateGroup" anchor="last"/>
 
-            <action id="com.ganguo.plugin.action.generate.GenerateApiTestClassAction"
-                    class="com.ganguo.plugin.action.generate.GenerateApiTestClassAction"
+            <action id="com.ganguo.java.plugin.action.generate.GenerateApiTestClassAction"
+                    class="com.ganguo.java.plugin.action.generate.GenerateApiTestClassAction"
                     text="生成接口方法测试类"
                     description="生成接口方法测试类"/>
 
-            <action id="com.ganguo.plugin.action.generate.GenerateRepositoryMethodAction"
-                    class="com.ganguo.plugin.action.generate.GenerateRepositoryMethodAction"
+            <action id="com.ganguo.java.plugin.action.generate.GenerateRepositoryMethodAction"
+                    class="com.ganguo.java.plugin.action.generate.GenerateRepositoryMethodAction"
                     text="实现此方法"
                     description="实现此方法"/>
 
         </group>
 
     </actions>
+
+    <change-notes><![CDATA[ Change notes will be filled by gradle build ]]></change-notes>
 
 </idea-plugin>
