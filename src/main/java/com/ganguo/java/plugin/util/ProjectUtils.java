@@ -9,6 +9,7 @@ import java.util.Optional;
 @Slf4j
 public class ProjectUtils {
 
+    private static final String DEFAULT_PROJECT_NAME = "com.intellij.openapi.project.impl.DefaultProject";
     private static final String PACKAGE_NAME_PATH_SEPARATE = "/java/";
     private static final String APPLICATION_FILENAME = "Application.java";
     private static final String TEST_APPLICATION_FILENAME = "ApplicationTests.java";
@@ -118,5 +119,15 @@ public class ProjectUtils {
                     log.error("get test resource file fail!");
                     return null;
                 });
+    }
+
+    /**
+     * 判断是不是打包插件时的Project
+     *
+     * @param project project
+     * @return true为是，false为否
+     */
+    public static boolean isDefaultProject(Project project) {
+        return project != null && project.getClass().getName().startsWith(DEFAULT_PROJECT_NAME);
     }
 }

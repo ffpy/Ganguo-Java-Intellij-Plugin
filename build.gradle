@@ -20,7 +20,6 @@ compileTestJava {
     options.compilerArgs << '-parameters'
 }
 
-
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
@@ -38,7 +37,7 @@ intellij {
     sameSinceUntilBuild false
     sandboxDirectory = "${rootProject.projectDir}/idea-sandbox/idea-${ideaVersion}"
 
-    plugins 'coverage'
+    plugins 'java'
 }
 
 patchPluginXml {
@@ -46,7 +45,6 @@ patchPluginXml {
     pluginDescription(file(descriptionFile).text)
     changeNotes(file(changesFile).text)
 }
-
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
@@ -64,5 +62,6 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
     // commons
+//    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
     compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
 }

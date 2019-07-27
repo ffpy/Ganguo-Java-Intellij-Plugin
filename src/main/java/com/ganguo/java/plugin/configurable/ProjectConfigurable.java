@@ -1,9 +1,10 @@
 package com.ganguo.java.plugin.configurable;
 
 import com.ganguo.java.plugin.constant.TemplateName;
+import com.ganguo.java.plugin.service.ProjectSettingService;
 import com.ganguo.java.plugin.ui.form.ConfigurationForm;
 import com.ganguo.java.plugin.util.PatternUtils;
-import com.ganguo.java.plugin.service.ProjectSettingService;
+import com.ganguo.java.plugin.util.ProjectUtils;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -12,6 +13,7 @@ import com.intellij.openapi.ui.Messages;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +27,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class ProjectConfigurable implements SearchableConfigurable {
 
     private final ConfigurationForm mForm;
@@ -33,12 +36,16 @@ public class ProjectConfigurable implements SearchableConfigurable {
     private String mPackageName;
 
     public ProjectConfigurable(Project project) {
+
         mProjectSettingService = ServiceManager.getService(project, ProjectSettingService.class);
 
         initTemplateMap();
 
         mForm = new ConfigurationForm(mTemplateMap);
-        mPackageName = mProjectSettingService.getPackageName();
+
+        if (!ProjectUtils.isDefaultProject(project)) {
+            mPackageName = mProjectSettingService.getPackageName();
+        }
 
         mForm.onReset(e -> {
             if (Messages.showYesNoDialog("确认恢复默认设置？", "提示",
