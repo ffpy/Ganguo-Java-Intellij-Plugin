@@ -86,6 +86,7 @@ public class NewRepositoryAction extends BaseAction {
         params.put("name", name);
         params.put("table", table);
         params.put("pojoCls", pojo + "POJO");
+        params.put("recordCls", pojo + "Record");
         params.put("pojoName", MyStringUtils.lowerCaseFirstChar(pojo));
 
         return params;
