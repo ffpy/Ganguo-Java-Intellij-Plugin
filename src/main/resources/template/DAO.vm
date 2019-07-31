@@ -47,4 +47,12 @@ public class ${name}DAO extends BaseDAO implements I${name}DbStrategy {
                 .where(${table}.ID.eq(id))
                 .execute();
     }
+
+    @Override
+    public boolean existsById(Long id) {
+        return mDSLContext.fetchExists(
+                mDSLContext.selectOne()
+                        .from(${table})
+                        .where(${table}.ID.eq(id)));
+    }
 }

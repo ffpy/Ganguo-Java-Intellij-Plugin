@@ -39,4 +39,9 @@ public class ${name}Repository implements I${name}Repository {
     public int deleteById(Long id) {
         return m${name}DbStrategy.deleteById(id);
     }
+
+    @Override
+    public boolean existsById(Long id) {
+        return m${name}DbStrategy.existsById(id);
+    }
 }
