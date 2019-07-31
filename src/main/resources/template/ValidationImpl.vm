@@ -1,4 +1,4 @@
-import ${packageName}.infrastructure.validation.BaseConstraintValidator;
+import com.ganguomob.dev.base.infrastructure.validation.BaseConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 public class ${name}ValidatorImpl extends BaseConstraintValidator<${name}, String> {

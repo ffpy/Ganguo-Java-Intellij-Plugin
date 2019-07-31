@@ -1,6 +1,7 @@
 import ${packageName}.domain.repository.${moduleName}.I${name}DbStrategy;
 import com.ganguomob.dev.base.infrastructure.repository.db.BaseDAO;
 import ${packageName}.jooq.tables.pojos.${pojoCls};
+import ${packageName}.jooq.tables.records.${recordCls};
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
