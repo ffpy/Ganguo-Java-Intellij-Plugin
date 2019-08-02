@@ -30,6 +30,7 @@ import org.dependcode.dependcode.Context;
 import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.anno.Func;
 import org.dependcode.dependcode.anno.Var;
+import org.dependcode.dependcode.anno.WhenNull;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -69,7 +70,11 @@ public class AddMsgAction extends BaseAction {
      */
     @Var
     private VirtualFile msgFile(VirtualFile rootFile) {
-        return rootFile.findFileByRelativePath(Paths.MSG_PROPERTIES);
+        VirtualFile file = rootFile.findFileByRelativePath(Paths.MSG_PROPERTIES);
+        if (file == null) {
+            file = rootFile.findFileByRelativePath(Paths.MSG_ZH_PROPERTIES);
+        }
+        return file;
     }
 
     /**

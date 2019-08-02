@@ -50,6 +50,10 @@ public class ${className}Tests extends BaseTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
+#if($method != "get")
+
+        prettyPrintJson(response);
+#end
 
         assertResponseSuccess(response);
     }
