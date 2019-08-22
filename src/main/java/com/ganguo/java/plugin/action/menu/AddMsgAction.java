@@ -30,7 +30,6 @@ import org.dependcode.dependcode.Context;
 import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.anno.Func;
 import org.dependcode.dependcode.anno.Var;
-import org.dependcode.dependcode.anno.WhenNull;
 
 import java.io.IOException;
 import java.util.Arrays;

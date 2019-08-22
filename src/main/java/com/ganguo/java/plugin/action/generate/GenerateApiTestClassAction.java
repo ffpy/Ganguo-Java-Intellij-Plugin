@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.FuncAction;
 import org.dependcode.dependcode.anno.Func;
+import org.dependcode.dependcode.anno.ImportFrom;
 import org.dependcode.dependcode.anno.Nla;
 import org.dependcode.dependcode.anno.Var;
 
@@ -38,6 +39,7 @@ import java.util.Optional;
  * 生成Api接口方法测试类
  */
 @Slf4j
+@ImportFrom(JavaFileContext.class)
 public class GenerateApiTestClassAction extends BaseGenerateAction {
 
     private static final String METHOD_GET = "get";
@@ -49,7 +51,6 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
     protected void action(AnActionEvent e) {
         ContextBuilder.of(this)
                 .put("event", e)
-                .importFrom(JavaFileContext.getContext())
                 .build()
                 .execVoid("doAction");
     }

@@ -7,18 +7,13 @@ import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import org.dependcode.dependcode.Context;
 import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.FuncAction;
+import org.dependcode.dependcode.anno.ImportThose;
 import org.dependcode.dependcode.anno.Var;
 
 import java.util.Optional;
 
+@ImportThose(value = NewContext.class, data = "createModuleDir")
 public class RepositoryContext {
-    private static final Context CONTEXT = ContextBuilder.of(new RepositoryContext())
-            .importThose(NewContext.getContext(), "createModuleDir")
-            .build();
-
-    public static Context getContext() {
-        return CONTEXT;
-    }
 
     /**
      * domain文件夹

@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.FuncAction;
 import org.dependcode.dependcode.anno.Func;
+import org.dependcode.dependcode.anno.ImportFrom;
 import org.dependcode.dependcode.anno.Var;
 
 import java.util.Arrays;
@@ -34,13 +35,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
+@ImportFrom(JavaFileContext.class)
 public class GenerateRepositoryMethodAction extends BaseGenerateAction {
 
     @Override
     protected void action(AnActionEvent e) throws Exception {
         ContextBuilder.of(this)
                 .put("event", e)
-                .importFrom(JavaFileContext.getContext())
                 .build()
                 .execVoid("doAction");
     }

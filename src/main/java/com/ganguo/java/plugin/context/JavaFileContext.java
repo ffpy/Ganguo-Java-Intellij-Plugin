@@ -26,11 +26,6 @@ import org.dependcode.dependcode.anno.Var;
 import java.util.Map;
 
 public class JavaFileContext {
-    private static final Context CONTEXT = ContextBuilder.of(new JavaFileContext()).build();
-
-    public static Context getContext() {
-        return CONTEXT;
-    }
 
     /**
      * 当前文件

@@ -16,11 +16,6 @@ import java.util.Optional;
 
 @Slf4j
 public class NewContext {
-    private static final Context CONTEXT = ContextBuilder.of(new NewContext()).build();
-
-    public static Context getContext() {
-        return CONTEXT;
-    }
 
     @Var
     private String modulePath(String module) {

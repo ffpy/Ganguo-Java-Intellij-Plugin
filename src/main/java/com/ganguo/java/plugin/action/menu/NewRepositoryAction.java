@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.FuncAction;
 import org.dependcode.dependcode.anno.Func;
+import org.dependcode.dependcode.anno.ImportFrom;
 import org.dependcode.dependcode.anno.Var;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +29,9 @@ import java.util.Map;
  * 创建Repository接口及实现类
  */
 @Slf4j
+@ImportFrom(NewContext.class)
+@ImportFrom(RepositoryContext.class)
+@ImportFrom(JavaFileContext.class)
 public class NewRepositoryAction extends BaseAction {
 
     @Override
@@ -41,9 +45,6 @@ public class NewRepositoryAction extends BaseAction {
                 .put("table", table)
                 .put("module", module)
                 .put("name", name)
-                .importFrom(NewContext.getContext())
-                .importFrom(RepositoryContext.getContext())
-                .importFrom(JavaFileContext.getContext())
                 .build()
                 .execVoid("writeFile")
                 .isPresent();

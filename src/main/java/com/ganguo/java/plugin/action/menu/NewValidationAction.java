@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.FuncAction;
 import org.dependcode.dependcode.anno.Func;
+import org.dependcode.dependcode.anno.ImportFrom;
 import org.dependcode.dependcode.anno.Var;
 
 import java.util.HashMap;
@@ -25,6 +26,8 @@ import java.util.Map;
  * 创建校验注解及校验类
  */
 @Slf4j
+@ImportFrom(NewContext.class)
+@ImportFrom(JavaFileContext.class)
 public class NewValidationAction extends BaseAction {
 
     @Override
@@ -37,8 +40,6 @@ public class NewValidationAction extends BaseAction {
                 .put("event", event)
                 .put("module", module)
                 .put("name", name)
-                .importFrom(NewContext.getContext())
-                .importFrom(JavaFileContext.getContext())
                 .build()
                 .execVoid("writeFile")
                 .isPresent();
