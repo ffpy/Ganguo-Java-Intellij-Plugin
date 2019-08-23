@@ -31,8 +31,8 @@ public class ${name}Repository implements I${name}Repository {
     }
 
     @Override
-    public int updateById(${pojoCls} ${pojoName}) {
-        return m${name}DbStrategy.updateById(${pojoName});
+    public int updateById(Long id, ${recordCls} ${pojoName}) {
+        return m${name}DbStrategy.updateById(id, ${pojoName});
     }
 
     @Override
