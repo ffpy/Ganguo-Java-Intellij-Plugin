@@ -9,11 +9,16 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiField;
+import lombok.extern.slf4j.Slf4j;
 import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.anno.Func;
 import org.dependcode.dependcode.anno.ImportFrom;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * ApiModel自动编号
+ */
+@Slf4j
 @ImportFrom(JavaFileContext.class)
 public class ApiModelAutoPosition extends BaseAction {
 

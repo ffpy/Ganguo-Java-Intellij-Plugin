@@ -27,6 +27,9 @@ public class PsiUtils {
      * 格式化代码
      */
     public static void reformatJavaFile(PsiElement theElement) {
+        if (theElement == null) {
+            return;
+        }
         WriteCommandAction.runWriteCommandAction(theElement.getProject(), () -> {
             CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(theElement.getProject());
             try {

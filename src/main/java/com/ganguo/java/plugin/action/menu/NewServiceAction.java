@@ -6,7 +6,7 @@ import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.context.NewContext;
 import com.ganguo.java.plugin.ui.dialog.ModuleAndNameDialog;
 import com.ganguo.java.plugin.util.FileUtils;
-import com.ganguo.java.plugin.util.FilenameIndexUtils;
+import com.ganguo.java.plugin.util.IndexUtils;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
@@ -80,7 +80,7 @@ public class NewServiceAction extends BaseAction {
     @Var
     private String repositoryClassName(Project project, String name) {
         return Arrays.stream(
-                FilenameIndexUtils.getFilesByName(project, "I" + name + "Repository.java"))
+                IndexUtils.getFilesByName(project, "I" + name + "Repository.java"))
                 .findFirst()
                 .map(f -> (PsiJavaFile) f)
                 .flatMap(f -> Arrays.stream(f.getClasses())

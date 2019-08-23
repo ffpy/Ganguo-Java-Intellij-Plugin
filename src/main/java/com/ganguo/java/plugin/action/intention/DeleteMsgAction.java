@@ -3,7 +3,7 @@ package com.ganguo.java.plugin.action.intention;
 import com.ganguo.java.plugin.constant.Filenames;
 import com.ganguo.java.plugin.util.EditorUtils;
 import com.ganguo.java.plugin.util.FileUtils;
-import com.ganguo.java.plugin.util.FilenameIndexUtils;
+import com.ganguo.java.plugin.util.IndexUtils;
 import com.ganguo.java.plugin.util.SafeProperties;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
@@ -80,7 +80,7 @@ public class DeleteMsgAction extends BaseIntentionAction {
      * 从ExceptionMsg.java文件中删除
      */
     private void deleteOnClass(Project project, String key) {
-        PsiFile[] psiFiles = FilenameIndexUtils.getFilesByName(project, Filenames.MSG_CLASS);
+        PsiFile[] psiFiles = IndexUtils.getFilesByName(project, Filenames.MSG_CLASS);
         if (psiFiles.length == 0) {
             log.error("find {} fail!", Filenames.MSG_CLASS);
             return;

@@ -3,7 +3,7 @@ package com.ganguo.java.plugin.context;
 import com.ganguo.java.plugin.constant.TemplateName;
 import com.ganguo.java.plugin.service.ProjectSettingService;
 import com.ganguo.java.plugin.util.ElementUtils;
-import com.ganguo.java.plugin.util.FilenameIndexUtils;
+import com.ganguo.java.plugin.util.IndexUtils;
 import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.StringHelper;
 import com.ganguo.java.plugin.util.TemplateUtils;
@@ -76,7 +76,7 @@ public class JavaFileContext {
      */
     @Func
     public VirtualFile getVirtualFilesByName(Project project, @Ignore String name) {
-        return FilenameIndexUtils.getVirtualFilesByName(project, name)
+        return IndexUtils.getVirtualFilesByName(project, name)
                 .stream().findFirst().orElse(null);
     }
 
@@ -85,7 +85,7 @@ public class JavaFileContext {
      */
     @Func
     public PsiFile getFilesByName(Project project, @Ignore String name) {
-        PsiFile[] files = FilenameIndexUtils.getFilesByName(project, name);
+        PsiFile[] files = IndexUtils.getFilesByName(project, name);
         if (files != null && files.length > 0) {
             return files[0];
         }

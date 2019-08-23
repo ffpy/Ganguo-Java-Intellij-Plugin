@@ -74,6 +74,13 @@
 
             </action>
 
+            <action id="com.ganguo.java.plugin.action.menu.GenerateSetterCaller"
+                    class="com.ganguo.java.plugin.action.menu.GenerateSetterCaller"
+                    text="生成Setter调用"
+                    description="生成Setter调用">
+
+            </action>
+
         </group>
 
         <group id="Ganguo.Generate"

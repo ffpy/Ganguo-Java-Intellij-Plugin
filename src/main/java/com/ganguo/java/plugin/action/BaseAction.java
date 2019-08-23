@@ -8,10 +8,12 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiFileSystemItem;
@@ -41,7 +43,11 @@ public abstract class BaseAction extends AnAction implements DumbAware {
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-        e.getPresentation().setEnabled(e.getProject() != null);
+        show(e, e.getProject() != null);
+    }
+
+    protected void show(AnActionEvent e, boolean show) {
+        e.getPresentation().setEnabled(show);
     }
 
     /**
@@ -67,52 +73,62 @@ public abstract class BaseAction extends AnAction implements DumbAware {
     }
 
     @Var
-    private Project project(AnActionEvent event) {
+    protected Project project(AnActionEvent event) {
         return event.getProject();
     }
 
     @Var
-    private VirtualFile rootFile(Project project) {
+    protected VirtualFile rootFile(Project project) {
         return ProjectUtils.getRootFile(project);
     }
 
     @Var
-    private VirtualFile packageFile(Project project) {
+    protected VirtualFile packageFile(Project project) {
         return ProjectUtils.getPackageFile(project);
     }
 
     @Var
-    private VirtualFile testPackageFile(Project project) {
+    protected VirtualFile testPackageFile(Project project) {
         return ProjectUtils.getTestPackageFile(project);
     }
 
     @Var
-    private PsiDirectoryFactory directoryFactory(Project project) {
+    protected PsiDirectoryFactory directoryFactory(Project project) {
         return PsiDirectoryFactory.getInstance(project);
     }
 
     @Var
-    private PsiFileFactory fileFactory(Project project) {
+    protected PsiFileFactory fileFactory(Project project) {
         return PsiFileFactory.getInstance(project);
     }
 
     @Var
-    private ProjectSettingService settingService(Project project) {
+    protected ProjectSettingService settingService(Project project) {
         return ServiceManager.getService(project, ProjectSettingService.class);
     }
 
     @Var
-    private String packageName(ProjectSettingService settingService) {
+    protected String packageName(ProjectSettingService settingService) {
         return settingService.getPackageName();
     }
 
     @Var
-    private PsiElementFactory elementFactory(Project project) {
+    protected PsiElementFactory elementFactory(Project project) {
         return JavaPsiFacade.getElementFactory(project);
     }
 
     @Var(cache = false)
-    private WriteActions writeActions(Project project) {
+    protected WriteActions writeActions(Project project) {
         return new WriteActions(project);
+    }
+
+    @Var
+    protected Editor editor(AnActionEvent event) {
+        return event.getData(LangDataKeys.HOST_EDITOR);
+    }
+
+    @Var
+    protected PsiElement curElement(AnActionEvent event) {
+        return event.getData(LangDataKeys.PSI_ELEMENT);
     }
 }
