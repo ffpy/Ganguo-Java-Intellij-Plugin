@@ -3,6 +3,7 @@ package com.ganguo.java.plugin.action.menu;
 import com.ganguo.java.plugin.action.BaseAction;
 import com.ganguo.java.plugin.util.EditorUtils;
 import com.ganguo.java.plugin.util.IndexUtils;
+import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.StringHelper;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -94,8 +95,7 @@ public class GenerateSetterCaller extends BaseAction {
 
     @Var
     private String callers(PsiClass targetClass, String indent, String varName) {
-        String callers = Arrays.stream(targetClass.getAllMethods())
-                .filter(method -> method.getName().matches("^set[A-Z].*$"))
+        String callers = PsiUtils.getAllSetter(targetClass)
                 .map(method -> StringHelper.of("{var}.{methodName}();")
                         .param("var", varName)
                         .param("methodName", method.getName())

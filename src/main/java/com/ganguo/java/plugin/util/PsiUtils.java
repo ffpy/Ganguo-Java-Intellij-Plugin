@@ -7,11 +7,14 @@ import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiJavaFile;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import org.apache.commons.beanutils.ConvertUtils;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class PsiUtils {
 
@@ -101,5 +104,10 @@ public class PsiUtils {
                 })
                 .orElse(null);
 
+    }
+
+    public static Stream<PsiMethod> getAllSetter(PsiClass psiClass) {
+        return Arrays.stream(psiClass.getAllMethods())
+                .filter(method -> method.getName().matches("^set[A-Z].*$"));
     }
 }
