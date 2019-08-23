@@ -2,9 +2,11 @@ package com.ganguo.java.plugin.util;
 
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
+import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import org.apache.commons.beanutils.ConvertUtils;
 
@@ -12,6 +14,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class PsiUtils {
+
+    public static PsiClass getClassByFile(PsiJavaFile file) {
+        PsiClass[] classes = file.getClasses();
+        if (classes.length > 0) {
+            return classes[0];
+        }
+        return null;
+    }
 
     /**
      * 格式化代码

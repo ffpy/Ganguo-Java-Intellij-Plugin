@@ -19,7 +19,7 @@ public class RepositoryContext {
      * domain文件夹
      */
     @Var
-    private PsiDirectory domainDir(Context context, FuncAction<PsiDirectory> createModuleDir) {
+    public PsiDirectory domainDir(Context context, FuncAction<PsiDirectory> createModuleDir) {
         return createModuleDir.get(Paths.DOMAIN_REPOSITORY);
     }
 
@@ -27,7 +27,7 @@ public class RepositoryContext {
      * Repository所在的文件夹
      */
     @Var
-    private PsiDirectory infrastructureImplDir(PsiDirectoryFactory directoryFactory,
+    public PsiDirectory infrastructureImplDir(PsiDirectoryFactory directoryFactory,
                                                VirtualFile packageFile) {
         return Optional.ofNullable(packageFile.findFileByRelativePath(Paths.INFRASTRUCTURE_IMPL))
                 .map(directoryFactory::createDirectory)
@@ -38,7 +38,7 @@ public class RepositoryContext {
      * DAO所在的文件夹
      */
     @Var
-    private PsiDirectory infrastructureDbImplDir(PsiDirectoryFactory directoryFactory,
+    public PsiDirectory infrastructureDbImplDir(PsiDirectoryFactory directoryFactory,
                                                  VirtualFile packageFile) {
         return Optional.ofNullable(packageFile.findFileByRelativePath(Paths.INFRASTRUCTURE_DB_IMPL))
                 .map(directoryFactory::createDirectory)

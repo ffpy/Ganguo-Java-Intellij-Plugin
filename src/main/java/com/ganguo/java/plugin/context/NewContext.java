@@ -18,12 +18,12 @@ import java.util.Optional;
 public class NewContext {
 
     @Var
-    private String modulePath(String module) {
+    public String modulePath(String module) {
         return module.replace('.', '/');
     }
 
     @Func
-    private PsiDirectory createModuleDir(VirtualFile packageFile, PsiDirectoryFactory directoryFactory,
+    public PsiDirectory createModuleDir(VirtualFile packageFile, PsiDirectoryFactory directoryFactory,
                                          String modulePath, @Ignore String path) {
         try {
             if (!path.endsWith("/")) {
