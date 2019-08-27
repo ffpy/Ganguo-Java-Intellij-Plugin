@@ -6,7 +6,7 @@ import com.ganguo.java.plugin.constant.Paths;
 import com.ganguo.java.plugin.ui.dialog.AddMsgDialog;
 import com.ganguo.java.plugin.util.CopyPasteUtils;
 import com.ganguo.java.plugin.util.FileUtils;
-import com.ganguo.java.plugin.util.FilenameIndexUtils;
+import com.ganguo.java.plugin.util.IndexUtils;
 import com.ganguo.java.plugin.util.MsgUtils;
 import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.SafeProperties;
@@ -69,7 +69,11 @@ public class AddMsgAction extends BaseAction {
      */
     @Var
     private VirtualFile msgFile(VirtualFile rootFile) {
-        return rootFile.findFileByRelativePath(Paths.MSG_PROPERTIES);
+        VirtualFile file = rootFile.findFileByRelativePath(Paths.MSG_PROPERTIES);
+        if (file == null) {
+            file = rootFile.findFileByRelativePath(Paths.MSG_ZH_PROPERTIES);
+        }
+        return file;
     }
 
     /**
@@ -130,7 +134,7 @@ public class AddMsgAction extends BaseAction {
      */
     @Var
     private PsiClass msgClass(Project project) {
-        return Arrays.stream(FilenameIndexUtils.getFilesByName(project, Filenames.MSG_CLASS))
+        return Arrays.stream(IndexUtils.getFilesByName(project, Filenames.MSG_CLASS))
                 .findFirst()
                 .map(file -> PsiTreeUtil.findChildOfType(file, PsiClass.class))
                 .orElse(null);

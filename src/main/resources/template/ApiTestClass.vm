@@ -31,6 +31,9 @@ public class ${className}Tests extends BaseTest {
     public void successTest() throws Exception {
 #if($requestClassSimpleName)
         ${requestClassSimpleName} request = new ${requestClassSimpleName}();
+#foreach($setter in $requestSetters)
+        request.$setter();
+#end
 
 #end
         String response = mMockMvc.perform(
@@ -50,6 +53,10 @@ public class ${className}Tests extends BaseTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
+#if($method == "get")
+
+        prettyPrintJson(response);
+#end
 
         assertResponseSuccess(response);
     }

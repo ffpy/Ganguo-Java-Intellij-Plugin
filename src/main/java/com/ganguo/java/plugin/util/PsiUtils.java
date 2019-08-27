@@ -2,21 +2,37 @@ package com.ganguo.java.plugin.util;
 
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
+import com.intellij.psi.PsiJavaFile;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import org.apache.commons.beanutils.ConvertUtils;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class PsiUtils {
+
+    public static PsiClass getClassByFile(PsiJavaFile file) {
+        PsiClass[] classes = file.getClasses();
+        if (classes.length > 0) {
+            return classes[0];
+        }
+        return null;
+    }
 
     /**
      * 格式化代码
      */
     public static void reformatJavaFile(PsiElement theElement) {
+        if (theElement == null) {
+            return;
+        }
         WriteCommandAction.runWriteCommandAction(theElement.getProject(), () -> {
             CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(theElement.getProject());
             try {
@@ -88,5 +104,10 @@ public class PsiUtils {
                 })
                 .orElse(null);
 
+    }
+
+    public static Stream<PsiMethod> getAllSetter(PsiClass psiClass) {
+        return Arrays.stream(psiClass.getAllMethods())
+                .filter(method -> method.getName().matches("^set[A-Z].*$"));
     }
 }

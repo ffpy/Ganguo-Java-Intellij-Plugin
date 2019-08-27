@@ -6,7 +6,7 @@ import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.context.NewContext;
 import com.ganguo.java.plugin.ui.dialog.ModuleAndNameDialog;
 import com.ganguo.java.plugin.util.FileUtils;
-import com.ganguo.java.plugin.util.FilenameIndexUtils;
+import com.ganguo.java.plugin.util.IndexUtils;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.FuncAction;
 import org.dependcode.dependcode.anno.Func;
+import org.dependcode.dependcode.anno.ImportFrom;
 import org.dependcode.dependcode.anno.Nla;
 import org.dependcode.dependcode.anno.Var;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,8 @@ import java.util.Map;
  * 创建Service接口及实现类
  */
 @Slf4j
+@ImportFrom(NewContext.class)
+@ImportFrom(JavaFileContext.class)
 public class NewServiceAction extends BaseAction {
 
     private static final String PATH_SERVICE_API = "service/api";
@@ -45,8 +48,6 @@ public class NewServiceAction extends BaseAction {
                 .put("event", event)
                 .put("module", module)
                 .put("name", name)
-                .importFrom(NewContext.getContext())
-                .importFrom(JavaFileContext.getContext())
                 .build()
                 .execVoid("writeFile")
                 .isPresent();
@@ -79,7 +80,7 @@ public class NewServiceAction extends BaseAction {
     @Var
     private String repositoryClassName(Project project, String name) {
         return Arrays.stream(
-                FilenameIndexUtils.getFilesByName(project, "I" + name + "Repository.java"))
+                IndexUtils.getFilesByName(project, "I" + name + "Repository.java"))
                 .findFirst()
                 .map(f -> (PsiJavaFile) f)
                 .flatMap(f -> Arrays.stream(f.getClasses())

@@ -16,19 +16,14 @@ import java.util.Optional;
 
 @Slf4j
 public class NewContext {
-    private static final Context CONTEXT = ContextBuilder.of(new NewContext()).build();
-
-    public static Context getContext() {
-        return CONTEXT;
-    }
 
     @Var
-    private String modulePath(String module) {
+    public String modulePath(String module) {
         return module.replace('.', '/');
     }
 
     @Func
-    private PsiDirectory createModuleDir(VirtualFile packageFile, PsiDirectoryFactory directoryFactory,
+    public PsiDirectory createModuleDir(VirtualFile packageFile, PsiDirectoryFactory directoryFactory,
                                          String modulePath, @Ignore String path) {
         try {
             if (!path.endsWith("/")) {

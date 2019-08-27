@@ -67,6 +67,20 @@
                 <keyboard-shortcut keymap="$default" first-keystroke="shift meta BACK_QUOTE"/>
             </action>
 
+            <action id="com.ganguo.java.plugin.action.menu.ApiModelAutoPosition"
+                    class="com.ganguo.java.plugin.action.menu.ApiModelAutoPosition"
+                    text="ApiMode自动编号"
+                    description="ApiMode自动编号">
+
+            </action>
+
+            <action id="com.ganguo.java.plugin.action.menu.GenerateSetterCaller"
+                    class="com.ganguo.java.plugin.action.menu.GenerateSetterCaller"
+                    text="生成Setter调用"
+                    description="生成Setter调用">
+
+            </action>
+
         </group>
 
         <group id="Ganguo.Generate"

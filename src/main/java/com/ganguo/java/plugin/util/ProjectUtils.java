@@ -38,7 +38,7 @@ public class ProjectUtils {
      * @return 包名
      */
     public static String getPackageName(Project project) {
-        return FilenameIndexUtils.getVirtualFilesByName(project, APPLICATION_FILENAME)
+        return IndexUtils.getVirtualFilesByName(project, APPLICATION_FILENAME)
                 .stream()
                 .findFirst()
                 .map(VirtualFile::getParent)
@@ -64,7 +64,7 @@ public class ProjectUtils {
      * @return 包目录
      */
     public static VirtualFile getPackageFile(Project project) {
-        return FilenameIndexUtils.getVirtualFilesByName(project, APPLICATION_FILENAME)
+        return IndexUtils.getVirtualFilesByName(project, APPLICATION_FILENAME)
                 .stream()
                 .findFirst()
                 .map(VirtualFile::getParent)
@@ -81,7 +81,7 @@ public class ProjectUtils {
      * @return 测试的包目录
      */
     public static VirtualFile getTestPackageFile(Project project) {
-        return FilenameIndexUtils.getVirtualFilesByName(project, TEST_APPLICATION_FILENAME)
+        return IndexUtils.getVirtualFilesByName(project, TEST_APPLICATION_FILENAME)
                 .stream()
                 .findFirst()
                 .map(VirtualFile::getParent)

@@ -2,6 +2,7 @@ package com.ganguo.java.plugin.action.generate;
 
 import com.ganguo.java.plugin.constant.TemplateName;
 import com.ganguo.java.plugin.util.FileUtils;
+import com.ganguo.java.plugin.util.IndexUtils;
 import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.context.JavaFileContext;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -9,6 +10,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
@@ -23,21 +25,25 @@ import org.apache.commons.lang3.StringUtils;
 import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.FuncAction;
 import org.dependcode.dependcode.anno.Func;
+import org.dependcode.dependcode.anno.ImportFrom;
 import org.dependcode.dependcode.anno.Nla;
 import org.dependcode.dependcode.anno.Var;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 生成Api接口方法测试类
  */
 @Slf4j
+@ImportFrom(JavaFileContext.class)
 public class GenerateApiTestClassAction extends BaseGenerateAction {
 
     private static final String METHOD_GET = "get";
@@ -49,7 +55,6 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
     protected void action(AnActionEvent e) {
         ContextBuilder.of(this)
                 .put("event", e)
-                .importFrom(JavaFileContext.getContext())
                 .build()
                 .execVoid("doAction");
     }
@@ -128,7 +133,7 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
      */
     @Var
     private Map<String, Object> params(String packageName, String className, PsiMethod curMethod,
-                                       String httpMethod, String url) {
+                                       String httpMethod, String url, Project project) {
         Map<String, Object> params = new HashMap<>(8);
 
         params.put("packageName", packageName);
@@ -140,6 +145,7 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
         if (requestBodyClassName != null) {
             params.put("requestClassName", requestBodyClassName.getName());
             params.put("requestClassSimpleName", requestBodyClassName.getSimpleName());
+            params.put("requestSetters", getSetters(project, requestBodyClassName.getName()));
         }
 
         if (METHOD_GET.equals(httpMethod)) {
@@ -241,6 +247,14 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
         return exists;
     }
 
+    private List<String> getSetters(Project project, String requestClassName) {
+        return Optional.ofNullable(IndexUtils.getClassByQualifiedName(project, requestClassName))
+                .map(psiClass -> PsiUtils.getAllSetter(psiClass)
+                        .map(PsiMethod::getName)
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
+    }
+
     /**
      * 获取标注有@RequestBody的参数的类名
      */
@@ -283,7 +297,7 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
     @Getter
     @AllArgsConstructor
     @ToString
-    private class RequestBodyClass {
+    private static class RequestBodyClass {
         private final String name;
         private final String simpleName;
     }

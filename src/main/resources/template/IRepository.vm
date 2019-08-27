@@ -2,6 +2,7 @@ import java.util.List;
 import java.util.Optional;
 
 import ${packageName}.jooq.tables.pojos.${pojoCls};
+import ${packageName}.jooq.tables.records.${recordCls};
 
 public interface I${name}Repository {
 
@@ -11,7 +12,9 @@ public interface I${name}Repository {
 
     ${pojoCls} insert(${pojoCls} ${pojoName});
 
-    int updateById(${pojoCls} ${pojoName});
+    int updateById(Long id, ${recordCls} ${pojoName});
 
     int deleteById(Long id);
+
+    boolean existsById(Long id);
 }
