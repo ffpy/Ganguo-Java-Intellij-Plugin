@@ -64,6 +64,7 @@ public abstract class BaseAction extends AnAction implements DumbAware {
 
     protected void showWithAnnotationOnClass(AnActionEvent e, String annotationName) {
         boolean show = Optional.ofNullable(e.getData(LangDataKeys.PSI_FILE))
+                .filter(file -> file instanceof PsiJavaFile)
                 .map(file -> (PsiJavaFile) file)
                 .filter(file -> e.getProject() != null)
                 .map(PsiUtils::getClassByFile)

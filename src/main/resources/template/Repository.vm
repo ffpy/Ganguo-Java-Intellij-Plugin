@@ -1,6 +1,7 @@
 import ${packageName}.domain.repository.${moduleName}.I${name}DbStrategy;
 import ${packageName}.domain.repository.${moduleName}.I${name}Repository;
 import ${packageName}.jooq.tables.pojos.${pojoCls};
+import ${packageName}.jooq.tables.records.${recordCls};
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
