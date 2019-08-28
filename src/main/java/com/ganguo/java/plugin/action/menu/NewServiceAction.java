@@ -32,8 +32,7 @@ import java.util.Map;
  * 创建Service接口及实现类
  */
 @Slf4j
-@ImportFrom(NewContext.class)
-@ImportFrom(JavaFileContext.class)
+@ImportFrom({NewContext.class, JavaFileContext.class})
 public class NewServiceAction extends BaseAction {
 
     private static final String PATH_SERVICE_API = "service/api";

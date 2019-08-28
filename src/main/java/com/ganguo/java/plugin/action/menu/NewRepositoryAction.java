@@ -29,9 +29,7 @@ import java.util.Map;
  * 创建Repository接口及实现类
  */
 @Slf4j
-@ImportFrom(NewContext.class)
-@ImportFrom(RepositoryContext.class)
-@ImportFrom(JavaFileContext.class)
+@ImportFrom({NewContext.class, RepositoryContext.class, JavaFileContext.class})
 public class NewRepositoryAction extends BaseAction {
 
     @Override

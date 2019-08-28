@@ -26,8 +26,7 @@ import java.util.Map;
  * 创建校验注解及校验类
  */
 @Slf4j
-@ImportFrom(NewContext.class)
-@ImportFrom(JavaFileContext.class)
+@ImportFrom({NewContext.class, JavaFileContext.class})
 public class NewValidationAction extends BaseAction {
 
     @Override
