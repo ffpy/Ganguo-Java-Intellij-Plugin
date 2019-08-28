@@ -178,13 +178,22 @@ public class GenerateRepositoryMethodAction extends BaseGenerateAction {
                     .map(NavigationItem::getName)
                     .orElse("m" + moduleName + "DbStrategy");
 
-            String newCodeBlockText = StringHelper.of("{" +
-                    "return {dbStrategyField}.{methodName}({parameters});" +
-                    "}")
+            boolean hasReturn = Optional.ofNullable(method.getReturnType())
+                    .map(type -> !"void".equals(type.getPresentableText()))
+                    .orElse(true);
+
+            System.out.println("return: " + method.getReturnType().getPresentableText());
+
+            String newCodeBlockText = StringHelper.of("{{" +
+                    "{return}{dbStrategyField}.{methodName}({parameters});" +
+                    "}}")
                     .param("methodName", method.getName())
                     .param("dbStrategyField", dbStrategyField)
                     .param("parameters", StringUtils.join(parameters, ", "))
+                    .param("return", hasReturn ? "return " : "")
                     .toString();
+
+            System.out.println("block: " + newCodeBlockText);
 
             PsiCodeBlock newCodeBlock = elementFactory.createCodeBlockFromText(newCodeBlockText, method);
 
