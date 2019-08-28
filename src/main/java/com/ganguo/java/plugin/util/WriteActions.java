@@ -22,6 +22,7 @@ public class WriteActions {
     public void run() {
         WriteCommandAction.runWriteCommandAction(project, () -> {
             tasks.forEach(Runnable::run);
+            tasks.clear();
         });
     }
 }
