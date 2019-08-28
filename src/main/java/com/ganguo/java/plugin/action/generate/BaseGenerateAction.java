@@ -23,39 +23,4 @@ public abstract class BaseGenerateAction extends BaseAction {
     public void update(@NotNull AnActionEvent e) {
         e.getPresentation().setEnabled(isShow(e));
     }
-
-    protected boolean isMethodOfClass(AnActionEvent e, String pattern) {
-        PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
-        if (!(psiFile instanceof PsiJavaFile)) {
-            return false;
-        }
-
-        PsiJavaFile curFile = (PsiJavaFile) psiFile;
-
-        String qualifiedName = Optional.of(curFile)
-                .flatMap(file -> Arrays.stream(file.getClasses()).findFirst())
-                .map(PsiClass::getQualifiedName)
-                .orElse(null);
-
-        return Optional.of(curFile)
-                .map(PsiFile::getVirtualFile)
-                .map(VirtualFile::getName)
-                .filter(name -> name.matches(pattern))
-                .map(it -> e.getData(LangDataKeys.PSI_ELEMENT))
-                .map(element -> {
-                    if (!(element instanceof PsiMethod)) {
-                        return false;
-                    }
-                    PsiElement parent = element.getParent();
-                    if (!(parent instanceof PsiClass)) {
-                        return false;
-                    }
-                    if (!Objects.equals(((PsiClass) parent).getQualifiedName(), qualifiedName)) {
-                        return false;
-                    }
-                    return true;
-
-                })
-                .orElse(false);
-    }
 }

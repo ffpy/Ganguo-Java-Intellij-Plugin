@@ -29,15 +29,20 @@ import java.util.function.Function;
 @Slf4j
 public abstract class BaseAction extends AnAction implements DumbAware {
 
+    protected AnActionEvent mEvent;
+
     protected abstract void action(AnActionEvent e) throws Exception;
 
     @Override
     @Deprecated
     public void actionPerformed(@NotNull AnActionEvent event) {
+        this.mEvent = event;
         try {
             action(event);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+        } finally {
+            this.mEvent = null;
         }
     }
 

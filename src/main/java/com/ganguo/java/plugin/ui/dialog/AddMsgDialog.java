@@ -25,12 +25,6 @@ public class AddMsgDialog extends BaseDialog<AddMsgForm, AddMsgDialog.Action> {
 
     @Nullable
     @Override
-    protected JComponent createCenterPanel() {
-        return mForm.getMainPanel();
-    }
-
-    @Nullable
-    @Override
     public JComponent getPreferredFocusedComponent() {
         return mForm.getKeyField();
     }

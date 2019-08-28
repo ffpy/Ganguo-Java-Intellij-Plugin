@@ -99,6 +99,11 @@
                     class="com.ganguo.java.plugin.action.generate.GenerateRepositoryMethodAction"
                     text="实现此方法"
                     description="实现此方法"/>
+            
+            <action id="com.ganguo.java.plugin.action.generate.ModifyApiTestUrlAction"
+                    class="com.ganguo.java.plugin.action.generate.ModifyApiTestUrlAction"
+                    text="修改URL"
+                    description="修改URL"/>
 
         </group>
 

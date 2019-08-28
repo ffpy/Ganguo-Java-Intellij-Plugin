@@ -1,6 +1,7 @@
 package com.ganguo.java.plugin.action.generate;
 
 import com.ganguo.java.plugin.context.JavaFileContext;
+import com.ganguo.java.plugin.util.ActionShowHelper;
 import com.ganguo.java.plugin.util.StringHelper;
 import com.ganguo.java.plugin.util.WriteActions;
 import com.intellij.navigation.NavigationItem;
@@ -53,7 +54,10 @@ public class GenerateRepositoryMethodAction extends BaseGenerateAction {
 
     @Override
     protected boolean isShow(AnActionEvent e) {
-        return isMethodOfClass(e, "^I.*Repository.java$");
+        return ActionShowHelper.of(e)
+                .filenameMatch("^I.*Repository.java$")
+                .elementType(PsiMethod.class)
+                .isShow();
     }
 
     @Func

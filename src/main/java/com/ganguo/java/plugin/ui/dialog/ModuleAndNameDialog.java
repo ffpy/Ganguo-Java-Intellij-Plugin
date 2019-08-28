@@ -50,15 +50,10 @@ public class ModuleAndNameDialog extends BaseDialog<ModuleAndNameForm, ModuleAnd
         String module = mForm.getModuleField().getText().trim();
         String name = StringUtils.capitalize(mForm.getNameField().getText().trim());
 
-        try {
-            if (!name.isEmpty() &&
-                    mModuleLimit.getMatcher().test(module) && mNameLimit.getMatcher().test(name) &&
-                    mAction.apply(mEvent, module, name)) {
-                super.doOKAction();
-
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+        if (!name.isEmpty() &&
+                mModuleLimit.getMatcher().test(module) && mNameLimit.getMatcher().test(name) &&
+                mAction.apply(mEvent, module, name)) {
+            super.doOKAction();
         }
     }
 
