@@ -182,8 +182,6 @@ public class GenerateRepositoryMethodAction extends BaseGenerateAction {
                     .map(type -> !"void".equals(type.getPresentableText()))
                     .orElse(true);
 
-            System.out.println("return: " + method.getReturnType().getPresentableText());
-
             String newCodeBlockText = StringHelper.of("{{" +
                     "{return}{dbStrategyField}.{methodName}({parameters});" +
                     "}}")
