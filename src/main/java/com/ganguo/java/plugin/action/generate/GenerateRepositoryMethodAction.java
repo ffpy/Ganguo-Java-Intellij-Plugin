@@ -3,6 +3,7 @@ package com.ganguo.java.plugin.action.generate;
 import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.util.StringHelper;
 import com.ganguo.java.plugin.util.WriteActions;
+import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
@@ -15,6 +16,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiCodeBlock;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
+import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiKeyword;
@@ -159,7 +161,8 @@ public class GenerateRepositoryMethodAction extends BaseGenerateAction {
 
     @Func
     private PsiMethod createMethodForImpl(Project project, PsiElementFactory elementFactory,
-                                          FuncAction<PsiMethod> createMethodForDao, String moduleName) {
+                                          FuncAction<PsiMethod> createMethodForDao, String moduleName,
+                                          PsiClass implClass) {
         PsiMethod method = createMethodForDao.get();
 
         PsiCodeBlock codeBlock = PsiTreeUtil.findChildOfType(method, PsiCodeBlock.class);
@@ -168,11 +171,18 @@ public class GenerateRepositoryMethodAction extends BaseGenerateAction {
                     .map(PsiNamedElement::getName)
                     .toArray(String[]::new);
 
+            String dbStrategyField = Arrays.stream(implClass.getAllFields())
+                    .filter(field -> field.getType().getPresentableText()
+                            .equalsIgnoreCase("I" + moduleName + "DbStrategy"))
+                    .findFirst()
+                    .map(NavigationItem::getName)
+                    .orElse("m" + moduleName + "DbStrategy");
+
             String newCodeBlockText = StringHelper.of("{" +
-                    "return m{moduleName}DbStrategy.{methodName}({parameters});" +
+                    "return {dbStrategyField}.{methodName}({parameters});" +
                     "}")
-                    .param("moduleName", moduleName)
                     .param("methodName", method.getName())
+                    .param("dbStrategyField", dbStrategyField)
                     .param("parameters", StringUtils.join(parameters, ", "))
                     .toString();
 
