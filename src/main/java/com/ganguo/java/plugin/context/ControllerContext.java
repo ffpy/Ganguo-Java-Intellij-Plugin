@@ -10,7 +10,10 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.dependcode.dependcode.FuncAction;
 import org.dependcode.dependcode.anno.DefaultValue;
+import org.dependcode.dependcode.anno.Func;
+import org.dependcode.dependcode.anno.Ignore;
 import org.dependcode.dependcode.anno.ImportFrom;
 import org.dependcode.dependcode.anno.Nla;
 import org.dependcode.dependcode.anno.Var;
@@ -100,7 +103,7 @@ public class ControllerContext {
      * 模块名，如api/user
      */
     @Var
-    private String moduleName(String curPackageName) {
+    public String moduleName(String curPackageName) {
         final String sep = ".controller";
         int index = curPackageName.indexOf(sep);
         String moduleName;
@@ -120,7 +123,7 @@ public class ControllerContext {
      * 接口测试文件夹
      */
     @Var
-    private VirtualFile apiTestDirFile(String moduleName, VirtualFile testPackageFile) {
+    public VirtualFile apiTestDirFile(String moduleName, VirtualFile testPackageFile) {
         try {
             return FileUtils.findOrCreateDirectory(testPackageFile, "controller/" + moduleName);
         } catch (IOException ex) {
@@ -133,7 +136,7 @@ public class ControllerContext {
      * 接口测试文件夹
      */
     @Var
-    private PsiDirectory apiTestDir(PsiDirectoryFactory directoryFactory, VirtualFile apiTestDirFile) {
+    public PsiDirectory apiTestDir(PsiDirectoryFactory directoryFactory, VirtualFile apiTestDirFile) {
         return directoryFactory.createDirectory(apiTestDirFile);
     }
 
@@ -141,15 +144,23 @@ public class ControllerContext {
      * 测试类类名
      */
     @Var
-    private String apiTestClassName(PsiMethod curMethod) {
-        return StringUtils.capitalize(curMethod.getName()) + "Tests";
+    public String apiTestClassName(PsiMethod curMethod, FuncAction<String> getTestClassNamByMethodName) {
+        return getTestClassNamByMethodName.exec(curMethod.getName()).get();
+    }
+
+    /**
+     * 从接口方法名获取测试类类名
+     */
+    @Func
+    public String getTestClassNamByMethodName(@Ignore String methodName) {
+        return StringUtils.capitalize(methodName) + "Tests";
     }
 
     /**
      * 测试类文件
      */
     @Var
-    private VirtualFile apiTestFile(VirtualFile apiTestDirFile, String apiTestClassName) {
+    public VirtualFile apiTestFile(VirtualFile apiTestDirFile, String apiTestClassName) {
         return apiTestDirFile.findFileByRelativePath(apiTestClassName + ".java");
     }
 
@@ -159,7 +170,7 @@ public class ControllerContext {
      * @return true为存在，false为不存在
      */
     @Var
-    private boolean apiTestFileExists(@Nla VirtualFile apiTestFile) {
+    public boolean apiTestFileExists(@Nla VirtualFile apiTestFile) {
         return Optional.ofNullable(apiTestFile)
                 .map(VirtualFile::exists)
                 .orElse(false);

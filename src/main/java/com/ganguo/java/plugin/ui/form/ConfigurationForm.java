@@ -2,6 +2,7 @@ package com.ganguo.java.plugin.ui.form;
 
 import com.ganguo.java.plugin.constant.TemplateName;
 import com.ganguo.java.plugin.ui.BaseForm;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -62,7 +63,8 @@ public class ConfigurationForm implements BaseForm {
     public void setTemplateMap(Map<TemplateName, String> templateMap) {
         for (Map.Entry<TemplateName, String> entry : templateMap.entrySet()) {
             Optional.ofNullable(mEditorMap.get(entry.getKey()))
-                    .ifPresent(editor -> editor.getDocument().setText(entry.getValue()));
+                    .ifPresent(editor -> ApplicationManager.getApplication().runWriteAction(() ->
+                            editor.getDocument().setText(entry.getValue())));
         }
     }
 

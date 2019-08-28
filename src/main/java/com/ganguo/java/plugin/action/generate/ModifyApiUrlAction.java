@@ -29,11 +29,11 @@ import java.nio.charset.Charset;
  */
 @Slf4j
 @ImportFrom({JavaFileContext.class, ControllerContext.class})
-public class ModifyApiTestUrlAction extends BaseGenerateAction {
+public class ModifyApiUrlAction extends BaseGenerateAction {
 
     @Override
     protected void action(AnActionEvent e) throws Exception {
-        Context context = ContextBuilder.of(new ModifyApiTestUrlAction())
+        Context context = ContextBuilder.of(new ModifyApiUrlAction())
                 .put("newPathUrl", "")
                 .put("event", mEvent)
                 .build();
