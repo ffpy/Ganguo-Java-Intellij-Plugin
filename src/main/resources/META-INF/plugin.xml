@@ -92,8 +92,13 @@
 
             <action id="com.ganguo.java.plugin.action.generate.GenerateApiTestClassAction"
                     class="com.ganguo.java.plugin.action.generate.GenerateApiTestClassAction"
-                    text="生成接口方法测试类"
-                    description="生成接口方法测试类"/>
+                    text="生成测试类"
+                    description="生成测试类"/>
+
+            <action id="com.ganguo.java.plugin.action.generate.GotoApiTestClassAction"
+                    class="com.ganguo.java.plugin.action.generate.GotoApiTestClassAction"
+                    text="跳转到测试类"
+                    description="跳转到测试类"/>
 
             <action id="com.ganguo.java.plugin.action.generate.GenerateRepositoryMethodAction"
                     class="com.ganguo.java.plugin.action.generate.GenerateRepositoryMethodAction"
@@ -107,8 +112,8 @@
 
             <action id="com.ganguo.java.plugin.action.generate.ModifyApiNameAction"
                     class="com.ganguo.java.plugin.action.generate.ModifyApiNameAction"
-                    text="修改接口方法名称"
-                    description="修改接口方法名称"/>
+                    text="修改方法名称"
+                    description="修改方法名称"/>
 
         </group>
 

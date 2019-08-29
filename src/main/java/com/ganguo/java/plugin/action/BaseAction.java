@@ -123,7 +123,7 @@ public abstract class BaseAction extends AnAction implements DumbAware {
         return JavaPsiFacade.getElementFactory(project);
     }
 
-    @Var(cache = false)
+    @Var
     protected WriteActions writeActions(Project project) {
         return new WriteActions(project);
     }

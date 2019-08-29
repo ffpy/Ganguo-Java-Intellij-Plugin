@@ -16,12 +16,11 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
-import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.dependcode.dependcode.Context;
 import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.FuncAction;
 import org.dependcode.dependcode.anno.Func;
@@ -29,7 +28,6 @@ import org.dependcode.dependcode.anno.ImportFrom;
 import org.dependcode.dependcode.anno.Nla;
 import org.dependcode.dependcode.anno.Var;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,18 +43,26 @@ import java.util.stream.Collectors;
 @Slf4j
 @ImportFrom({JavaFileContext.class, ControllerContext.class})
 public class GenerateApiTestClassAction extends BaseGenerateAction {
+    private static final Context context = ContextBuilder.of(new GenerateApiTestClassAction())
+            .put("event", "")
+            .build();
 
     @Override
     protected void action(AnActionEvent e) {
-        ContextBuilder.of(this)
-                .put("event", e)
-                .build()
+        context.clearCache()
+                .update("event", e)
                 .execVoid("doAction");
     }
 
     @Override
     protected boolean isShow(AnActionEvent e) {
-        return ActionShowHelper.of(e).isControllerApiMethod().isShow();
+        context.clearCache().update("event", e);
+        return ActionShowHelper.of(e)
+                .isControllerApiMethod()
+                .and(() -> Optional.ofNullable(context.get("apiTestFileExists", Boolean.class))
+                        .map(b -> !b)
+                        .orElse(false))
+                .isShow();
     }
 
     @Func

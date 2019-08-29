@@ -16,7 +16,6 @@ import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.FuncAction;
 import org.dependcode.dependcode.anno.DefaultValue;
 import org.dependcode.dependcode.anno.Func;
-import org.dependcode.dependcode.anno.Ignore;
 import org.dependcode.dependcode.anno.ImportFrom;
 import org.dependcode.dependcode.anno.Nla;
 import org.dependcode.dependcode.anno.Var;
@@ -52,9 +51,9 @@ public class ModifyApiUrlAction extends BaseGenerateAction {
     @Func
     private boolean doAction(FuncAction<Void> modifyMethodUrl, FuncAction<Void> modifyApiTestsUrl,
                              WriteActions writeActions, boolean apiTestFileExists) {
-        modifyMethodUrl.exec(writeActions);
+        modifyMethodUrl.exec();
         if (apiTestFileExists) {
-            modifyApiTestsUrl.exec(writeActions);
+            modifyApiTestsUrl.exec();
         }
         writeActions.run();
         return true;
@@ -62,14 +61,14 @@ public class ModifyApiUrlAction extends BaseGenerateAction {
 
     @Func
     private void modifyMethodUrl(String newPathUrl, PsiAnnotation curMapping,
-                                 PsiElementFactory elementFactory, @Ignore WriteActions writeActions) {
+                                 PsiElementFactory elementFactory, WriteActions writeActions) {
         PsiExpression value = elementFactory.createExpressionFromText("\"" + newPathUrl + "\"", null);
         writeActions.add(() -> curMapping.setDeclaredAttributeValue("value", value));
     }
 
     @Func
     private void modifyApiTestsUrl(VirtualFile apiTestFile, String url, String newUrl,
-                                   @Ignore WriteActions writeActions) {
+                                   WriteActions writeActions) {
         try {
             Charset charset = apiTestFile.getCharset();
             String content = new String(apiTestFile.contentsToByteArray(), charset);

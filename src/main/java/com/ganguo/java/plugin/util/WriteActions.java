@@ -19,6 +19,11 @@ public class WriteActions {
         return this;
     }
 
+    public WriteActions clear() {
+        tasks.clear();
+        return this;
+    }
+
     public void run() {
         if (!tasks.isEmpty()) {
             WriteCommandAction.runWriteCommandAction(project, () -> {

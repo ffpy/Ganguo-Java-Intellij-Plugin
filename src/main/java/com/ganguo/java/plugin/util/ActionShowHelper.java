@@ -10,6 +10,7 @@ import com.intellij.psi.PsiMethod;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class ActionShowHelper {
     private static final ActionShowHelper EMPTY = new ActionShowHelper(null);
@@ -78,6 +79,13 @@ public class ActionShowHelper {
         if (this != EMPTY) {
             return filenameMatch("^.*Controller.java$")
                     .elementMatch(PsiMethod.class, this::isApiMethod);
+        }
+        return this;
+    }
+
+    public ActionShowHelper and(Supplier<Boolean> supplier) {
+        if (this != EMPTY) {
+            return checkMatch(supplier.get());
         }
         return this;
     }

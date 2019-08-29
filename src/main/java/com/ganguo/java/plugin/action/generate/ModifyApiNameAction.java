@@ -4,11 +4,14 @@ import com.ganguo.java.plugin.context.ControllerContext;
 import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.ui.dialog.InputDialog;
 import com.ganguo.java.plugin.util.ActionShowHelper;
-import com.ganguo.java.plugin.util.IndexUtils;
+import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.WriteActions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiJavaFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiMethod;
 import lombok.extern.slf4j.Slf4j;
 import org.dependcode.dependcode.Context;
@@ -56,21 +59,20 @@ public class ModifyApiNameAction extends BaseGenerateAction {
                              String newTestClassName, Project project,
                              WriteActions writeActions) {
         writeActions.add(() -> {
-            String javaFileSuffix = ".java";
+            // 修改方法名
             curMethod.setName(newMethodName);
 
-            String oldTestFileName = apiTestFile.getName();
-            if (oldTestFileName.endsWith(javaFileSuffix)) {
-                oldTestFileName = oldTestFileName.substring(0, oldTestFileName.length() - javaFileSuffix.length());
-            }
-
-            try {
-                Optional.ofNullable(IndexUtils.getClassByShortName(project, oldTestFileName))
-                        .ifPresent(psiClass -> psiClass.setName(newTestClassName));
-
-                apiTestFile.rename(this, newTestClassName + javaFileSuffix);
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
+            PsiFile testPsiFile = PsiManager.getInstance(project).findFile(apiTestFile);
+            if (testPsiFile instanceof PsiJavaFile) {
+                try {
+                    // 修改测试类文件名
+                    Optional.ofNullable(PsiUtils.getClassByFile((PsiJavaFile) testPsiFile))
+                            .ifPresent(file -> file.setName(newTestClassName));
+                    // 修改测试类类名
+                    apiTestFile.rename(this, newTestClassName + ".java");
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                }
             }
         }).run();
         return true;
