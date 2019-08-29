@@ -1,7 +1,8 @@
 package com.ganguo.java.plugin.action.menu;
 
-import com.ganguo.java.plugin.action.BaseAction;
+import com.ganguo.java.plugin.action.BaseAnAction;
 import com.ganguo.java.plugin.context.JavaFileContext;
+import com.ganguo.java.plugin.util.ActionShowHelper;
 import com.ganguo.java.plugin.util.WriteActions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.psi.PsiAnnotation;
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @Slf4j
 @ImportFrom(JavaFileContext.class)
-public class ApiModelAutoPosition extends BaseAction {
+public class ApiModelAutoPosition extends BaseAnAction {
 
     private static final String API_MODEL_ANNOTATION_NAME = "io.swagger.annotations.ApiModel";
     private static final String API_MODEL_PROPERTY_ANNOTATION_NAME = "io.swagger.annotations.ApiModelProperty";
@@ -36,7 +37,9 @@ public class ApiModelAutoPosition extends BaseAction {
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-        showWithAnnotationOnClass(e, API_MODEL_ANNOTATION_NAME);
+        ActionShowHelper.of(e)
+                .classWithAnnotation(API_MODEL_ANNOTATION_NAME)
+                .update();
     }
 
     @Func

@@ -5,7 +5,7 @@ import com.ganguo.java.plugin.context.NewContext;
 import com.ganguo.java.plugin.context.RepositoryContext;
 import com.ganguo.java.plugin.util.FileUtils;
 import com.ganguo.java.plugin.util.MyStringUtils;
-import com.ganguo.java.plugin.action.BaseAction;
+import com.ganguo.java.plugin.action.BaseAnAction;
 import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.ui.dialog.NewRepositoryDialog;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -30,7 +30,7 @@ import java.util.Map;
  */
 @Slf4j
 @ImportFrom({NewContext.class, RepositoryContext.class, JavaFileContext.class})
-public class NewRepositoryAction extends BaseAction {
+public class NewRepositoryAction extends BaseAnAction {
 
     @Override
     public void action(@NotNull AnActionEvent e) {

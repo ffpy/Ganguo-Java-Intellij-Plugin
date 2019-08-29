@@ -4,7 +4,7 @@ import com.ganguo.java.plugin.constant.Paths;
 import com.ganguo.java.plugin.constant.TemplateName;
 import com.ganguo.java.plugin.context.NewContext;
 import com.ganguo.java.plugin.util.FileUtils;
-import com.ganguo.java.plugin.action.BaseAction;
+import com.ganguo.java.plugin.action.BaseAnAction;
 import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.ui.dialog.ModuleAndNameDialog;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -27,7 +27,7 @@ import java.util.Map;
  */
 @Slf4j
 @ImportFrom({NewContext.class, JavaFileContext.class})
-public class NewValidationAction extends BaseAction {
+public class NewValidationAction extends BaseAnAction {
 
     @Override
     protected void action(AnActionEvent e) throws Exception {

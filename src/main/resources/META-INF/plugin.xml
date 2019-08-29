@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.ganguo.plugin</id>
     <name>Ganguo Java</name>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">Ganguo</vendor>
+    <vendor email="wenlongsheng@ganguo.hk" url="https://www.ganguotech.com/">Ganguo</vendor>
 
     <description><![CDATA[ Description will be added by gradle build ]]></description>
 

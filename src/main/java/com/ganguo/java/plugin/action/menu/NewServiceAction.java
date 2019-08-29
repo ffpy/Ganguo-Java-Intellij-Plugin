@@ -1,6 +1,6 @@
 package com.ganguo.java.plugin.action.menu;
 
-import com.ganguo.java.plugin.action.BaseAction;
+import com.ganguo.java.plugin.action.BaseAnAction;
 import com.ganguo.java.plugin.constant.TemplateName;
 import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.context.NewContext;
@@ -33,7 +33,7 @@ import java.util.Map;
  */
 @Slf4j
 @ImportFrom({NewContext.class, JavaFileContext.class})
-public class NewServiceAction extends BaseAction {
+public class NewServiceAction extends BaseAnAction {
 
     private static final String PATH_SERVICE = "service";
 

@@ -1,6 +1,6 @@
 package com.ganguo.java.plugin.action.menu;
 
-import com.ganguo.java.plugin.action.BaseAction;
+import com.ganguo.java.plugin.action.BaseAnAction;
 import com.ganguo.java.plugin.constant.Filenames;
 import com.ganguo.java.plugin.constant.Paths;
 import com.ganguo.java.plugin.ui.dialog.AddMsgDialog;
@@ -39,7 +39,7 @@ import java.util.Map;
  * 添加Msg
  */
 @Slf4j
-public class AddMsgAction extends BaseAction {
+public class AddMsgAction extends BaseAnAction {
 
     @Override
     public void action(AnActionEvent e) {
