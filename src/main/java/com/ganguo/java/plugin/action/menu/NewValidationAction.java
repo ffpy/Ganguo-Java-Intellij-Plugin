@@ -34,7 +34,7 @@ public class NewValidationAction extends BaseAction {
         new ModuleAndNameDialog(e, "New Validation", false, this::doAction).show();
     }
 
-    private boolean doAction(AnActionEvent event, String module, String name) {
+    private boolean doAction(AnActionEvent event, String path, String module, String name) {
         return ContextBuilder.of(this)
                 .put("event", event)
                 .put("module", module)

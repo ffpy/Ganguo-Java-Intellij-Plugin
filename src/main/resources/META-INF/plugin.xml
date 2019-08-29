@@ -40,18 +40,18 @@
 
             <action id="com.ganguo.java.plugin.action.menu.NewServiceAction"
                     class="com.ganguo.java.plugin.action.menu.NewServiceAction"
-                    text="生成Service接口及实现类"
-                    description="生成Service接口及实现类"/>
+                    text="生成Service"
+                    description="生成Service"/>
 
             <action id="com.ganguo.java.plugin.action.menu.NewRepositoryAction"
                     class="com.ganguo.java.plugin.action.menu.NewRepositoryAction"
-                    text="生成Repository接口及实现类"
-                    description="生成Repository接口及实现类"/>
+                    text="生成Repository"
+                    description="生成Repository"/>
 
             <action id="com.ganguo.java.plugin.action.menu.NewValidationAction"
                     class="com.ganguo.java.plugin.action.menu.NewValidationAction"
-                    text="生成校验注解及校验类"
-                    description="生成校验注解及校验类"/>
+                    text="生成校验注解"
+                    description="生成校验注解"/>
 
             <action id="com.ganguo.java.plugin.action.menu.CaseFormatAction"
                     class="com.ganguo.java.plugin.action.menu.CaseFormatAction"

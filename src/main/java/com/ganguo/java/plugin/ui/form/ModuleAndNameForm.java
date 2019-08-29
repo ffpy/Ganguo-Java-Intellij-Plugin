@@ -5,16 +5,26 @@ import com.ganguo.java.plugin.ui.BaseForm;
 import javax.swing.*;
 
 public class ModuleAndNameForm implements BaseForm {
-    private JTextField mModuleField;
-    private JTextField mNameField;
+    private JTextField moduleField;
+    private JTextField nameField;
     private JPanel mainPanel;
+    private JTextField pathField;
+    private JLabel pathLabel;
 
     public JTextField getModuleField() {
-        return mModuleField;
+        return moduleField;
     }
 
     public JTextField getNameField() {
-        return mNameField;
+        return nameField;
+    }
+
+    public JTextField getPathField() {
+        return pathField;
+    }
+
+    public JLabel getPathLabel() {
+        return pathLabel;
     }
 
     @Override

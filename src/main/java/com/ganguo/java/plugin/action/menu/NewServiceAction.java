@@ -35,17 +35,17 @@ import java.util.Map;
 @ImportFrom({NewContext.class, JavaFileContext.class})
 public class NewServiceAction extends BaseAction {
 
-    private static final String PATH_SERVICE_API = "service/api";
+    private static final String PATH_SERVICE = "service";
 
     @Override
     public void action(@NotNull AnActionEvent e) {
-        new ModuleAndNameDialog(e, "New Service", this::doAction).show();
+        new ModuleAndNameDialog(e, "New Service", true, "api", this::doAction).show();
     }
 
-    private boolean doAction(AnActionEvent event, String module, String name) {
+    private boolean doAction(AnActionEvent event, String path, String module, String name) {
         return ContextBuilder.of(this)
                 .put("event", event)
-                .put("module", module)
+                .put("module", path + "/" + module)
                 .put("name", name)
                 .build()
                 .execVoid("writeFile")
@@ -70,7 +70,7 @@ public class NewServiceAction extends BaseAction {
      */
     @Var
     private VirtualFile serviceApiFile(VirtualFile packageFile) {
-        return packageFile.findFileByRelativePath(PATH_SERVICE_API);
+        return packageFile.findFileByRelativePath(PATH_SERVICE);
     }
 
     /**
@@ -120,6 +120,6 @@ public class NewServiceAction extends BaseAction {
      */
     @Var
     private PsiDirectory moduleDir(FuncAction<PsiDirectory> createModuleDir) {
-        return createModuleDir.get(PATH_SERVICE_API);
+        return createModuleDir.get(PATH_SERVICE);
     }
 }
