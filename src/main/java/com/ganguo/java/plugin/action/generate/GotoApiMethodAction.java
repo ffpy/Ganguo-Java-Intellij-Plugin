@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 public class GotoApiMethodAction extends BaseGenerateAction {
     private static final String CLASS_NAME_SUFFIX = "Tests";
     private static final Pattern MODULE_PATH_PATTERN =
-            Pattern.compile("/src/test/java/com/ganguomob/dev/.*/controller/(.*)/[\\w]*.java");
+            Pattern.compile("/src/test/java/com/ganguomob/dev/.*/controller/(.*)/[\\w]*\\.java");
 
     @Override
     protected void action(AnActionEvent e) throws Exception {

@@ -108,6 +108,11 @@
                     class="com.ganguo.java.plugin.action.generate.GenerateRepositoryMethodAction"
                     text="实现此方法"/>
 
+            <!-- Mapper -->
+            <action id="com.ganguo.java.plugin.action.generate.AddMappingIgnoreAction"
+                    class="com.ganguo.java.plugin.action.generate.AddMappingIgnoreAction"
+                    text="添加ignore"/>
+
         </group>
 
     </actions>

@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiMethod;
 
 import java.util.Objects;
@@ -80,6 +81,18 @@ public class ActionShowHelper {
                     .filter(element -> type.isAssignableFrom(element.getClass()))
                     .map(element -> (T) element)
                     .map(predicate::test)
+                    .orElse(false));
+        }
+        return this;
+    }
+
+    public ActionShowHelper classWithAnnotation(String qName) {
+        if (this != EMPTY) {
+            return checkMatch(Optional.ofNullable(event.getData(LangDataKeys.PSI_FILE))
+                    .filter(file -> file instanceof PsiJavaFile)
+                    .map(file -> (PsiJavaFile) file)
+                    .map(PsiUtils::getClassByFile)
+                    .map(psiClass -> psiClass.hasAnnotation(qName))
                     .orElse(false));
         }
         return this;
