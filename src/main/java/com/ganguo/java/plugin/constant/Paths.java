@@ -7,4 +7,5 @@ public class Paths {
     public static final String INFRASTRUCTURE_IMPL = "infrastructure/repository/impl";
     public static final String INFRASTRUCTURE_DB_IMPL = "infrastructure/repository/db/impl";
     public static final String VALIDATION = "infrastructure/validation/";
+    public static final String SERVICE = "service";
 }

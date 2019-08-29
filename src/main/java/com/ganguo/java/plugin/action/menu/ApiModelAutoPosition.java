@@ -1,6 +1,7 @@
 package com.ganguo.java.plugin.action.menu;
 
 import com.ganguo.java.plugin.action.BaseAnAction;
+import com.ganguo.java.plugin.constant.AnnotationNames;
 import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.util.ActionShowHelper;
 import com.ganguo.java.plugin.util.WriteActions;
@@ -23,8 +24,6 @@ import org.jetbrains.annotations.NotNull;
 @ImportFrom(JavaFileContext.class)
 public class ApiModelAutoPosition extends BaseAnAction {
 
-    private static final String API_MODEL_ANNOTATION_NAME = "io.swagger.annotations.ApiModel";
-    private static final String API_MODEL_PROPERTY_ANNOTATION_NAME = "io.swagger.annotations.ApiModelProperty";
     private static final String POSITION_ATTR_NAME = "position";
 
     @Override
@@ -38,7 +37,7 @@ public class ApiModelAutoPosition extends BaseAnAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         ActionShowHelper.of(e)
-                .classWithAnnotation(API_MODEL_ANNOTATION_NAME)
+                .classWithAnnotation(AnnotationNames.API_MODEL)
                 .update();
     }
 
@@ -46,7 +45,7 @@ public class ApiModelAutoPosition extends BaseAnAction {
     private void doAction(PsiClass curClass, PsiElementFactory elementFactory, WriteActions writeActions) {
         int pos = 1;
         for (PsiField field : curClass.getFields()) {
-            PsiAnnotation anno = field.getAnnotation(API_MODEL_PROPERTY_ANNOTATION_NAME);
+            PsiAnnotation anno = field.getAnnotation(AnnotationNames.API_MODEL_PROPERTY);
             if (anno != null) {
                 PsiExpression value = elementFactory.createExpressionFromText(String.valueOf(pos++), null);
                 writeActions.add(() -> anno.setDeclaredAttributeValue(POSITION_ATTR_NAME, value));

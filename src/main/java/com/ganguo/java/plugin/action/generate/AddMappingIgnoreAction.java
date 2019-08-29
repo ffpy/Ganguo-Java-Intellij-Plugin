@@ -1,5 +1,6 @@
 package com.ganguo.java.plugin.action.generate;
 
+import com.ganguo.java.plugin.constant.AnnotationNames;
 import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.util.ActionShowHelper;
 import com.ganguo.java.plugin.util.IndexUtils;
@@ -36,9 +37,6 @@ import java.util.stream.Collectors;
 @ImportFrom(JavaFileContext.class)
 public class AddMappingIgnoreAction extends BaseGenerateAction {
 
-    private static final String MAPPER_ANNOTATION_NAME = "org.mapstruct.Mapper";
-    private static final String MAPPING_ANNOTATION_NAME = "org.mapstruct.Mapping";
-
     @Override
     protected void action(AnActionEvent e) throws Exception {
         ContextBuilder.of(this)
@@ -51,7 +49,7 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
     protected boolean isShow(AnActionEvent e) {
         return ActionShowHelper.of(e)
                 .fileNameMatch(".*Assembler\\.java")
-                .classWithAnnotation(MAPPER_ANNOTATION_NAME)
+                .classWithAnnotation(AnnotationNames.MAPPER)
                 .elementType(PsiMethod.class)
                 .isShow();
     }
@@ -111,7 +109,7 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
         set.removeAll(parameterArgs);
 
         Arrays.stream(curMethod.getAnnotations())
-                .filter(anno -> MAPPING_ANNOTATION_NAME.equals(anno.getQualifiedName()))
+                .filter(anno -> AnnotationNames.MAPPING.equals(anno.getQualifiedName()))
                 .map(anno -> PsiUtils.getAnnotationValue(anno, "target", String.class))
                 .filter(Objects::nonNull)
                 .forEach(set::remove);
