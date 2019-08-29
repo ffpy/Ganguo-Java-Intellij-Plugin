@@ -108,14 +108,8 @@ public class FileUtils {
      * @param file    文件
      * @param content 内容
      */
-    public static void setContent(VirtualFile file, byte[] content) {
-        ApplicationManager.getApplication().runWriteAction(() -> {
-            try {
-                file.setBinaryContent(content);
-                file.refresh(true, false);
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
-        });
+    public static void setContent(VirtualFile file, byte[] content) throws IOException {
+        file.setBinaryContent(content);
+        file.refresh(true, false);
     }
 }

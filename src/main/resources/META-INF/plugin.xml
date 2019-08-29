@@ -33,9 +33,9 @@
 
             <add-to-group group-id="MainMenu" anchor="last"/>
 
-            <action id="com.ganguo.java.plugin.action.menu.AddMsgAction"
-                    class="com.ganguo.java.plugin.action.menu.AddMsgAction"
-                    text="添加Msg"/>
+            <action id="com.ganguo.java.plugin.action.menu.AddExceptionMsgAction"
+                    class="com.ganguo.java.plugin.action.menu.AddExceptionMsgAction"
+                    text="添加ExceptionMsg"/>
 
             <action id="com.ganguo.java.plugin.action.menu.NewServiceAction"
                     class="com.ganguo.java.plugin.action.menu.NewServiceAction"

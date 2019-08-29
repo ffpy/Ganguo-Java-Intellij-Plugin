@@ -1,5 +1,7 @@
 package com.ganguo.java.plugin.util;
 
+import com.ganguo.java.plugin.constant.Filenames;
+import com.ganguo.java.plugin.constant.Paths;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import lombok.extern.slf4j.Slf4j;
@@ -10,9 +12,6 @@ import java.util.Optional;
 public class ProjectUtils {
 
     private static final String DEFAULT_PROJECT_NAME = "com.intellij.openapi.project.impl.DefaultProject";
-    private static final String PACKAGE_NAME_PATH_SEPARATE = "/java/";
-    private static final String APPLICATION_FILENAME = "Application.java";
-    private static final String TEST_APPLICATION_FILENAME = "ApplicationTests.java";
 
     /**
      * 获取项目的根目录
@@ -26,7 +25,7 @@ public class ProjectUtils {
                 .map(VirtualFile::getParent)
                 .map(VirtualFile::getParent)
                 .orElseGet(() -> {
-                    log.error("get root file fail!");
+                    log.error("get root dir fail!");
                     return null;
                 });
     }
@@ -38,16 +37,16 @@ public class ProjectUtils {
      * @return 包名
      */
     public static String getPackageName(Project project) {
-        return IndexUtils.getVirtualFilesByName(project, APPLICATION_FILENAME)
+        return IndexUtils.getVirtualFilesByName(project, Filenames.APPLICATION)
                 .stream()
                 .findFirst()
                 .map(VirtualFile::getParent)
                 .map(VirtualFile::getPath)
                 .map(path -> {
-                    int index = path.lastIndexOf(PACKAGE_NAME_PATH_SEPARATE);
+                    int index = path.lastIndexOf(Paths.PACKAGE_NAME_PATH_SEPARATE);
                     if (index == -1) return null;
 
-                    return path.substring(index + PACKAGE_NAME_PATH_SEPARATE.length())
+                    return path.substring(index + Paths.PACKAGE_NAME_PATH_SEPARATE.length())
                             .replace('/', '.')
                             .replace('\\', '.');
                 })
@@ -64,12 +63,12 @@ public class ProjectUtils {
      * @return 包目录
      */
     public static VirtualFile getPackageFile(Project project) {
-        return IndexUtils.getVirtualFilesByName(project, APPLICATION_FILENAME)
+        return IndexUtils.getVirtualFilesByName(project, Filenames.APPLICATION)
                 .stream()
                 .findFirst()
                 .map(VirtualFile::getParent)
                 .orElseGet(() -> {
-                    log.error("get package file fail!");
+                    log.error("get package dir fail!");
                     return null;
                 });
     }
@@ -81,12 +80,12 @@ public class ProjectUtils {
      * @return 测试的包目录
      */
     public static VirtualFile getTestPackageFile(Project project) {
-        return IndexUtils.getVirtualFilesByName(project, TEST_APPLICATION_FILENAME)
+        return IndexUtils.getVirtualFilesByName(project, Filenames.TEST_APPLICATION)
                 .stream()
                 .findFirst()
                 .map(VirtualFile::getParent)
                 .orElseGet(() -> {
-                    log.error("get test package file fail!");
+                    log.error("get test package dir fail!");
                     return null;
                 });
     }
@@ -99,9 +98,24 @@ public class ProjectUtils {
      */
     public static VirtualFile getResourceFile(Project project) {
         return Optional.ofNullable(getRootFile(project))
-                .map(f -> f.findFileByRelativePath("src/main/resources"))
+                .map(f -> f.findFileByRelativePath(Paths.RESOURCE))
                 .orElseGet(() -> {
-                    log.error("get resource file fail!");
+                    log.error("get resource dir fail!");
+                    return null;
+                });
+    }
+
+    /**
+     * 获取多语言资源目录/src/main/resourse/i18n
+     *
+     * @param project project
+     * @return 目录
+     */
+    public static VirtualFile getI18nDirFile(Project project) {
+        return Optional.ofNullable(getResourceFile(project))
+                .map(f -> f.findFileByRelativePath(Paths.I_18_N))
+                .orElseGet(() -> {
+                    log.error("get i18n dir fail!");
                     return null;
                 });
     }
@@ -116,7 +130,7 @@ public class ProjectUtils {
         return Optional.ofNullable(getRootFile(project))
                 .map(f -> f.findFileByRelativePath("src/test/resources"))
                 .orElseGet(() -> {
-                    log.error("get test resource file fail!");
+                    log.error("get test resource dir fail!");
                     return null;
                 });
     }

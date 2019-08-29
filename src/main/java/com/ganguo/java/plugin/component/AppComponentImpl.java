@@ -1,6 +1,6 @@
 package com.ganguo.java.plugin.component;
 
-import com.ganguo.java.plugin.action.intention.DeleteMsgAction;
+import com.ganguo.java.plugin.action.intention.DeleteExceptionMsgAction;
 import com.intellij.codeInsight.intention.IntentionManager;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,7 @@ public class AppComponentImpl implements AppComponent {
 
     @Override
     public void initComponent() {
-        IntentionManager.getInstance().addAction(new DeleteMsgAction());
+        IntentionManager.getInstance().addAction(new DeleteExceptionMsgAction());
         log.info("错误日志位置：{}", new File("log/GanguoPlugin.log").getAbsolutePath());
     }
 }

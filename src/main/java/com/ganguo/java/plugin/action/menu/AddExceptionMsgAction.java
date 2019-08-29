@@ -34,12 +34,13 @@ import org.dependcode.dependcode.anno.Var;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 
 /**
- * 添加Msg
+ * 添加ExceptionMsg
  */
 @Slf4j
-public class AddMsgAction extends BaseAnAction {
+public class AddExceptionMsgAction extends BaseAnAction {
 
     @Override
     public void action(AnActionEvent e) {
@@ -72,6 +73,12 @@ public class AddMsgAction extends BaseAnAction {
         VirtualFile file = rootFile.findFileByRelativePath(Paths.MSG_PROPERTIES);
         if (file == null) {
             file = rootFile.findFileByRelativePath(Paths.MSG_ZH_PROPERTIES);
+        }
+        if (file == null) {
+            file = rootFile.findFileByRelativePath(Paths.MSG_ZH_CN_PROPERTIES);
+        }
+        if (file == null) {
+            file = rootFile.findFileByRelativePath(Paths.MSG_EN_PROPERTIES);
         }
         return file;
     }
