@@ -14,9 +14,9 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class ActionShowHelper {
-    private static final ActionShowHelper EMPTY = new ActionShowHelper(null);
 
     private final AnActionEvent event;
+    private boolean enable = true;
 
     public static ActionShowHelper of(AnActionEvent event) {
         return new ActionShowHelper(Objects.requireNonNull(event));
@@ -27,79 +27,79 @@ public class ActionShowHelper {
     }
 
     public ActionShowHelper fileNameMatch(String pattern) {
-        if (this != EMPTY) {
-            return checkMatch(Optional.ofNullable(event.getData(LangDataKeys.VIRTUAL_FILE))
+        if (enable) {
+            enable = Optional.ofNullable(event.getData(LangDataKeys.VIRTUAL_FILE))
                     .map(VirtualFile::getName)
                     .map(name -> name.matches(pattern))
-                    .orElse(false));
+                    .orElse(false);
         }
         return this;
     }
 
     public ActionShowHelper fileNameEquals(String filename) {
-        if (this != EMPTY) {
-            return checkMatch(Optional.ofNullable(event.getData(LangDataKeys.VIRTUAL_FILE))
+        if (enable) {
+            enable = Optional.ofNullable(event.getData(LangDataKeys.VIRTUAL_FILE))
                     .map(VirtualFile::getName)
                     .map(name -> Objects.equals(name, filename))
-                    .orElse(false));
+                    .orElse(false);
         }
         return this;
     }
 
     public ActionShowHelper filePathMatch(String pattern) {
-        if (this != EMPTY) {
-            return checkMatch(Optional.ofNullable(event.getData(LangDataKeys.VIRTUAL_FILE))
+        if (enable) {
+            enable = Optional.ofNullable(event.getData(LangDataKeys.VIRTUAL_FILE))
                     .map(VirtualFile::getPath)
                     .map(path -> path.matches(pattern))
-                    .orElse(false));
+                    .orElse(false);
         }
         return this;
     }
 
     public ActionShowHelper fileMatch(Predicate<PsiFile> predicate) {
-        if (this != EMPTY) {
-            return checkMatch(Optional.ofNullable(event.getData(LangDataKeys.PSI_FILE))
+        if (enable) {
+            enable = Optional.ofNullable(event.getData(LangDataKeys.PSI_FILE))
                     .map(predicate::test)
-                    .orElse(false));
+                    .orElse(false);
         }
         return this;
     }
 
     public ActionShowHelper elementType(Class<? extends PsiElement> type) {
-        if (this != EMPTY) {
-            return checkMatch(Optional.ofNullable(event.getData(LangDataKeys.PSI_ELEMENT))
+        if (enable) {
+            enable = Optional.ofNullable(event.getData(LangDataKeys.PSI_ELEMENT))
                     .map(element -> type.isAssignableFrom(element.getClass()))
-                    .orElse(false));
+                    .orElse(false);
         }
         return this;
     }
 
     public <T extends PsiElement> ActionShowHelper elementMatch(Class<T> type, Predicate<T> predicate) {
-        if (this != EMPTY) {
+        if (enable) {
             //noinspection unchecked
-            return checkMatch(Optional.ofNullable(event.getData(LangDataKeys.PSI_ELEMENT))
+            enable = Optional.ofNullable(event.getData(LangDataKeys.PSI_ELEMENT))
                     .filter(element -> type.isAssignableFrom(element.getClass()))
                     .map(element -> (T) element)
                     .map(predicate::test)
-                    .orElse(false));
+                    .orElse(false);
         }
         return this;
     }
 
     public ActionShowHelper classWithAnnotation(String qName) {
-        if (this != EMPTY) {
-            return checkMatch(Optional.ofNullable(event.getData(LangDataKeys.PSI_FILE))
+        if (enable) {
+            enable = Optional.ofNullable(event.getData(LangDataKeys.PSI_FILE))
                     .filter(file -> file instanceof PsiJavaFile)
                     .map(file -> (PsiJavaFile) file)
                     .map(PsiUtils::getClassByFile)
                     .map(psiClass -> psiClass.hasAnnotation(qName))
-                    .orElse(false));
+                    .orElse(false);
         }
         return this;
     }
 
     public ActionShowHelper isControllerApiMethod() {
-        if (this != EMPTY) {
+        if (enable) {
             return fileNameMatch(".*Controller.java")
                     .elementMatch(PsiMethod.class, this::isApiMethod);
         }
@@ -107,22 +107,18 @@ public class ActionShowHelper {
     }
 
     public ActionShowHelper and(Supplier<Boolean> supplier) {
-        if (this != EMPTY) {
-            return checkMatch(supplier.get());
+        if (enable) {
+            enable = supplier.get();
         }
         return this;
     }
 
     public boolean isShow() {
-        return this != EMPTY;
+        return enable;
     }
 
     public void update() {
-        event.getPresentation().setEnabled(isShow());
-    }
-
-    private ActionShowHelper checkMatch(boolean match) {
-        return match ? this : EMPTY;
+        event.getPresentation().setEnabled(enable);
     }
 
     private boolean isApiMethod(PsiMethod psiMethod) {
