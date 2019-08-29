@@ -56,6 +56,11 @@ public class FileUtils {
         new OpenFileDescriptor(project, file).navigate(true);
     }
 
+    public static void navigateFileInEditor(Project project, VirtualFile file) {
+        if (file == null) return;
+        new OpenFileDescriptor(project, file).navigateInEditor(project, true);
+    }
+
     public static void navigateFile(Project project, VirtualFile directory, String filename) {
         navigateFile(project, Optional.ofNullable(directory)
                 .map(dir -> dir.findChild(filename))

@@ -14,26 +14,29 @@ import org.dependcode.dependcode.anno.ImportFrom;
 
 import java.util.Optional;
 
+/**
+ * 从接口方法跳转到测试类
+ */
 @Slf4j
 @ImportFrom(ControllerContext.class)
 public class GotoApiTestClassAction extends BaseGenerateAction {
-    private static final Context context = ContextBuilder.of(new GotoApiTestClassAction())
-            .put("event", null)
-            .build();
 
     @Override
     protected void action(AnActionEvent e) throws Exception {
-        context.clearCache()
-                .update("event", e)
+        ContextBuilder.of(this)
+                .put("event", e)
+                .build()
                 .execVoid("doAction");
     }
 
     @Override
     protected boolean isShow(AnActionEvent e) {
-        context.clearCache().update("event", e);
         return ActionShowHelper.of(e)
                 .isControllerApiMethod()
-                .and(() -> Optional.ofNullable(context.get("apiTestFileExists", Boolean.class))
+                .and(() -> Optional.ofNullable(ContextBuilder.of(this)
+                        .put("event", e)
+                        .build()
+                        .get("apiTestFileExists", Boolean.class))
                         .orElse(false))
                 .isShow();
     }

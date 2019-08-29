@@ -20,7 +20,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.dependcode.dependcode.Context;
 import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.FuncAction;
 import org.dependcode.dependcode.anno.Func;
@@ -43,23 +42,23 @@ import java.util.stream.Collectors;
 @Slf4j
 @ImportFrom({JavaFileContext.class, ControllerContext.class})
 public class GenerateApiTestClassAction extends BaseGenerateAction {
-    private static final Context context = ContextBuilder.of(new GenerateApiTestClassAction())
-            .put("event", "")
-            .build();
 
     @Override
     protected void action(AnActionEvent e) {
-        context.clearCache()
-                .update("event", e)
+        ContextBuilder.of(this)
+                .put("event", e)
+                .build()
                 .execVoid("doAction");
     }
 
     @Override
     protected boolean isShow(AnActionEvent e) {
-        context.clearCache().update("event", e);
         return ActionShowHelper.of(e)
                 .isControllerApiMethod()
-                .and(() -> Optional.ofNullable(context.get("apiTestFileExists", Boolean.class))
+                .and(() -> Optional.ofNullable(ContextBuilder.of(this)
+                        .put("event", e)
+                        .build()
+                        .get("apiTestFileExists", Boolean.class))
                         .map(b -> !b)
                         .orElse(false))
                 .isShow();

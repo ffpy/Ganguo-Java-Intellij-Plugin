@@ -28,7 +28,7 @@ public class ApiModelAutoPosition extends BaseAction {
 
     @Override
     protected void action(AnActionEvent e) throws Exception {
-        ContextBuilder.of(new ApiModelAutoPosition())
+        ContextBuilder.of(this)
                 .put("event", e)
                 .build()
                 .execVoid("doAction");

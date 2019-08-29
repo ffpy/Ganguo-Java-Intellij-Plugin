@@ -2,22 +2,21 @@ package com.ganguo.java.plugin.action.generate;
 
 import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.util.ActionShowHelper;
+import com.ganguo.java.plugin.util.EditorUtils;
+import com.ganguo.java.plugin.util.FileUtils;
 import com.ganguo.java.plugin.util.StringHelper;
 import com.ganguo.java.plugin.util.WriteActions;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.ScrollType;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiCodeBlock;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
-import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiKeyword;
@@ -55,7 +54,7 @@ public class GenerateRepositoryMethodAction extends BaseGenerateAction {
     @Override
     protected boolean isShow(AnActionEvent e) {
         return ActionShowHelper.of(e)
-                .filenameMatch("^I.*Repository.java$")
+                .fileNameMatch("I.*Repository.java")
                 .elementType(PsiMethod.class)
                 .isShow();
     }
@@ -78,8 +77,7 @@ public class GenerateRepositoryMethodAction extends BaseGenerateAction {
 
         // 跳转到DAO对应的方法处
         writeActions.add(() -> {
-            new OpenFileDescriptor(project, daoClass.getContainingFile().getVirtualFile())
-                    .navigateInEditor(project, true);
+            FileUtils.navigateFileInEditor(project, daoClass.getContainingFile().getVirtualFile());
 
             getDaoEditor.exec().ifPresent(editor -> Optional
                     .ofNullable(daoClass.findMethodBySignature(curMethod, false))
@@ -131,14 +129,7 @@ public class GenerateRepositoryMethodAction extends BaseGenerateAction {
 
     @Func
     private Editor getDaoEditor(PsiClass daoClass) {
-        Editor[] editors = EditorFactory.getInstance().getAllEditors();
-        for (int i = editors.length - 1; i >= 0; i--) {
-            Editor editor = editors[i];
-            if (editor.getDocument().getText().contains("public class " + daoClass.getName())) {
-                return editor;
-            }
-        }
-        return null;
+        return EditorUtils.getEditorByClassName(daoClass.getName());
     }
 
     @Func

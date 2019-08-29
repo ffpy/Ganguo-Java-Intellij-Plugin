@@ -38,7 +38,7 @@ public class GenerateSetterCaller extends BaseAction {
 
     @Override
     protected void action(AnActionEvent e) throws Exception {
-        ContextBuilder.of(new GenerateSetterCaller())
+        ContextBuilder.of(this)
                 .put("event", e)
                 .build()
                 .execVoid("doAction");

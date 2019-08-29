@@ -25,7 +25,7 @@ public class ActionShowHelper {
         this.event = event;
     }
 
-    public ActionShowHelper filenameMatch(String pattern) {
+    public ActionShowHelper fileNameMatch(String pattern) {
         if (this != EMPTY) {
             return checkMatch(Optional.ofNullable(event.getData(LangDataKeys.VIRTUAL_FILE))
                     .map(VirtualFile::getName)
@@ -35,11 +35,21 @@ public class ActionShowHelper {
         return this;
     }
 
-    public ActionShowHelper filenameEquals(String filename) {
+    public ActionShowHelper fileNameEquals(String filename) {
         if (this != EMPTY) {
             return checkMatch(Optional.ofNullable(event.getData(LangDataKeys.VIRTUAL_FILE))
                     .map(VirtualFile::getName)
                     .map(name -> Objects.equals(name, filename))
+                    .orElse(false));
+        }
+        return this;
+    }
+
+    public ActionShowHelper filePathMatch(String pattern) {
+        if (this != EMPTY) {
+            return checkMatch(Optional.ofNullable(event.getData(LangDataKeys.VIRTUAL_FILE))
+                    .map(VirtualFile::getPath)
+                    .map(path -> path.matches(pattern))
                     .orElse(false));
         }
         return this;
@@ -77,7 +87,7 @@ public class ActionShowHelper {
 
     public ActionShowHelper isControllerApiMethod() {
         if (this != EMPTY) {
-            return filenameMatch("^.*Controller.java$")
+            return fileNameMatch(".*Controller.java")
                     .elementMatch(PsiMethod.class, this::isApiMethod);
         }
         return this;
@@ -92,6 +102,10 @@ public class ActionShowHelper {
 
     public boolean isShow() {
         return this != EMPTY;
+    }
+
+    public void update() {
+        event.getPresentation().setEnabled(isShow());
     }
 
     private ActionShowHelper checkMatch(boolean match) {

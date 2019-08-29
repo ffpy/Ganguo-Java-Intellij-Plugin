@@ -32,7 +32,7 @@ public class ModifyApiUrlAction extends BaseGenerateAction {
 
     @Override
     protected void action(AnActionEvent e) throws Exception {
-        Context context = ContextBuilder.of(new ModifyApiUrlAction())
+        Context context = ContextBuilder.of(this)
                 .put("newPathUrl", "")
                 .put("event", mEvent)
                 .build();

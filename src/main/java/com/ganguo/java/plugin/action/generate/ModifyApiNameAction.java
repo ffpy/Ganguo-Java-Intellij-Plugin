@@ -33,7 +33,7 @@ public class ModifyApiNameAction extends BaseGenerateAction {
 
     @Override
     protected void action(AnActionEvent e) throws Exception {
-        Context context = ContextBuilder.of(new ModifyApiNameAction())
+        Context context = ContextBuilder.of(this)
                 .put("event", e)
                 .put("newMethodName", "")
                 .build();

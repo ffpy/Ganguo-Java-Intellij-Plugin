@@ -2,10 +2,15 @@ package com.ganguo.java.plugin.util;
 
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.util.TextRange;
 
+import java.util.regex.Pattern;
+
 public class EditorUtils {
+
+    private static Pattern GET_EDITOR_PATTERN;
 
     /**
      * 获取光标所在行的文本
@@ -33,5 +38,26 @@ public class EditorUtils {
         new WriteActions(editor.getProject())
                 .add(() -> editor.getDocument().insertString(lineEndOffset, content))
                 .run();
+    }
+
+    /**
+     * 在当前打开的编辑框中查找指定顶部类的Editor
+     *
+     * @param className 顶部类类名
+     * @return Editor，找不到则为null
+     */
+    public static Editor getEditorByClassName(String className) {
+        if (GET_EDITOR_PATTERN == null) {
+            GET_EDITOR_PATTERN = Pattern.compile("^public\\s+class\\s+" + className + "\\s+", Pattern.MULTILINE);
+        }
+
+        Editor[] editors = EditorFactory.getInstance().getAllEditors();
+        for (int i = editors.length - 1; i >= 0; i--) {
+            Editor editor = editors[i];
+            if (GET_EDITOR_PATTERN.matcher(editor.getDocument().getText()).find()) {
+                return editor;
+            }
+        }
+        return null;
     }
 }

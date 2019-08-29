@@ -18,6 +18,7 @@ import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiJavaFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.dependcode.dependcode.anno.Var;
@@ -136,5 +137,10 @@ public abstract class BaseAction extends AnAction implements DumbAware {
     @Var
     protected PsiElement curElement(AnActionEvent event) {
         return event.getData(LangDataKeys.PSI_ELEMENT);
+    }
+
+    @Var
+    protected PsiManager psiManager(Project project) {
+        return PsiManager.getInstance(project);
     }
 }
