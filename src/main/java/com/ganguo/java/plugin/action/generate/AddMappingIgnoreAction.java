@@ -13,6 +13,7 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiModifierList;
 import com.intellij.psi.PsiParameter;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -76,6 +77,8 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
                 .flatMap(type -> Optional.ofNullable(
                         IndexUtils.getClassByQualifiedName(project, type.getCanonicalText())))
                 .map(psiClass -> Arrays.stream(psiClass.getAllFields())
+                        .filter(field -> field.getModifierList() == null ||
+                                !field.getModifierList().hasModifierProperty(PsiModifier.STATIC))
                         .map(NavigationItem::getName)
                         .collect(Collectors.toSet()))
                 .orElse(Collections.emptySet());
@@ -85,7 +88,8 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
     private Set<String> parameterArgs(PsiMethod curMethod, Project project) {
         Set<String> args = new HashSet<>();
         for (PsiParameter parameter : curMethod.getParameterList().getParameters()) {
-            PsiClass parameterClass = IndexUtils.getClassByQualifiedName(project, parameter.getType().getCanonicalText());
+            PsiClass parameterClass = IndexUtils.getClassByQualifiedName(project,
+                    parameter.getType().getCanonicalText());
 
             boolean isCustomClass = Optional.ofNullable(parameterClass)
                     .map(PsiClass::getQualifiedName)
@@ -94,8 +98,10 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
 
             if (isCustomClass) {
                 args.addAll(Arrays.stream(parameterClass.getAllFields())
+                        .filter(field -> field.getModifierList() == null ||
+                                !field.getModifierList().hasModifierProperty(PsiModifier.STATIC))
                         .map(NavigationItem::getName)
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toSet()));
             } else {
                 args.add(parameter.getName());
             }
