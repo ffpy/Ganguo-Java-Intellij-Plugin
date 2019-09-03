@@ -48,7 +48,7 @@ public class EditorUtils {
      */
     public static Editor getEditorByClassName(String className) {
         if (GET_EDITOR_PATTERN == null) {
-            GET_EDITOR_PATTERN = Pattern.compile("^public\\s+class\\s+" + className + "\\s+", Pattern.MULTILINE);
+            GET_EDITOR_PATTERN = Pattern.compile("^public\\s+class\\s+" + className, Pattern.MULTILINE);
         }
 
         Editor[] editors = EditorFactory.getInstance().getAllEditors();

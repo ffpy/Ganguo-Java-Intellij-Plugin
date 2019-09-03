@@ -10,6 +10,7 @@ import com.ganguo.java.plugin.util.IndexUtils;
 import com.ganguo.java.plugin.util.MsgUtils;
 import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.SafeProperties;
+import com.ganguo.java.plugin.util.WriteActions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -103,7 +104,8 @@ public class AddExceptionMsgAction extends BaseAnAction {
      * 添加到exception_msg.properties中
      */
     @Func
-    private Status add2Properties(VirtualFile msgFile, SafeProperties properties, String key, String value) {
+    private Status add2Properties(VirtualFile msgFile, SafeProperties properties, String key, String value,
+                                  WriteActions writeActions) {
         // 检查Value是否已存在
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             if (value.equals(entry.getValue())) {
@@ -126,14 +128,15 @@ public class AddExceptionMsgAction extends BaseAnAction {
         }
 
         properties.setProperty(key, value);
-        try {
-            FileUtils.setContent(msgFile, properties);
-            return Status.SUCCESS;
-        } catch (IOException e) {
-            log.error("write {} fail", Paths.MSG_PROPERTIES, e);
-        }
+        writeActions.add(() -> {
+            try {
+                FileUtils.setContent(msgFile, properties);
+            } catch (IOException e) {
+                log.error("write {} fail", Paths.MSG_PROPERTIES, e);
+            }
+        }).run();
 
-        return Status.FAIL;
+        return Status.SUCCESS;
     }
 
     /**

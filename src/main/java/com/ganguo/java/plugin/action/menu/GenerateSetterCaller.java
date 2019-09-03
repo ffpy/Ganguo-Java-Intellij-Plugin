@@ -103,6 +103,7 @@ public class GenerateSetterCaller extends BaseAnAction {
                         .param("var", varName)
                         .param("methodName", method.getName())
                         .toString())
+                .distinct()
                 .map(call -> indent + call + "\n")
                 .collect(Collectors.joining());
         return callers.endsWith("\n") ? callers.substring(0, callers.length() - "\n".length()) : callers;
