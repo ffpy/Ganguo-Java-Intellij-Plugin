@@ -1,10 +1,10 @@
 import com.ganguomob.dev.base.infrastructure.validation.BaseConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class ${name}ValidatorImpl extends BaseConstraintValidator<${name}, String> {
+public class ${Name}ValidatorImpl extends BaseConstraintValidator<${Name}, String> {
 
     @Override
-    public void initialize(${name} constraintAnnotation) {
+    public void initialize(${Name} constraintAnnotation) {
 
     }
 

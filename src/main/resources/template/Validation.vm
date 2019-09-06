@@ -8,11 +8,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Constraint(validatedBy = {${name}ValidatorImpl.class})
+@Constraint(validatedBy = {${Name}ValidatorImpl.class})
 @Target({ElementType.FIELD, ElementType.TYPE, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @ReportAsSingleViolation
-public @interface ${name} {
+public @interface ${Name} {
 
     String message() default "";
 

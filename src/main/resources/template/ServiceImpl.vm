@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class ${name}ServiceImpl implements ${name}Service {
+public class ${Name}ServiceImpl implements ${Name}Service {
 
 #if($repositoryClassName)
     @Autowired
-    private I${name}Repository m${name}Repository;
+    private I${Name}Repository ${name}Repository;
 
 #end
 

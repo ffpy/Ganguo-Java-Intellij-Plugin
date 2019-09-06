@@ -3,20 +3,6 @@ package com.ganguo.java.plugin.util;
 public class MyStringUtils {
 
     /**
-     * 将首字母变为小写
-     *
-     * @param str 字符串
-     * @return 转换后的字符串
-     */
-    public static String lowerCaseFirstChar(String str) {
-        if (str == null || str.isEmpty()) return str;
-
-        char firstChar = str.charAt(0);
-        return Character.isLowerCase(firstChar) ? str :
-                Character.toLowerCase(firstChar) + str.substring(1);
-    }
-
-    /**
      * 驼峰转下划线
      *
      * @param str 字符串

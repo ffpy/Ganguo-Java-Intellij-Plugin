@@ -1,5 +1,5 @@
 import com.ganguomob.dev.base.domain.repository.IDbStrategy;
 
-public interface I${name}DbStrategy extends IDbStrategy, I${name}Repository {
+public interface I${Name}DbStrategy extends IDbStrategy, I${Name}Repository {
 
 }

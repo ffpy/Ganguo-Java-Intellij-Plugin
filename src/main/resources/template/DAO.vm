@@ -1,4 +1,4 @@
-import ${packageName}.domain.repository.${moduleName}.I${name}DbStrategy;
+import ${packageName}.domain.repository.${moduleName}.I${Name}DbStrategy;
 import com.ganguomob.dev.base.infrastructure.repository.db.BaseDAO;
 import ${packageName}.jooq.tables.pojos.${pojoCls};
 import ${packageName}.jooq.tables.records.${recordCls};
@@ -11,7 +11,7 @@ import java.util.Optional;
 import static ${packageName}.jooq.Tables.${table};
 
 @Repository
-public class ${name}DAO extends BaseDAO implements I${name}DbStrategy {
+public class ${Name}DAO extends BaseDAO implements I${Name}DbStrategy {
 
     @Override
     public Optional<${pojoCls}> findById(Long id) {

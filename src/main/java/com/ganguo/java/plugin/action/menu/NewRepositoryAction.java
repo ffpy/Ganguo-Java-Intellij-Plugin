@@ -82,11 +82,12 @@ public class NewRepositoryAction extends BaseAnAction {
 
         params.put("packageName", packageName);
         params.put("moduleName", module);
-        params.put("name", name);
+        params.put("name", StringUtils.uncapitalize(name));
+        params.put("Name", StringUtils.capitalize(name));
         params.put("table", table);
         params.put("pojoCls", pojo + "POJO");
         params.put("recordCls", pojo + "Record");
-        params.put("pojoName", MyStringUtils.lowerCaseFirstChar(pojo));
+        params.put("pojoName", StringUtils.uncapitalize(pojo));
 
         return params;
     }
