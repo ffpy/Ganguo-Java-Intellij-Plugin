@@ -77,7 +77,7 @@ public class NewValidationAction extends BaseAnAction {
      */
     @Var
     private PsiFile validationFile(FuncAction<PsiFile> createJavaFile) {
-        return createJavaFile.get(TemplateName.VALIDATION, "{name}");
+        return createJavaFile.get(TemplateName.VALIDATION, "{Name}");
     }
 
     /**
@@ -85,7 +85,7 @@ public class NewValidationAction extends BaseAnAction {
      */
     @Var
     private PsiFile validationImplFile(FuncAction<PsiFile> createJavaFile) {
-        return createJavaFile.get(TemplateName.VALIDATION_IMPL, "{name}ValidatorImpl");
+        return createJavaFile.get(TemplateName.VALIDATION_IMPL, "{Name}ValidatorImpl");
     }
 
     /**

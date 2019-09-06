@@ -97,7 +97,7 @@ public class NewRepositoryAction extends BaseAnAction {
      */
     @Var
     private PsiFile repositoryFile(FuncAction<PsiFile> createJavaFile) {
-        return createJavaFile.get(TemplateName.I_REPOSITORY, "I{name}Repository");
+        return createJavaFile.get(TemplateName.I_REPOSITORY, "I{Name}Repository");
     }
 
     /**
@@ -105,7 +105,7 @@ public class NewRepositoryAction extends BaseAnAction {
      */
     @Var
     private PsiFile dbStrategyFile(FuncAction<PsiFile> createJavaFile) {
-        return createJavaFile.get(TemplateName.I_DB_STRATEGY, "I{name}DbStrategy");
+        return createJavaFile.get(TemplateName.I_DB_STRATEGY, "I{Name}DbStrategy");
     }
 
     /**
@@ -113,7 +113,7 @@ public class NewRepositoryAction extends BaseAnAction {
      */
     @Var
     private PsiFile repositoryImplFile(FuncAction<PsiFile> createJavaFile) {
-        return createJavaFile.get(TemplateName.REPOSITORY, "{name}Repository");
+        return createJavaFile.get(TemplateName.REPOSITORY, "{Name}Repository");
     }
 
     /**
@@ -121,6 +121,6 @@ public class NewRepositoryAction extends BaseAnAction {
      */
     @Var
     private PsiFile daoFile(FuncAction<PsiFile> createJavaFile) {
-        return createJavaFile.get(TemplateName.DAO, "{name}DAO");
+        return createJavaFile.get(TemplateName.DAO, "{Name}DAO");
     }
 }

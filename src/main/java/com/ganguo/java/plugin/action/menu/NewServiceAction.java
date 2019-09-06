@@ -105,7 +105,7 @@ public class NewServiceAction extends BaseAnAction {
      */
     @Var
     private PsiFile interFile(FuncAction<PsiFile> createJavaFile) {
-        return createJavaFile.get(TemplateName.SERVICE, "{name}Service");
+        return createJavaFile.get(TemplateName.SERVICE, "{Name}Service");
     }
 
     /**
@@ -113,7 +113,7 @@ public class NewServiceAction extends BaseAnAction {
      */
     @Var
     private PsiFile implFile(FuncAction<PsiFile> createJavaFile) {
-        return createJavaFile.get(TemplateName.SERVICE_IMPL, "{name}ServiceImpl");
+        return createJavaFile.get(TemplateName.SERVICE_IMPL, "{Name}ServiceImpl");
     }
 
     /**
