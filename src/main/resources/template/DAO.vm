@@ -4,8 +4,7 @@ import ${packageName}.jooq.tables.pojos.${pojoCls};
 import ${packageName}.jooq.tables.records.${recordCls};
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,8 +35,8 @@ public class ${name}DAO extends BaseDAO implements I${name}DbStrategy {
     }
 
     @Override
-    public int updateById(Long id, ${pojoCls} ${pojoName}) {
-        ${pojoName}.setUpdatedAt(LocalDateTime.now(ZoneOffset.UTC));
+    public int updateById(Long id, ${recordCls} ${pojoName}) {
+        ${pojoName}.setUpdatedAt(Instant.now());
         return mDSLContext.executeUpdate(${pojoName}, ${table}.ID.eq(id));
     }
 
