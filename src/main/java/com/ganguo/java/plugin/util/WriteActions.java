@@ -19,9 +19,17 @@ public class WriteActions {
         return this;
     }
 
+    public WriteActions clear() {
+        tasks.clear();
+        return this;
+    }
+
     public void run() {
-        WriteCommandAction.runWriteCommandAction(project, () -> {
-            tasks.forEach(Runnable::run);
-        });
+        if (!tasks.isEmpty()) {
+            WriteCommandAction.runWriteCommandAction(project, () -> {
+                tasks.forEach(Runnable::run);
+                tasks.clear();
+            });
+        }
     }
 }

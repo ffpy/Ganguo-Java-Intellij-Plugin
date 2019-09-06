@@ -4,7 +4,7 @@ import com.ganguo.java.plugin.constant.Paths;
 import com.ganguo.java.plugin.constant.TemplateName;
 import com.ganguo.java.plugin.context.NewContext;
 import com.ganguo.java.plugin.util.FileUtils;
-import com.ganguo.java.plugin.action.BaseAction;
+import com.ganguo.java.plugin.action.BaseAnAction;
 import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.ui.dialog.ModuleAndNameDialog;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -26,16 +26,15 @@ import java.util.Map;
  * 创建校验注解及校验类
  */
 @Slf4j
-@ImportFrom(NewContext.class)
-@ImportFrom(JavaFileContext.class)
-public class NewValidationAction extends BaseAction {
+@ImportFrom({NewContext.class, JavaFileContext.class})
+public class NewValidationAction extends BaseAnAction {
 
     @Override
     protected void action(AnActionEvent e) throws Exception {
         new ModuleAndNameDialog(e, "New Validation", false, this::doAction).show();
     }
 
-    private boolean doAction(AnActionEvent event, String module, String name) {
+    private boolean doAction(AnActionEvent event, String path, String module, String name) {
         return ContextBuilder.of(this)
                 .put("event", event)
                 .put("module", module)

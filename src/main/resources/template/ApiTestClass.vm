@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Slf4j
 @Sql({"/sql/user/user_base.sql"})
-public class ${className}Tests extends BaseTest {
+public class ${className} extends BaseTest {
 
     @Test
     @WithUserDetails(userDetailsServiceBeanName = "userDetailsServiceImpl", value = "openId1")

@@ -1,7 +1,9 @@
 package com.ganguo.java.plugin.action.menu;
 
-import com.ganguo.java.plugin.action.BaseAction;
+import com.ganguo.java.plugin.action.BaseAnAction;
+import com.ganguo.java.plugin.constant.AnnotationNames;
 import com.ganguo.java.plugin.context.JavaFileContext;
+import com.ganguo.java.plugin.util.ActionShowHelper;
 import com.ganguo.java.plugin.util.WriteActions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.psi.PsiAnnotation;
@@ -20,15 +22,13 @@ import org.jetbrains.annotations.NotNull;
  */
 @Slf4j
 @ImportFrom(JavaFileContext.class)
-public class ApiModelAutoPosition extends BaseAction {
+public class ApiModelAutoPosition extends BaseAnAction {
 
-    private static final String API_MODEL_ANNOTATION_NAME = "io.swagger.annotations.ApiModel";
-    private static final String API_MODEL_PROPERTY_ANNOTATION_NAME = "io.swagger.annotations.ApiModelProperty";
     private static final String POSITION_ATTR_NAME = "position";
 
     @Override
     protected void action(AnActionEvent e) throws Exception {
-        ContextBuilder.of(new ApiModelAutoPosition())
+        ContextBuilder.of(this)
                 .put("event", e)
                 .build()
                 .execVoid("doAction");
@@ -36,14 +36,16 @@ public class ApiModelAutoPosition extends BaseAction {
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-        showWithAnnotationOnClass(e, API_MODEL_ANNOTATION_NAME);
+        ActionShowHelper.of(e)
+                .classWithAnnotation(AnnotationNames.API_MODEL)
+                .update();
     }
 
     @Func
     private void doAction(PsiClass curClass, PsiElementFactory elementFactory, WriteActions writeActions) {
         int pos = 1;
         for (PsiField field : curClass.getFields()) {
-            PsiAnnotation anno = field.getAnnotation(API_MODEL_PROPERTY_ANNOTATION_NAME);
+            PsiAnnotation anno = field.getAnnotation(AnnotationNames.API_MODEL_PROPERTY);
             if (anno != null) {
                 PsiExpression value = elementFactory.createExpressionFromText(String.valueOf(pos++), null);
                 writeActions.add(() -> anno.setDeclaredAttributeValue(POSITION_ATTR_NAME, value));

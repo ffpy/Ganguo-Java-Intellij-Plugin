@@ -8,6 +8,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiModifierList;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import org.apache.commons.beanutils.ConvertUtils;
 
@@ -108,6 +110,11 @@ public class PsiUtils {
 
     public static Stream<PsiMethod> getAllSetter(PsiClass psiClass) {
         return Arrays.stream(psiClass.getAllMethods())
+                .filter(method -> {
+                    PsiModifierList modifierList = method.getModifierList();
+                    return modifierList.hasModifierProperty(PsiModifier.PUBLIC) &&
+                            !modifierList.hasModifierProperty(PsiModifier.STATIC);
+                })
                 .filter(method -> method.getName().matches("^set[A-Z].*$"));
     }
 }

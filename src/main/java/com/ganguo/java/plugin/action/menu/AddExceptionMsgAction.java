@@ -1,6 +1,6 @@
 package com.ganguo.java.plugin.action.menu;
 
-import com.ganguo.java.plugin.action.BaseAction;
+import com.ganguo.java.plugin.action.BaseAnAction;
 import com.ganguo.java.plugin.constant.Filenames;
 import com.ganguo.java.plugin.constant.Paths;
 import com.ganguo.java.plugin.ui.dialog.AddMsgDialog;
@@ -10,6 +10,7 @@ import com.ganguo.java.plugin.util.IndexUtils;
 import com.ganguo.java.plugin.util.MsgUtils;
 import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.SafeProperties;
+import com.ganguo.java.plugin.util.WriteActions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -34,12 +35,13 @@ import org.dependcode.dependcode.anno.Var;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 
 /**
- * 添加Msg
+ * 添加ExceptionMsg
  */
 @Slf4j
-public class AddMsgAction extends BaseAction {
+public class AddExceptionMsgAction extends BaseAnAction {
 
     @Override
     public void action(AnActionEvent e) {
@@ -73,6 +75,12 @@ public class AddMsgAction extends BaseAction {
         if (file == null) {
             file = rootFile.findFileByRelativePath(Paths.MSG_ZH_PROPERTIES);
         }
+        if (file == null) {
+            file = rootFile.findFileByRelativePath(Paths.MSG_ZH_CN_PROPERTIES);
+        }
+        if (file == null) {
+            file = rootFile.findFileByRelativePath(Paths.MSG_EN_PROPERTIES);
+        }
         return file;
     }
 
@@ -96,7 +104,8 @@ public class AddMsgAction extends BaseAction {
      * 添加到exception_msg.properties中
      */
     @Func
-    private Status add2Properties(VirtualFile msgFile, SafeProperties properties, String key, String value) {
+    private Status add2Properties(VirtualFile msgFile, SafeProperties properties, String key, String value,
+                                  WriteActions writeActions) {
         // 检查Value是否已存在
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             if (value.equals(entry.getValue())) {
@@ -119,14 +128,15 @@ public class AddMsgAction extends BaseAction {
         }
 
         properties.setProperty(key, value);
-        try {
-            FileUtils.setContent(msgFile, properties);
-            return Status.SUCCESS;
-        } catch (IOException e) {
-            log.error("write {} fail", Paths.MSG_PROPERTIES, e);
-        }
+        writeActions.add(() -> {
+            try {
+                FileUtils.setContent(msgFile, properties);
+            } catch (IOException e) {
+                log.error("write {} fail", Paths.MSG_PROPERTIES, e);
+            }
+        }).run();
 
-        return Status.FAIL;
+        return Status.SUCCESS;
     }
 
     /**

@@ -56,6 +56,11 @@ public class FileUtils {
         new OpenFileDescriptor(project, file).navigate(true);
     }
 
+    public static void navigateFileInEditor(Project project, VirtualFile file) {
+        if (file == null) return;
+        new OpenFileDescriptor(project, file).navigateInEditor(project, true);
+    }
+
     public static void navigateFile(Project project, VirtualFile directory, String filename) {
         navigateFile(project, Optional.ofNullable(directory)
                 .map(dir -> dir.findChild(filename))
@@ -103,14 +108,8 @@ public class FileUtils {
      * @param file    文件
      * @param content 内容
      */
-    public static void setContent(VirtualFile file, byte[] content) {
-        ApplicationManager.getApplication().runWriteAction(() -> {
-            try {
-                file.setBinaryContent(content);
-                file.refresh(true, false);
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
-        });
+    public static void setContent(VirtualFile file, byte[] content) throws IOException {
+        file.setBinaryContent(content);
+        file.refresh(true, false);
     }
 }

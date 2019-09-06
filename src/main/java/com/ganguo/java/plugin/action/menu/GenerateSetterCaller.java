@@ -1,6 +1,7 @@
 package com.ganguo.java.plugin.action.menu;
 
-import com.ganguo.java.plugin.action.BaseAction;
+import com.ganguo.java.plugin.action.BaseAnAction;
+import com.ganguo.java.plugin.util.ActionShowHelper;
 import com.ganguo.java.plugin.util.EditorUtils;
 import com.ganguo.java.plugin.util.IndexUtils;
 import com.ganguo.java.plugin.util.PsiUtils;
@@ -22,7 +23,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,13 +32,13 @@ import java.util.stream.Collectors;
  * 生成Setter调用代码
  */
 @Slf4j
-public class GenerateSetterCaller extends BaseAction {
+public class GenerateSetterCaller extends BaseAnAction {
 
     private static final Pattern INDENT_PATTERN = Pattern.compile("(\\s*).*");
 
     @Override
     protected void action(AnActionEvent e) throws Exception {
-        ContextBuilder.of(new GenerateSetterCaller())
+        ContextBuilder.of(this)
                 .put("event", e)
                 .build()
                 .execVoid("doAction");
@@ -47,12 +47,15 @@ public class GenerateSetterCaller extends BaseAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         Transferable contents = CopyPasteManager.getInstance().getContents();
-        show(e, contents != null &&
-                contents.isDataFlavorSupported(DataFlavor.stringFlavor) &&
-                Optional.ofNullable(e.getData(LangDataKeys.EDITOR))
+        //noinspection ConstantConditions
+        ActionShowHelper.of(e)
+                .and(() -> contents != null)
+                .and(() -> contents.isDataFlavorSupported(DataFlavor.stringFlavor))
+                .and(() -> Optional.ofNullable(e.getData(LangDataKeys.EDITOR))
                         .map(Editor::getSelectionModel)
                         .map(SelectionModel::hasSelection)
-                        .orElse(false));
+                        .orElse(false))
+                .update();
     }
 
     @Var
@@ -100,6 +103,7 @@ public class GenerateSetterCaller extends BaseAction {
                         .param("var", varName)
                         .param("methodName", method.getName())
                         .toString())
+                .distinct()
                 .map(call -> indent + call + "\n")
                 .collect(Collectors.joining());
         return callers.endsWith("\n") ? callers.substring(0, callers.length() - "\n".length()) : callers;

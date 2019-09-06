@@ -2,7 +2,6 @@ package com.ganguo.java.plugin.context;
 
 import com.ganguo.java.plugin.constant.TemplateName;
 import com.ganguo.java.plugin.service.ProjectSettingService;
-import com.ganguo.java.plugin.util.ElementUtils;
 import com.ganguo.java.plugin.util.IndexUtils;
 import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.StringHelper;
@@ -57,7 +56,7 @@ public class JavaFileContext {
     @Var
     public PsiMethod curMethod(AnActionEvent event) {
         PsiElement psiElement = event.getData(LangDataKeys.PSI_ELEMENT);
-        if (!ElementUtils.isMethodElement(psiElement)) {
+        if (!(psiElement instanceof PsiMethod)) {
             return null;
         }
         return (PsiMethod) psiElement;

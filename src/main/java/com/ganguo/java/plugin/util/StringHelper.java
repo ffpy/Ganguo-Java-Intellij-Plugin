@@ -7,8 +7,6 @@ import java.util.Objects;
 public class StringHelper {
     private static final String LEFT = "\001";
     private static final String RIGHT = "\002";
-    private static final String LEFT_STR = "{{";
-    private static final String RIGHT_STR = "}}";
 
     private String mStr;
     private Map<String, Object> paramMap = new HashMap<>();
@@ -45,14 +43,14 @@ public class StringHelper {
     public String toString() {
         if (mStr.isEmpty()) return "";
 
-        mStr = mStr.replace(LEFT_STR, LEFT);
-        mStr = mStr.replace(RIGHT_STR, RIGHT);
+        mStr = mStr.replace("{{", LEFT);
+        mStr = mStr.replace("}}", RIGHT);
 
         paramMap.forEach(
                 (key, value) -> mStr = mStr.replace("{" + key + "}", String.valueOf(value)));
 
-        mStr = mStr.replace(LEFT, LEFT_STR);
-        mStr = mStr.replace(RIGHT, RIGHT_STR);
+        mStr = mStr.replace(LEFT, "{");
+        mStr = mStr.replace(RIGHT, "}");
 
         return mStr;
     }

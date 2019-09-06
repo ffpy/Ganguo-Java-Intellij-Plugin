@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public abstract class BaseReplaceAction extends BaseAction {
+public abstract class BaseReplaceAction extends BaseAnAction {
 
     /**
      * @param e AnActionEvent

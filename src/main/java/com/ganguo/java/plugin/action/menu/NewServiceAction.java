@@ -1,6 +1,7 @@
 package com.ganguo.java.plugin.action.menu;
 
-import com.ganguo.java.plugin.action.BaseAction;
+import com.ganguo.java.plugin.action.BaseAnAction;
+import com.ganguo.java.plugin.constant.Paths;
 import com.ganguo.java.plugin.constant.TemplateName;
 import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.context.NewContext;
@@ -32,21 +33,18 @@ import java.util.Map;
  * 创建Service接口及实现类
  */
 @Slf4j
-@ImportFrom(NewContext.class)
-@ImportFrom(JavaFileContext.class)
-public class NewServiceAction extends BaseAction {
-
-    private static final String PATH_SERVICE_API = "service/api";
+@ImportFrom({NewContext.class, JavaFileContext.class})
+public class NewServiceAction extends BaseAnAction {
 
     @Override
     public void action(@NotNull AnActionEvent e) {
-        new ModuleAndNameDialog(e, "New Service", this::doAction).show();
+        new ModuleAndNameDialog(e, "New Service", true, "api", this::doAction).show();
     }
 
-    private boolean doAction(AnActionEvent event, String module, String name) {
+    private boolean doAction(AnActionEvent event, String path, String module, String name) {
         return ContextBuilder.of(this)
                 .put("event", event)
-                .put("module", module)
+                .put("module", path + "/" + module)
                 .put("name", name)
                 .build()
                 .execVoid("writeFile")
@@ -71,7 +69,7 @@ public class NewServiceAction extends BaseAction {
      */
     @Var
     private VirtualFile serviceApiFile(VirtualFile packageFile) {
-        return packageFile.findFileByRelativePath(PATH_SERVICE_API);
+        return packageFile.findFileByRelativePath(Paths.SERVICE);
     }
 
     /**
@@ -121,6 +119,6 @@ public class NewServiceAction extends BaseAction {
      */
     @Var
     private PsiDirectory moduleDir(FuncAction<PsiDirectory> createModuleDir) {
-        return createModuleDir.get(PATH_SERVICE_API);
+        return createModuleDir.get(Paths.SERVICE);
     }
 }

@@ -1,77 +1,23 @@
-package com.ganguo.java.plugin.action;
+package com.ganguo.java.plugin.context;
 
 import com.ganguo.java.plugin.service.ProjectSettingService;
 import com.ganguo.java.plugin.util.ProjectUtils;
-import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.WriteActions;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiJavaFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
-import lombok.extern.slf4j.Slf4j;
 import org.dependcode.dependcode.anno.Var;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
-import java.util.function.Function;
-
-@Slf4j
-public abstract class BaseAction extends AnAction implements DumbAware {
-
-    protected abstract void action(AnActionEvent e) throws Exception;
-
-    @Override
-    @Deprecated
-    public void actionPerformed(@NotNull AnActionEvent event) {
-        try {
-            action(event);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void update(@NotNull AnActionEvent e) {
-        show(e, e.getProject() != null);
-    }
-
-    protected void show(AnActionEvent e, boolean show) {
-        e.getPresentation().setEnabled(show);
-    }
-
-    /**
-     * 当文件名匹配时显示
-     */
-    protected void showWithFilename(AnActionEvent e, Function<String, Boolean> f) {
-        boolean show = Optional.ofNullable(e.getData(LangDataKeys.PSI_FILE))
-                .filter(file -> e.getProject() != null)
-                .map(PsiFileSystemItem::getName)
-                .map(f)
-                .orElse(false);
-        e.getPresentation().setEnabled(show);
-    }
-
-    protected void showWithAnnotationOnClass(AnActionEvent e, String annotationName) {
-        boolean show = Optional.ofNullable(e.getData(LangDataKeys.PSI_FILE))
-                .filter(file -> file instanceof PsiJavaFile)
-                .map(file -> (PsiJavaFile) file)
-                .filter(file -> e.getProject() != null)
-                .map(PsiUtils::getClassByFile)
-                .map(cls -> cls.getAnnotation(annotationName) != null)
-                .orElse(false);
-        e.getPresentation().setEnabled(show);
-    }
+public class BaseContext {
 
     @Var
     protected Project project(AnActionEvent event) {
@@ -118,7 +64,7 @@ public abstract class BaseAction extends AnAction implements DumbAware {
         return JavaPsiFacade.getElementFactory(project);
     }
 
-    @Var(cache = false)
+    @Var
     protected WriteActions writeActions(Project project) {
         return new WriteActions(project);
     }
@@ -131,5 +77,10 @@ public abstract class BaseAction extends AnAction implements DumbAware {
     @Var
     protected PsiElement curElement(AnActionEvent event) {
         return event.getData(LangDataKeys.PSI_ELEMENT);
+    }
+
+    @Var
+    protected PsiManager psiManager(Project project) {
+        return PsiManager.getInstance(project);
     }
 }
