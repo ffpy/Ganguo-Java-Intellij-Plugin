@@ -25,7 +25,7 @@ import org.dependcode.dependcode.anno.Var;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -80,13 +80,15 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
                         .filter(field -> field.getModifierList() == null ||
                                 !field.getModifierList().hasModifierProperty(PsiModifier.STATIC))
                         .map(NavigationItem::getName)
-                        .collect(Collectors.toSet()))
+                        .collect(Collectors.toList()))
+                // 保持顺序
+                .map(list -> (Set<String>) new LinkedHashSet<>(list))
                 .orElse(Collections.emptySet());
     }
 
     @Var
     private Set<String> parameterArgs(PsiMethod curMethod, Project project) {
-        Set<String> args = new HashSet<>();
+        Set<String> args = new LinkedHashSet<>();
         for (PsiParameter parameter : curMethod.getParameterList().getParameters()) {
             PsiClass parameterClass = IndexUtils.getClassByQualifiedName(project,
                     parameter.getType().getCanonicalText());
@@ -111,7 +113,7 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
 
     @Var
     private Set<String> ignoreFields(Set<String> parameterArgs, Set<String> returnFields, PsiMethod curMethod) {
-        Set<String> set = new HashSet<>(returnFields);
+        Set<String> set = new LinkedHashSet<>(returnFields);
         set.removeAll(parameterArgs);
 
         Arrays.stream(curMethod.getAnnotations())
