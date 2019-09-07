@@ -1,6 +1,7 @@
 package com.ganguo.java.plugin.action.generate;
 
 import com.ganguo.java.plugin.constant.AnnotationNames;
+import com.ganguo.java.plugin.constant.Constant;
 import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.util.ActionShowHelper;
 import com.ganguo.java.plugin.util.IndexUtils;
@@ -95,7 +96,7 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
 
             boolean isCustomClass = Optional.ofNullable(parameterClass)
                     .map(PsiClass::getQualifiedName)
-                    .map(name -> name.startsWith("com.ganguomob.dev"))
+                    .map(name -> name.startsWith(Constant.BASE_PACKAGE_NAME))
                     .orElse(false);
 
             if (isCustomClass) {
