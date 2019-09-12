@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ${className} extends BaseTest {
 
     @Test
-    @WithUserDetails(userDetailsServiceBeanName = "userDetailsServiceImpl", value = "openId1")
+    @WithUserDetails(userDetailsServiceBeanName = "userDetailsServiceImpl", value = "user1")
     public void successTest() throws Exception {
 #if($requestClassSimpleName)
         ${requestClassSimpleName} request = new ${requestClassSimpleName}();
@@ -37,16 +37,16 @@ public class ${className} extends BaseTest {
 
 #end
         String response = mMockMvc.perform(
-                MockMvcRequestBuilders.${method}(BASE_HOST + "${url}")#if($method != "get")
+                MockMvcRequestBuilders.${method}(BASE_HOST + "${url}"#foreach($pathVar in $pathVars), $pathVar#end)#if($requestClassSimpleName)
 
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mObjectMapper.writeValueAsString(#if($requestClassSimpleName)request#end)))#end#if($params.size() == 0))#end
+                        .content(mObjectMapper.writeValueAsString(#if($requestClassSimpleName)request#end)))#end#if($params.size() == 0 || $method != 'get' && !$requestClassSimpleName))#end
 
 #if($method == "get")
     #foreach($param in $params)
                 .param("${param}", "")#if($velocityCount==$params.size()))#end
 
-    #end
+#end
 #end
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print())

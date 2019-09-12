@@ -1,5 +1,6 @@
 package com.ganguo.java.plugin.action.generate;
 
+import com.ganguo.java.plugin.constant.AnnotationNames;
 import com.ganguo.java.plugin.constant.TemplateName;
 import com.ganguo.java.plugin.context.ControllerContext;
 import com.ganguo.java.plugin.context.HttpMethod;
@@ -15,6 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiParameter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -86,13 +88,14 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
      */
     @Var
     private Map<String, Object> params(String packageName, String apiTestClassName, PsiMethod curMethod,
-                                       String httpMethod, String url, Project project) {
+                                       String httpMethod, String url, Project project, List<String> pathVars) {
         Map<String, Object> params = new HashMap<>(8);
 
         params.put("packageName", packageName);
         params.put("className", apiTestClassName);
         params.put("method", httpMethod);
         params.put("url", url);
+        params.put("pathVars", pathVars);
 
         RequestBodyClass requestBodyClassName = getClassNameWithRequestBody(curMethod);
         if (requestBodyClassName != null) {
@@ -114,6 +117,18 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
     @Func
     private PsiFile createTestFile(String apiTestClassName, FuncAction<PsiFile> createJavaFile) {
         return createJavaFile.get(TemplateName.API_TEST_CLASS, apiTestClassName);
+    }
+
+    /**
+     * Path参数列表
+     */
+    @Var
+    private List<String> pathVars(PsiMethod curMethod) {
+        return Arrays.stream(curMethod.getParameterList().getParameters())
+                .filter(parameter -> parameter.getAnnotation(
+                        AnnotationNames.PATH_VARIABLE) != null)
+                .map(PsiNamedElement::getName)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -149,18 +164,19 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
         PsiParameter[] parameters = method.getParameterList().getParameters();
         List<String> params = new ArrayList<>(parameters.length);
         Arrays.stream(parameters)
-                .filter(param -> {
-                    String simpleName = param.getType().getPresentableText();
+                .filter(parameter -> {
+                    String simpleName = parameter.getType().getPresentableText();
                     return !"HttpSession".equals(simpleName) &&
                             !"HttpServletRequest".equals(simpleName) &&
                             !"HttpServletResponse".equals(simpleName);
                 })
-                .forEach(param -> {
-                    if ("Pageable".equals(param.getType().getPresentableText())) {
+                .filter(parameter -> parameter.getAnnotation(AnnotationNames.PATH_VARIABLE) == null)
+                .forEach(parameter -> {
+                    if ("Pageable".equals(parameter.getType().getPresentableText())) {
                         params.add("page");
                         params.add("size");
                     } else {
-                        params.add(param.getName());
+                        params.add(parameter.getName());
                     }
                 });
         return params;
