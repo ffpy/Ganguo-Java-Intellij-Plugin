@@ -43,8 +43,8 @@ public class ${className} extends BaseTest {
                         .content(mObjectMapper.writeValueAsString(#if($requestClassSimpleName)request#end)))#end#if($params.size() == 0 || $method != 'get' && !$requestClassSimpleName))#end
 
 #if($method == "get")
-    #foreach($param in $params)
-                .param("${param}", "")#if($velocityCount==$params.size()))#end
+#foreach($param in $params)
+                    .param("${param}", "")#if($velocityCount==$params.size()))#end
 
 #end
 #end
