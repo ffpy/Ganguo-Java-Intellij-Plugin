@@ -77,10 +77,7 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
         return Optional.ofNullable(curMethod.getReturnType())
                 .flatMap(type -> Optional.ofNullable(
                         IndexUtils.getClassByQualifiedName(project, type.getCanonicalText())))
-                .map(psiClass -> Arrays.stream(psiClass.getAllFields())
-                        .filter(field -> field.getModifierList() == null ||
-                                !field.getModifierList().hasModifierProperty(PsiModifier.STATIC))
-                        .map(NavigationItem::getName)
+                .map(psiClass -> PsiUtils.getAllSetterName(psiClass)
                         .collect(Collectors.toList()))
                 // 保持顺序
                 .map(list -> (Set<String>) new LinkedHashSet<>(list))
@@ -100,10 +97,7 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
                     .orElse(false);
 
             if (isCustomClass) {
-                args.addAll(Arrays.stream(parameterClass.getAllFields())
-                        .filter(field -> field.getModifierList() == null ||
-                                !field.getModifierList().hasModifierProperty(PsiModifier.STATIC))
-                        .map(NavigationItem::getName)
+                args.addAll(PsiUtils.getAllGetterName(parameterClass)
                         .collect(Collectors.toSet()));
             } else {
                 args.add(parameter.getName());
