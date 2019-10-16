@@ -88,7 +88,8 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
      */
     @Var
     private Map<String, Object> params(String packageName, String apiTestClassName, PsiMethod curMethod,
-                                       String httpMethod, String url, Project project, List<String> pathVars) {
+                                       String httpMethod, String url, Project project, List<String> pathVars,
+                                       Boolean hasReturn, Boolean isAdmin) {
         Map<String, Object> params = new HashMap<>(8);
 
         params.put("packageName", packageName);
@@ -96,6 +97,8 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
         params.put("method", httpMethod);
         params.put("url", url);
         params.put("pathVars", pathVars);
+        params.put("hasReturn", hasReturn);
+        params.put("isAdmin", isAdmin);
 
         RequestBodyClass requestBodyClassName = getClassNameWithRequestBody(curMethod);
         if (requestBodyClassName != null) {
@@ -117,6 +120,24 @@ public class GenerateApiTestClassAction extends BaseGenerateAction {
     @Func
     private PsiFile createTestFile(String apiTestClassName, FuncAction<PsiFile> createJavaFile) {
         return createJavaFile.get(TemplateName.API_TEST_CLASS, apiTestClassName);
+    }
+
+    /**
+     * 是否有返回值
+     */
+    @Var
+    private Boolean hasReturn(PsiMethod curMethod) {
+        return Optional.ofNullable(curMethod.getReturnType())
+                .map(type -> !type.getPresentableText().equals("void"))
+                .orElse(false);
+    }
+
+    /**
+     * 是否是管理员模块
+     */
+    @Var
+    private Boolean isAdmin(String baseUrl) {
+        return baseUrl.contains("admin");
     }
 
     /**

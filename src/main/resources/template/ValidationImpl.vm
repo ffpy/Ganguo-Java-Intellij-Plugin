@@ -1,7 +1,7 @@
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class ${Name}ValidatorImpl implements ConstraintValidator<${Name}, String> {
+public class ${Name}ValidatorImpl implements ConstraintValidator<${Name}, Long> {
 
     @Override
     public void initialize(${Name} constraintAnnotation) {
@@ -11,7 +11,7 @@ public class ${Name}ValidatorImpl implements ConstraintValidator<${Name}, String
      * 校验
      */
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
+    public boolean isValid(Long value, ConstraintValidatorContext context) {
         return false;
     }
 }

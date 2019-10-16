@@ -2,14 +2,17 @@ import ${packageName}.BaseTest;
 #if($requestClassName)
 import ${requestClassName};
 #end
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 #if($method != "get")
 import org.springframework.http.MediaType;
 #end
-import org.springframework.security.test.context.support.WithUserDetails;
+#if($isAdmin)
+import ${packageName}.mock.MockAdmin;
+#else
+import ${packageName}.mock.MockApiUser;
+#end
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -22,12 +25,16 @@ import org.springframework.transaction.annotation.Transactional;
 @WebAppConfiguration
 @SpringBootTest
 @Transactional
-@Slf4j
+#if($isAdmin)
+@MockAdmin
 @Sql({"/sql/user/user_base.sql"})
+#else
+@MockApiUser("user1")
+@Sql({"/sql/user/user_base.sql"})
+#end
 public class ${className} extends BaseTest {
 
     @Test
-    @WithUserDetails(userDetailsServiceBeanName = "userDetailsServiceImpl", value = "user1")
     public void successTest() throws Exception {
 #if($requestClassSimpleName)
         ${requestClassSimpleName} request = new ${requestClassSimpleName}();
@@ -53,7 +60,7 @@ public class ${className} extends BaseTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-#if($method == "get")
+#if($hasReturn)
 
         prettyPrintJson(response);
 #end
