@@ -49,14 +49,13 @@ public class GotoApiMethodAction extends BaseGenerateAction {
     @Override
     protected boolean isShow(AnActionEvent e) {
         return ActionShowHelper.of(e)
-                .elementType(PsiClass.class)
                 .filePathMatch(".*/src/test/java/com/ganguomob/dev/.*/controller/.*Tests\\.java")
                 .isShow();
     }
 
     @Var
-    private PsiClass curClass(PsiElement curElement) {
-        return curElement instanceof PsiClass ? (PsiClass) curElement : null;
+    private PsiClass curClass(PsiJavaFile curFile) {
+        return PsiUtils.getClassByFile(curFile);
     }
 
     @Var

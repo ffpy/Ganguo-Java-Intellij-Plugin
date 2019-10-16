@@ -75,12 +75,12 @@
 
         </group>
 
-        <group id="Ganguo.Generate"
-               text="Ganguo"
-               description="Ganguo"
+        <group id="Ganguo.Popup"
+               text="甘果"
+               description="甘果"
                popup="true">
 
-            <add-to-group group-id="GenerateGroup" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
 
             <!-- Controller -->
             <action id="com.ganguo.java.plugin.action.generate.GenerateApiTestClassAction"
