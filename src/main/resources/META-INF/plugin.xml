@@ -15,8 +15,8 @@
     <extensions defaultExtensionNs="com.intellij">
         <projectConfigurable instance="com.ganguo.java.plugin.configurable.ProjectConfigurable"/>
 
-        <projectService serviceInterface="com.ganguo.java.plugin.service.ProjectSettingService"
-                        serviceImplementation="com.ganguo.java.plugin.service.ProjectSettingServiceImpl"/>
+        <projectService serviceInterface="com.ganguo.java.plugin.service.SettingService"
+                        serviceImplementation="com.ganguo.java.plugin.service.SettingServiceImpl"/>
     </extensions>
 
     <application-components>
@@ -63,15 +63,15 @@
 
             <action id="com.ganguo.java.plugin.action.menu.ApiModelAutoPosition"
                     class="com.ganguo.java.plugin.action.menu.ApiModelAutoPosition"
-                    text="ApiMode自动编号">
-
-            </action>
+                    text="ApiMode自动编号"/>
 
             <action id="com.ganguo.java.plugin.action.menu.GenerateSetterCaller"
                     class="com.ganguo.java.plugin.action.menu.GenerateSetterCaller"
-                    text="生成Setter调用">
+                    text="生成Setter调用"/>
 
-            </action>
+            <action id="com.ganguo.java.plugin.action.menu.NewEnumCodeAction"
+                    class="com.ganguo.java.plugin.action.menu.NewEnumCodeAction"
+                    text="生成EnumCode"/>
 
         </group>
 

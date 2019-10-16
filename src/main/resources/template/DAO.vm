@@ -36,7 +36,6 @@ public class ${Name}DAO extends BaseDAO implements I${Name}DbStrategy {
 
     @Override
     public int updateById(Long id, ${recordCls} ${pojoName}) {
-        ${pojoName}.setUpdatedAt(Instant.now());
         return mDSLContext.executeUpdate(${pojoName}, ${table}.ID.eq(id));
     }
 
@@ -48,10 +47,14 @@ public class ${Name}DAO extends BaseDAO implements I${Name}DbStrategy {
     }
 
     @Override
+    public int deleteByIds(List<Long> ids) {
+        return mDSLContext.deleteFrom(${table})
+                .where(${table}.ID.in(ids))
+                .execute();
+    }
+
+    @Override
     public boolean existsById(Long id) {
-        return mDSLContext.fetchExists(
-                mDSLContext.selectOne()
-                        .from(${table})
-                        .where(${table}.ID.eq(id)));
+        return mDSLContext.fetchExists(${table}, ${table}.ID.eq(id));
     }
 }

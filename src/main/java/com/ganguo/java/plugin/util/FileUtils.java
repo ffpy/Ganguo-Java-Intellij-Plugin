@@ -83,7 +83,7 @@ public class FileUtils {
      */
     public static boolean addIfAbsent(PsiDirectory directory, PsiFile file) {
         if (directory.findFile(file.getName()) != null) {
-            MsgUtils.info("%s已存在", file.getName());
+            NotificationHelper.warn("%s已存在", file.getName()).show();
             return false;
         }
         directory.add(file);

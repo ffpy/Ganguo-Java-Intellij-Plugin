@@ -1,5 +1,7 @@
 package com.ganguo.java.plugin.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class MyStringUtils {
 
     /**
@@ -55,5 +57,14 @@ public class MyStringUtils {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * 转换为标题样式，如hello_world -> HelloWorld
+     * @param str 字符串
+     * @return 转换后的字符串
+     */
+    public static String toTitle(String str) {
+        return StringUtils.capitalize(underScoreCase2CamelCase(str));
     }
 }

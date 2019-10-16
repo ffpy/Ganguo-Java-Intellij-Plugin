@@ -16,5 +16,7 @@ public interface I${Name}Repository {
 
     int deleteById(Long id);
 
+    int deleteByIds(List<Long> ids);
+
     boolean existsById(Long id);
 }

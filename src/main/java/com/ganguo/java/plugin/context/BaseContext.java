@@ -1,6 +1,6 @@
 package com.ganguo.java.plugin.context;
 
-import com.ganguo.java.plugin.service.ProjectSettingService;
+import com.ganguo.java.plugin.service.SettingService;
 import com.ganguo.java.plugin.util.ProjectUtils;
 import com.ganguo.java.plugin.util.WriteActions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -50,12 +50,12 @@ public class BaseContext {
     }
 
     @Var
-    protected ProjectSettingService settingService(Project project) {
-        return ServiceManager.getService(project, ProjectSettingService.class);
+    protected SettingService settingService(Project project) {
+        return ServiceManager.getService(project, SettingService.class);
     }
 
     @Var
-    protected String packageName(ProjectSettingService settingService) {
+    protected String packageName(SettingService settingService) {
         return settingService.getPackageName();
     }
 

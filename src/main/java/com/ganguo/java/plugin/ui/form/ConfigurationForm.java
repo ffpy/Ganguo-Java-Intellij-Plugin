@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
+import lombok.Getter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,66 +21,70 @@ import java.util.stream.Collectors;
 
 public class ConfigurationForm implements BaseForm {
 
+    @Getter
     private JPanel mainPanel;
-    private JTextField mPackageNameField;
-    private JTabbedPane mTabPane;
-    private JButton mResetButton;
-    private Map<TemplateName, Editor> mEditorMap = new HashMap<>();
-    private EditorFactory mEditorFactory;
+
+    @Getter
+    private JTextField packageNameField;
+
+    private JTabbedPane tabPane;
+
+    private JButton resetButton;
+
+    @Getter
+    private JTextField translateAppIdField;
+
+    @Getter
+    private JTextField translateSecretField;
+
+    private Map<TemplateName, Editor> editorMap = new HashMap<>();
+
+    private EditorFactory editorFactory;
 
     /**
      * @param templateMap TreeMap实例
      */
     public ConfigurationForm(Map<TemplateName, String> templateMap) {
-        mEditorFactory = EditorFactory.getInstance();
+        editorFactory = EditorFactory.getInstance();
         FileType fileType = FileTypeManager.getInstance().getFileTypeByExtension("vm");
 
-        templateMap.entrySet().forEach(entry -> addTab(mEditorFactory, fileType, entry));
+        templateMap.entrySet().forEach(entry -> addTab(editorFactory, fileType, entry));
 
-        if (mTabPane.getTabCount() > 0) {
-            mTabPane.setSelectedIndex(0);
+        if (tabPane.getTabCount() > 0) {
+            tabPane.setSelectedIndex(0);
         }
     }
 
     public void onReset(ActionListener listener) {
-        mResetButton.addActionListener(Objects.requireNonNull(listener));
+        resetButton.addActionListener(Objects.requireNonNull(listener));
     }
 
     private void addTab(EditorFactory factory, FileType fileType, Map.Entry<TemplateName, String> entry) {
         EventQueue.invokeLater(() -> {
             Document document = factory.createDocument(entry.getValue());
             Editor editor = factory.createEditor(document, null, fileType, false);
-            mEditorMap.put(entry.getKey(), editor);
-            mTabPane.addTab(entry.getKey().getName(), editor.getComponent());
+            editorMap.put(entry.getKey(), editor);
+            tabPane.addTab(entry.getKey().getName(), editor.getComponent());
         });
     }
 
     public Map<TemplateName, String> getTemplateMap() {
-        return mEditorMap.entrySet().stream()
+        return editorMap.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey,
                         entry -> entry.getValue().getDocument().getText()));
     }
 
     public void setTemplateMap(Map<TemplateName, String> templateMap) {
         for (Map.Entry<TemplateName, String> entry : templateMap.entrySet()) {
-            Optional.ofNullable(mEditorMap.get(entry.getKey()))
+            Optional.ofNullable(editorMap.get(entry.getKey()))
                     .ifPresent(editor -> ApplicationManager.getApplication().runWriteAction(() ->
                             editor.getDocument().setText(entry.getValue())));
         }
     }
 
-    @Override
-    public JPanel getMainPanel() {
-        return mainPanel;
-    }
-
-    public JTextField getPackageNameField() {
-        return mPackageNameField;
-    }
-
     public void dispose() {
-        mEditorMap.values().forEach(mEditorFactory::releaseEditor);
-        mEditorMap.clear();
-        mEditorFactory = null;
+        editorMap.values().forEach(editorFactory::releaseEditor);
+        editorMap.clear();
+        editorFactory = null;
     }
 }
