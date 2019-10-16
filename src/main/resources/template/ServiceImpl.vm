@@ -13,7 +13,7 @@ public class ${Name}ServiceImpl implements ${Name}Service {
 
 #if($repositoryClassName)
     @Autowired
-    private I${Name}Repository ${name}Repository;
+    private ${repositoryClassName} ${name}Repository;
 #end
 
 }

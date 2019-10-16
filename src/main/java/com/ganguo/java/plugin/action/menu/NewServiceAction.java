@@ -45,6 +45,7 @@ public class NewServiceAction extends BaseAnAction {
     private boolean doAction(AnActionEvent event, String path, String module, String name) {
         return ContextBuilder.of(this)
                 .put("event", event)
+                .put("path", path)
                 .put("module", path + "/" + module)
                 .put("name", name)
                 .build()
@@ -92,10 +93,10 @@ public class NewServiceAction extends BaseAnAction {
      * 模板参数
      */
     @Var
-    private Map<String, Object> params(String name, @Nla String repositoryClassName) {
+    private Map<String, Object> params(String path, String name, @Nla String repositoryClassName) {
         Map<String, Object> params = new HashMap<>();
         params.put("name", StringUtils.uncapitalize(name));
-        params.put("Name", StringUtils.capitalize(name));
+        params.put("Name", ("admin".equals(path) ? "Admin" : "") + StringUtils.capitalize(name));
         params.put("repositoryClassName", repositoryClassName);
         return params;
     }
