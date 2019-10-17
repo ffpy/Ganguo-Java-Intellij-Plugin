@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 public class NewEnumCodeAction extends BaseAnAction {
 
     private static final Predicate<String> PREDICATE_UPDATE = Pattern.compile(
-            "\\s*`\\w+`\\s+TINYINT\\(1\\)\\s+.*COMMENT\\s+'.+:.*'.*",
+            "\\s*`\\w+`\\s+(TINY)?INT\\(\\d*\\)\\s+.*COMMENT\\s+'.+[:：].*'.*",
             Pattern.MULTILINE | Pattern.CASE_INSENSITIVE).asPredicate();
 
     private static final Pattern PATTERN_CREATE_TABLE = Pattern.compile(
@@ -63,7 +63,7 @@ public class NewEnumCodeAction extends BaseAnAction {
             "^\\s*`(\\w+)`");
 
     private static final Pattern PATTERN_COMMENT = Pattern.compile(
-            "COMMENT\\s+'.*:(.+)'", Pattern.CASE_INSENSITIVE);
+            "COMMENT\\s+'.*[:：](.+)'", Pattern.CASE_INSENSITIVE);
 
 
     @Override

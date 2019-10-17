@@ -48,7 +48,7 @@
 
 #### 生成EnumCode
 在sql文件中光标移到字段所在行，打开`顶部菜单栏->Ganguo->生成EnumCode`，即可生成对应的状态类。<br>
-字段列必须匹配格式: \`xxx\` TINYINT(1) ... COMMENT 'xx:0-xxx,1-xx'<br>
+字段列必须匹配格式: \`xxx\` (TINY)?INT(x) ... COMMENT 'xx:0-xxx,1-xx'<br>
 例如把光标移到status字段所在行，选择`生成EnumCode`。
 ```sql
 CREATE TABLE `user`
