@@ -17,6 +17,10 @@
 
         <projectService serviceInterface="com.ganguo.java.plugin.service.SettingService"
                         serviceImplementation="com.ganguo.java.plugin.service.SettingServiceImpl"/>
+
+        <completion.confidence id="com.ganguo.java.plugin.completion.MyCompletionConfidence"
+                               implementationClass="com.ganguo.java.plugin.completion.MyCompletionConfidence"
+                               order="first" language="JAVA"/>
     </extensions>
 
     <application-components>
@@ -28,8 +32,7 @@
 
     <actions>
         <group id="Ganguo.Menu"
-               text="Ganguo"
-               description="Ganguo">
+               text="Ganguo">
 
             <add-to-group group-id="MainMenu" anchor="last"/>
 
@@ -81,7 +84,6 @@
 
         <group id="Ganguo.Popup"
                text="甘果"
-               description="甘果"
                popup="true">
 
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
@@ -94,7 +96,7 @@
             <action id="com.ganguo.java.plugin.action.generate.GotoApiTestClassAction"
                     class="com.ganguo.java.plugin.action.generate.GotoApiTestClassAction"
                     text="跳转到测试类"/>
-            
+
             <action id="com.ganguo.java.plugin.action.generate.ModifyApiUrlAction"
                     class="com.ganguo.java.plugin.action.generate.ModifyApiUrlAction"
                     text="修改URL"/>
