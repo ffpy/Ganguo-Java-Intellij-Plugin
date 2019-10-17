@@ -12,6 +12,7 @@ import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiModifierList;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -115,6 +116,47 @@ public class PsiUtils {
                     return modifierList.hasModifierProperty(PsiModifier.PUBLIC) &&
                             !modifierList.hasModifierProperty(PsiModifier.STATIC);
                 })
-                .filter(method -> method.getName().matches("^set[A-Z].*$"));
+                .filter(method -> method.getName().matches("^set[A-Z].*$"))
+                .filter(method -> method.getParameterList().getParametersCount() == 1);
+    }
+
+    public static Stream<String> getAllSetterName(PsiClass psiClass) {
+        return getAllSetter(psiClass)
+                .map(method -> {
+                    String name = method.getName();
+                    if (name.startsWith("set")) {
+                        return StringUtils.uncapitalize(name.substring("set".length()));
+                    } else {
+                        return name;
+                    }
+                });
+    }
+
+    public static Stream<PsiMethod> getAllGetter(PsiClass psiClass) {
+        return Arrays.stream(psiClass.getAllMethods())
+                .filter(method -> {
+                    PsiModifierList modifierList = method.getModifierList();
+                    return modifierList.hasModifierProperty(PsiModifier.PUBLIC) &&
+                            !modifierList.hasModifierProperty(PsiModifier.STATIC);
+                })
+                .filter(method -> method.getName().matches("^get[A-Z].*$") ||
+                        method.getName().matches("^is[A-Z].*$"))
+                .filter(method -> method.getParameterList().getParametersCount() == 0)
+                .filter(method -> method.getReturnType() != null &&
+                        !method.getReturnType().getPresentableText().equals("void"));
+    }
+
+    public static Stream<String> getAllGetterName(PsiClass psiClass) {
+        return getAllGetter(psiClass)
+                .map(method -> {
+                    String name = method.getName();
+                    if (name.startsWith("is")) {
+                        return StringUtils.uncapitalize(name.substring("is".length()));
+                    } else if (name.startsWith("get")) {
+                        return StringUtils.uncapitalize(name.substring("get".length()));
+                    } else {
+                        return name;
+                    }
+                });
     }
 }

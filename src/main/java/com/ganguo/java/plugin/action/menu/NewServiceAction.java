@@ -17,6 +17,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.FuncAction;
 import org.dependcode.dependcode.anno.Func;
@@ -44,6 +45,7 @@ public class NewServiceAction extends BaseAnAction {
     private boolean doAction(AnActionEvent event, String path, String module, String name) {
         return ContextBuilder.of(this)
                 .put("event", event)
+                .put("path", path)
                 .put("module", path + "/" + module)
                 .put("name", name)
                 .build()
@@ -91,9 +93,10 @@ public class NewServiceAction extends BaseAnAction {
      * 模板参数
      */
     @Var
-    private Map<String, Object> params(String name, @Nla String repositoryClassName) {
+    private Map<String, Object> params(String path, String name, @Nla String repositoryClassName) {
         Map<String, Object> params = new HashMap<>();
-        params.put("name", name);
+        params.put("name", StringUtils.uncapitalize(name));
+        params.put("Name", ("admin".equals(path) ? "Admin" : "") + StringUtils.capitalize(name));
         params.put("repositoryClassName", repositoryClassName);
         return params;
     }
@@ -103,7 +106,7 @@ public class NewServiceAction extends BaseAnAction {
      */
     @Var
     private PsiFile interFile(FuncAction<PsiFile> createJavaFile) {
-        return createJavaFile.get(TemplateName.SERVICE, "{name}Service");
+        return createJavaFile.get(TemplateName.SERVICE, "{Name}Service");
     }
 
     /**
@@ -111,7 +114,7 @@ public class NewServiceAction extends BaseAnAction {
      */
     @Var
     private PsiFile implFile(FuncAction<PsiFile> createJavaFile) {
-        return createJavaFile.get(TemplateName.SERVICE_IMPL, "{name}ServiceImpl");
+        return createJavaFile.get(TemplateName.SERVICE_IMPL, "{Name}ServiceImpl");
     }
 
     /**

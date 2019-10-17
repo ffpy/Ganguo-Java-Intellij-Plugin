@@ -8,6 +8,7 @@ import com.ganguo.java.plugin.util.CopyPasteUtils;
 import com.ganguo.java.plugin.util.FileUtils;
 import com.ganguo.java.plugin.util.IndexUtils;
 import com.ganguo.java.plugin.util.MsgUtils;
+import com.ganguo.java.plugin.util.NotificationHelper;
 import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.SafeProperties;
 import com.ganguo.java.plugin.util.WriteActions;
@@ -112,7 +113,7 @@ public class AddExceptionMsgAction extends BaseAnAction {
                 CopyPasteUtils.putString(entry.getValue().toString());
                 CopyPasteUtils.putString(entry.getKey().toString());
 
-                MsgUtils.info("发现%s已存在，已放入粘贴板", entry.getValue());
+                NotificationHelper.info("发现%s已存在，已放入粘贴板", entry.getValue()).show();
 
                 return Status.EXISTS;
             }
@@ -123,6 +124,7 @@ public class AddExceptionMsgAction extends BaseAnAction {
             int result = Messages.showYesNoDialog(key + "已存在，是否覆盖？",
                     "提示", "覆盖", "取消", null);
             if (result != Messages.YES) {
+                CopyPasteUtils.putString(key);
                 return Status.FAIL;
             }
         }

@@ -4,6 +4,7 @@ import com.ganguo.java.plugin.constant.TemplateName;
 import com.ganguo.java.plugin.context.NewContext;
 import com.ganguo.java.plugin.context.RepositoryContext;
 import com.ganguo.java.plugin.util.FileUtils;
+import com.ganguo.java.plugin.util.IndexUtils;
 import com.ganguo.java.plugin.util.MyStringUtils;
 import com.ganguo.java.plugin.action.BaseAnAction;
 import com.ganguo.java.plugin.context.JavaFileContext;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 创建Repository接口及实现类
@@ -31,6 +33,8 @@ import java.util.Map;
 @Slf4j
 @ImportFrom({NewContext.class, RepositoryContext.class, JavaFileContext.class})
 public class NewRepositoryAction extends BaseAnAction {
+
+    private static final String FIELD_ACTIVE = "ACTIVE";
 
     @Override
     public void action(@NotNull AnActionEvent e) {
@@ -77,16 +81,19 @@ public class NewRepositoryAction extends BaseAnAction {
      * 模板参数
      */
     @Var
-    private Map<String, Object> params(String packageName, String module, String name, String table, String pojo) {
+    private Map<String, Object> params(String packageName, String module, String name, String table,
+                                       String pojo, Boolean hasActive) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("packageName", packageName);
         params.put("moduleName", module);
-        params.put("name", name);
+        params.put("name", StringUtils.uncapitalize(name));
+        params.put("Name", StringUtils.capitalize(name));
         params.put("table", table);
         params.put("pojoCls", pojo + "POJO");
         params.put("recordCls", pojo + "Record");
-        params.put("pojoName", MyStringUtils.lowerCaseFirstChar(pojo));
+        params.put("pojoName", StringUtils.uncapitalize(pojo));
+        params.put("hasActive", hasActive);
 
         return params;
     }
@@ -96,7 +103,7 @@ public class NewRepositoryAction extends BaseAnAction {
      */
     @Var
     private PsiFile repositoryFile(FuncAction<PsiFile> createJavaFile) {
-        return createJavaFile.get(TemplateName.I_REPOSITORY, "I{name}Repository");
+        return createJavaFile.get(TemplateName.I_REPOSITORY, "I{Name}Repository");
     }
 
     /**
@@ -104,7 +111,7 @@ public class NewRepositoryAction extends BaseAnAction {
      */
     @Var
     private PsiFile dbStrategyFile(FuncAction<PsiFile> createJavaFile) {
-        return createJavaFile.get(TemplateName.I_DB_STRATEGY, "I{name}DbStrategy");
+        return createJavaFile.get(TemplateName.I_DB_STRATEGY, "I{Name}DbStrategy");
     }
 
     /**
@@ -112,7 +119,7 @@ public class NewRepositoryAction extends BaseAnAction {
      */
     @Var
     private PsiFile repositoryImplFile(FuncAction<PsiFile> createJavaFile) {
-        return createJavaFile.get(TemplateName.REPOSITORY, "{name}Repository");
+        return createJavaFile.get(TemplateName.REPOSITORY, "{Name}Repository");
     }
 
     /**
@@ -120,6 +127,17 @@ public class NewRepositoryAction extends BaseAnAction {
      */
     @Var
     private PsiFile daoFile(FuncAction<PsiFile> createJavaFile) {
-        return createJavaFile.get(TemplateName.DAO, "{name}DAO");
+        return createJavaFile.get(TemplateName.DAO, "{Name}DAO");
+    }
+
+    /**
+     * 是否有ACTIVE字段
+     */
+    @Var
+    private Boolean hasActive(Project project, String table) {
+        String className = MyStringUtils.toTitle(table.toLowerCase()) + "Table";
+        return Optional.ofNullable(IndexUtils.getClassByShortName(project, className))
+                .map(psiClass -> psiClass.findFieldByName(FIELD_ACTIVE, false) != null)
+                .orElse(false);
     }
 }

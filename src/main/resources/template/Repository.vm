@@ -1,5 +1,5 @@
-import ${packageName}.domain.repository.${moduleName}.I${name}DbStrategy;
-import ${packageName}.domain.repository.${moduleName}.I${name}Repository;
+import ${packageName}.domain.repository.${moduleName}.I${Name}DbStrategy;
+import ${packageName}.domain.repository.${moduleName}.I${Name}Repository;
 import ${packageName}.jooq.tables.pojos.${pojoCls};
 import ${packageName}.jooq.tables.records.${recordCls};
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,38 +11,43 @@ import java.util.Optional;
 
 @Repository
 @Primary
-public class ${name}Repository implements I${name}Repository {
+public class ${Name}Repository implements I${Name}Repository {
 
     @Autowired
-    private I${name}DbStrategy m${name}DbStrategy;
+    private I${Name}DbStrategy ${name}DbStrategy;
 
     @Override
     public Optional<${pojoCls}> findById(Long id) {
-        return m${name}DbStrategy.findById(id);
+        return ${name}DbStrategy.findById(id);
     }
 
     @Override
     public List<${pojoCls}> findAll() {
-        return m${name}DbStrategy.findAll();
+        return ${name}DbStrategy.findAll();
     }
 
     @Override
     public ${pojoCls} insert(${pojoCls} ${pojoName}) {
-        return m${name}DbStrategy.insert(${pojoName});
+        return ${name}DbStrategy.insert(${pojoName});
     }
 
     @Override
     public int updateById(Long id, ${recordCls} ${pojoName}) {
-        return m${name}DbStrategy.updateById(id, ${pojoName});
+        return ${name}DbStrategy.updateById(id, ${pojoName});
     }
 
     @Override
     public int deleteById(Long id) {
-        return m${name}DbStrategy.deleteById(id);
+        return ${name}DbStrategy.deleteById(id);
+    }
+
+    @Override
+    public int deleteByIds(List<Long> ids) {
+        return ${name}DbStrategy.deleteByIds(ids);
     }
 
     @Override
     public boolean existsById(Long id) {
-        return m${name}DbStrategy.existsById(id);
+        return ${name}DbStrategy.existsById(id);
     }
 }

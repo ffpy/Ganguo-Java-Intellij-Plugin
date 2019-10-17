@@ -30,7 +30,7 @@ public class NewRepositoryDialog extends BaseDialog<NewRepositoryForm, NewReposi
                 text -> MyStringUtils.camelCase2UnderScoreCase(text).toUpperCase());
         mTabletLimit = new InputLimit(mForm.getTableField(), "^([A-Z_][A-Z0-9_]*)?$");
         mModuleLimit = new InputLimit(mForm.getModuleField(), "^([a-zA-Z][\\w.]*)?$");
-        mNameLimit = new InputLimit(mForm.getNameField(), "^([a-zA-Z][a-zA-Z\\d]*)?$");
+        mNameLimit = new InputLimit(mForm.getNameField(), "^([a-zA-Z][a-zA-Z\\d_]*)?$");
     }
 
     @Nullable
@@ -43,7 +43,7 @@ public class NewRepositoryDialog extends BaseDialog<NewRepositoryForm, NewReposi
     protected void doOKAction() {
         String table = mForm.getTableField().getText().trim();
         String module = mForm.getModuleField().getText().trim();
-        String name = StringUtils.capitalize(mForm.getNameField().getText().trim());
+        String name = MyStringUtils.toTitle(mForm.getNameField().getText().trim());
 
         if (!table.isEmpty() && !name.isEmpty() &&
                 mTabletLimit.getMatcher().test(table) &&

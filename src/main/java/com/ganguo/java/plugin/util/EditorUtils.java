@@ -1,6 +1,7 @@
 package com.ganguo.java.plugin.util;
 
 import com.intellij.openapi.editor.CaretModel;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.LogicalPosition;
@@ -24,6 +25,22 @@ public class EditorUtils {
         int start = line == 0 ? 0 : editor.getDocument().getLineEndOffset(line - 1) + 1;
         int end = editor.getDocument().getLineEndOffset(line);
         return editor.getDocument().getText(new TextRange(start, end));
+    }
+
+    /**
+     * 获取指定行的文本
+     *
+     * @param doc  文档
+     * @param line 行号(0到doc.getLineCount()-1)
+     * @return 文本
+     */
+    public static String getLineText(Document doc, int line) {
+        if (line < 0 || line >= doc.getLineCount()) {
+            return null;
+        }
+        int start = doc.getLineStartOffset(line);
+        int end = doc.getLineEndOffset(line);
+        return doc.getText(new TextRange(start, end));
     }
 
     /**

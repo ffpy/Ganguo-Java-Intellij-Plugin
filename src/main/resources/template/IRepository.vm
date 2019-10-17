@@ -4,7 +4,7 @@ import java.util.Optional;
 import ${packageName}.jooq.tables.pojos.${pojoCls};
 import ${packageName}.jooq.tables.records.${recordCls};
 
-public interface I${name}Repository {
+public interface I${Name}Repository {
 
     Optional<${pojoCls}> findById(Long id);
 
@@ -15,6 +15,8 @@ public interface I${name}Repository {
     int updateById(Long id, ${recordCls} ${pojoName});
 
     int deleteById(Long id);
+
+    int deleteByIds(List<Long> ids);
 
     boolean existsById(Long id);
 }

@@ -1,29 +1,33 @@
-import ${packageName}.domain.repository.${moduleName}.I${name}DbStrategy;
+import ${packageName}.domain.repository.${moduleName}.I${Name}DbStrategy;
 import com.ganguomob.dev.base.infrastructure.repository.db.BaseDAO;
 import ${packageName}.jooq.tables.pojos.${pojoCls};
 import ${packageName}.jooq.tables.records.${recordCls};
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
 import static ${packageName}.jooq.Tables.${table};
 
 @Repository
-public class ${name}DAO extends BaseDAO implements I${name}DbStrategy {
+public class ${Name}DAO extends BaseDAO implements I${Name}DbStrategy {
 
     @Override
     public Optional<${pojoCls}> findById(Long id) {
         return mDSLContext.selectFrom(${table})
                 .where(${table}.ID.eq(id))
+#if($hasActive)
+                .and(${table}.ACTIVE.isTrue())
+#end
                 .fetchOptionalInto(${pojoCls}.class);
     }
 
     @Override
     public List<${pojoCls}> findAll() {
         return mDSLContext.selectFrom(${table})
+#if($hasActive)
+                .where(${table}.ACTIVE.isTrue())
+#end
                 .orderBy(${table}.ID.asc())
                 .fetchInto(${pojoCls}.class);
     }
@@ -36,23 +40,42 @@ public class ${name}DAO extends BaseDAO implements I${name}DbStrategy {
     }
 
     @Override
-    public int updateById(Long id, ${pojoCls} ${pojoName}) {
-        ${pojoName}.setUpdatedAt(LocalDateTime.now(ZoneOffset.UTC));
+    public int updateById(Long id, ${recordCls} ${pojoName}) {
         return mDSLContext.executeUpdate(${pojoName}, ${table}.ID.eq(id));
     }
 
     @Override
     public int deleteById(Long id) {
+#if($hasActive)
+        return mDSLContext.update(${table})
+                .set(${table}.ACTIVE, false)
+                .where(${table}.ID.eq(id))
+                .execute();
+#else
         return mDSLContext.deleteFrom(${table})
                 .where(${table}.ID.eq(id))
                 .execute();
+#end
+    }
+
+    @Override
+    public int deleteByIds(List<Long> ids) {
+#if($hasActive)
+        return mDSLContext.update(${table})
+                .set(${table}.ACTIVE, false)
+                .where(${table}.ID.in(ids))
+                .execute();
+#else
+        return mDSLContext.deleteFrom(${table})
+                .where(${table}.ID.in(ids))
+                .execute();
+#end
     }
 
     @Override
     public boolean existsById(Long id) {
-        return mDSLContext.fetchExists(
-                mDSLContext.selectOne()
-                        .from(${table})
-                        .where(${table}.ID.eq(id)));
+        return mDSLContext.fetchExists(${table}, ${table}.ID.eq(id)#if($hasActive)
+
+                .and(${table}.ACTIVE.isTrue())#end);
     }
 }

@@ -1,7 +1,7 @@
 package com.ganguo.java.plugin.configurable;
 
 import com.ganguo.java.plugin.constant.TemplateName;
-import com.ganguo.java.plugin.service.ProjectSettingService;
+import com.ganguo.java.plugin.service.SettingService;
 import com.ganguo.java.plugin.ui.form.ConfigurationForm;
 import com.ganguo.java.plugin.util.PatternUtils;
 import com.ganguo.java.plugin.util.ProjectUtils;
@@ -30,28 +30,33 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ProjectConfigurable implements SearchableConfigurable {
 
-    private final ConfigurationForm mForm;
-    private final ProjectSettingService mProjectSettingService;
-    private Map<TemplateName, String> mTemplateMap;
-    private String mPackageName;
+    private final ConfigurationForm form;
+    private final SettingService settingService;
+    private Map<TemplateName, String> templateMap;
+    private String packageName;
+    private String translateAppId;
+    private String translateSecret;
 
     public ProjectConfigurable(Project project) {
 
-        mProjectSettingService = ServiceManager.getService(project, ProjectSettingService.class);
+        settingService = ServiceManager.getService(project, SettingService.class);
 
         initTemplateMap();
 
-        mForm = new ConfigurationForm(mTemplateMap);
+        form = new ConfigurationForm(templateMap);
 
         if (!ProjectUtils.isDefaultProject(project)) {
-            mPackageName = mProjectSettingService.getPackageName();
+            packageName = settingService.getPackageName();
         }
 
-        mForm.onReset(e -> {
+        translateAppId = settingService.getTranslateAppId();
+        translateSecret = settingService.getTranslateSecret();
+
+        form.onReset(e -> {
             if (Messages.showYesNoDialog("确认恢复默认设置？", "提示",
                     "确定", "取消", null) == Messages.YES) {
-                mProjectSettingService.reset();
-                mPackageName = mProjectSettingService.getPackageName();
+                settingService.reset();
+                packageName = settingService.getPackageName();
                 initTemplateMap();
                 reset();
             }
@@ -59,7 +64,7 @@ public class ProjectConfigurable implements SearchableConfigurable {
     }
 
     private void initTemplateMap() {
-        mTemplateMap = Arrays.stream(TemplateName.values())
+        templateMap = Arrays.stream(TemplateName.values())
                 .map(this::loadTemplate)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(Item::getName, Item::getContent, (u, v) -> {
@@ -82,61 +87,73 @@ public class ProjectConfigurable implements SearchableConfigurable {
     @Nullable
     @Override
     public JComponent createComponent() {
-        return mForm.getMainPanel();
+        return form.getMainPanel();
     }
 
     @Override
     public boolean isModified() {
-        if (!mForm.getPackageNameField().getText().equals(mPackageName)) {
-            return true;
-        }
-        if (!mForm.getTemplateMap().equals(mTemplateMap)) {
-            return true;
-        }
-
-        return false;
+        return !form.getPackageNameField().getText().equals(packageName) ||
+                !form.getTemplateMap().equals(templateMap) ||
+                !form.getTranslateAppIdField().getText().equals(translateAppId) ||
+                !form.getTranslateSecretField().getText().equals(translateSecret);
     }
 
     @Override
     public void apply() throws ConfigurationException {
         applyPackageName();
         applyTemplate();
+        applyTranslateAppId();
+        applyTranslateSecret();
     }
 
     private void applyTemplate() {
-        Map<TemplateName, String> templateMap = mForm.getTemplateMap();
-        templateMap.forEach(mProjectSettingService::setTemplate);
-        mTemplateMap = templateMap;
+        Map<TemplateName, String> templateMap = form.getTemplateMap();
+        templateMap.forEach(settingService::setTemplate);
+        this.templateMap = templateMap;
     }
 
     private void applyPackageName() throws ConfigurationException {
-        String packageName = mForm.getPackageNameField().getText();
+        String packageName = form.getPackageNameField().getText();
         if (!PatternUtils.matchPackageName(packageName)) {
             throw new ConfigurationException("包名格式不正确");
         }
 
-        mProjectSettingService.setPackageName(packageName);
+        settingService.setPackageName(packageName);
 
         if (StringUtils.isEmpty(packageName)) {
-            mForm.getPackageNameField().setText(mProjectSettingService.getPackageName());
+            form.getPackageNameField().setText(settingService.getPackageName());
         }
 
-        mPackageName = mForm.getPackageNameField().getText();
+        this.packageName = form.getPackageNameField().getText();
+    }
+
+    private void applyTranslateAppId() {
+        String translateAppId = form.getTranslateAppIdField().getText();
+        settingService.setTranslateAppId(translateAppId);
+        this.translateAppId = translateAppId;
+    }
+
+    private void applyTranslateSecret() {
+        String translateSecret = form.getTranslateSecretField().getText();
+        settingService.setTranslateSecret(translateSecret);
+        this.translateSecret = translateSecret;
     }
 
     @Override
     public void reset() {
-        mForm.getPackageNameField().setText(mPackageName);
-        mForm.setTemplateMap(mTemplateMap);
+        form.getPackageNameField().setText(packageName);
+        form.setTemplateMap(templateMap);
+        form.getTranslateAppIdField().setText(translateAppId);
+        form.getTranslateSecretField().setText(translateSecret);
     }
 
     @Override
     public void disposeUIResources() {
-        mForm.dispose();
+        form.dispose();
     }
 
     private Item<String> loadTemplate(TemplateName name) {
-        return Optional.ofNullable(mProjectSettingService.getTemplate(name))
+        return Optional.ofNullable(settingService.getTemplate(name))
                 .map(content -> new Item<>(name, content))
                 .orElse(null);
     }

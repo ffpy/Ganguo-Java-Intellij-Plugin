@@ -15,8 +15,12 @@
     <extensions defaultExtensionNs="com.intellij">
         <projectConfigurable instance="com.ganguo.java.plugin.configurable.ProjectConfigurable"/>
 
-        <projectService serviceInterface="com.ganguo.java.plugin.service.ProjectSettingService"
-                        serviceImplementation="com.ganguo.java.plugin.service.ProjectSettingServiceImpl"/>
+        <projectService serviceInterface="com.ganguo.java.plugin.service.SettingService"
+                        serviceImplementation="com.ganguo.java.plugin.service.SettingServiceImpl"/>
+
+        <completion.confidence id="com.ganguo.java.plugin.completion.MyCompletionConfidence"
+                               implementationClass="com.ganguo.java.plugin.completion.MyCompletionConfidence"
+                               order="first" language="JAVA"/>
     </extensions>
 
     <application-components>
@@ -28,8 +32,7 @@
 
     <actions>
         <group id="Ganguo.Menu"
-               text="Ganguo"
-               description="Ganguo">
+               text="Ganguo">
 
             <add-to-group group-id="MainMenu" anchor="last"/>
 
@@ -63,24 +66,27 @@
 
             <action id="com.ganguo.java.plugin.action.menu.ApiModelAutoPosition"
                     class="com.ganguo.java.plugin.action.menu.ApiModelAutoPosition"
-                    text="ApiMode自动编号">
-
-            </action>
+                    text="ApiModel自动编号"/>
 
             <action id="com.ganguo.java.plugin.action.menu.GenerateSetterCaller"
                     class="com.ganguo.java.plugin.action.menu.GenerateSetterCaller"
-                    text="生成Setter调用">
+                    text="生成Setter调用"/>
 
-            </action>
+            <action id="com.ganguo.java.plugin.action.menu.NewEnumCodeAction"
+                    class="com.ganguo.java.plugin.action.menu.NewEnumCodeAction"
+                    text="生成EnumCode"/>
+
+            <action id="com.ganguo.java.plugin.action.menu.FormatSqlAction"
+                    class="com.ganguo.java.plugin.action.menu.FormatSqlAction"
+                    text="格式化SQL脚本"/>
 
         </group>
 
-        <group id="Ganguo.Generate"
-               text="Ganguo"
-               description="Ganguo"
+        <group id="Ganguo.Popup"
+               text="甘果"
                popup="true">
 
-            <add-to-group group-id="GenerateGroup" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
 
             <!-- Controller -->
             <action id="com.ganguo.java.plugin.action.generate.GenerateApiTestClassAction"
@@ -90,7 +96,7 @@
             <action id="com.ganguo.java.plugin.action.generate.GotoApiTestClassAction"
                     class="com.ganguo.java.plugin.action.generate.GotoApiTestClassAction"
                     text="跳转到测试类"/>
-            
+
             <action id="com.ganguo.java.plugin.action.generate.ModifyApiUrlAction"
                     class="com.ganguo.java.plugin.action.generate.ModifyApiUrlAction"
                     text="修改URL"/>

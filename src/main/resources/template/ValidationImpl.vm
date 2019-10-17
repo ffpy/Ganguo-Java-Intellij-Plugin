@@ -1,18 +1,17 @@
-import com.ganguomob.dev.base.infrastructure.validation.BaseConstraintValidator;
+import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class ${name}ValidatorImpl extends BaseConstraintValidator<${name}, String> {
+public class ${Name}ValidatorImpl implements ConstraintValidator<${Name}, Long> {
 
     @Override
-    public void initialize(${name} constraintAnnotation) {
-
+    public void initialize(${Name} constraintAnnotation) {
     }
 
     /**
      * 校验
      */
     @Override
-    protected boolean validate(String value, ConstraintValidatorContext context) throws Exception {
+    public boolean isValid(Long value, ConstraintValidatorContext context) {
         return false;
     }
 }

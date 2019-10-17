@@ -13,6 +13,7 @@ public enum TemplateName {
     SERVICE_IMPL("ServiceImpl.vm"),
     VALIDATION("Validation.vm"),
     VALIDATION_IMPL("ValidationImpl.vm"),
+    ENUM_CODE("EnumCode.vm"),
     ;
 
     public static final String PATH_TEMPLATE = "/template/";

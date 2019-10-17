@@ -1,7 +1,7 @@
 package com.ganguo.java.plugin.context;
 
 import com.ganguo.java.plugin.constant.TemplateName;
-import com.ganguo.java.plugin.service.ProjectSettingService;
+import com.ganguo.java.plugin.service.SettingService;
 import com.ganguo.java.plugin.util.IndexUtils;
 import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.StringHelper;
@@ -92,7 +92,7 @@ public class JavaFileContext {
     }
 
     @Func
-    public PsiFile createJavaFile(PsiFileFactory fileFactory, ProjectSettingService settingService,
+    public PsiFile createJavaFile(PsiFileFactory fileFactory, SettingService settingService,
                                    @Nla Map<String, Object> params,
                                    @Ignore TemplateName templateName, String filename) {
         PsiFile file = fileFactory.createFileFromText(JavaLanguage.INSTANCE,
