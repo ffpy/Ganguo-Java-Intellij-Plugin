@@ -7,7 +7,6 @@ import com.ganguo.java.plugin.util.ActionShowHelper;
 import com.ganguo.java.plugin.util.IndexUtils;
 import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.WriteActions;
-import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiAnnotation;
@@ -27,6 +26,7 @@ import org.dependcode.dependcode.anno.Var;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -72,18 +72,37 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
         return PsiTreeUtil.getChildOfType(curMethod, PsiModifierList.class);
     }
 
+    /**
+     * 返回类的字段列表
+     */
     @Var
     private Set<String> returnFields(PsiMethod curMethod, Project project) {
         return Optional.ofNullable(curMethod.getReturnType())
                 .flatMap(type -> Optional.ofNullable(
                         IndexUtils.getClassByQualifiedName(project, type.getCanonicalText())))
-                .map(psiClass -> PsiUtils.getAllSetterName(psiClass)
-                        .collect(Collectors.toList()))
+                .map(psiClass -> {
+                    List<String> list = PsiUtils.getAllSetterName(psiClass)
+                            .collect(Collectors.toList());
+                    // 处理XXXRecord的valueXX方法
+                    list.addAll(Arrays.stream(psiClass.getAllMethods())
+                            .filter(method -> {
+                                PsiModifierList modifierList = method.getModifierList();
+                                return modifierList.hasModifierProperty(PsiModifier.PUBLIC) &&
+                                        !modifierList.hasModifierProperty(PsiModifier.STATIC);
+                            })
+                            .filter(method -> method.getName().matches("value\\d+"))
+                            .map(PsiMethod::getName)
+                            .collect(Collectors.toList()));
+                    return list;
+                })
                 // 保持顺序
                 .map(list -> (Set<String>) new LinkedHashSet<>(list))
                 .orElse(Collections.emptySet());
     }
 
+    /**
+     * 参数字段列表
+     */
     @Var
     private Set<String> parameterArgs(PsiMethod curMethod, Project project) {
         Set<String> args = new LinkedHashSet<>();
@@ -106,6 +125,9 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
         return args;
     }
 
+    /**
+     * 要忽略的字段列表
+     */
     @Var
     private Set<String> ignoreFields(Set<String> parameterArgs, Set<String> returnFields, PsiMethod curMethod) {
         Set<String> set = new LinkedHashSet<>(returnFields);

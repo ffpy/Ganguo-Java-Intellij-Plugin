@@ -55,8 +55,8 @@ public class NewValidationAction extends BaseAnAction {
             FileUtils.addIfAbsent(moduleDir, validationFile);
             FileUtils.addIfAbsent(moduleDir, validationImplFile);
 
-            FileUtils.navigateFile(project, moduleDir, validationFile.getName());
             FileUtils.navigateFile(project, moduleDir, validationImplFile.getName());
+            FileUtils.navigateFile(project, moduleDir, validationFile.getName());
         });
     }
 
