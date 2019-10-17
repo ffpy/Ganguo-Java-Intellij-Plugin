@@ -163,6 +163,7 @@ public class FormatSqlAction extends BaseAnAction {
                         .map(String::trim)
                         .map(str -> str.startsWith("(") ? str.substring(1) : str)
                         .map(str -> str.endsWith(");") ? str.substring(0, str.length() - 2) : str)
+                        .map(String::trim)
                         .toArray(String[]::new))
                 .collect(Collectors.toList());
     }
