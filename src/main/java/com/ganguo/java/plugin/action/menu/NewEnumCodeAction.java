@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -47,6 +48,23 @@ import java.util.stream.Collectors;
 @Slf4j
 @ImportFrom(JavaFileContext.class)
 public class NewEnumCodeAction extends BaseAnAction {
+
+    private static final Predicate<String> PREDICATE_UPDATE = Pattern.compile(
+            "\\s*`\\w+`\\s+TINYINT\\(1\\)\\s+.*COMMENT\\s+'.+:.*'.*",
+            Pattern.MULTILINE | Pattern.CASE_INSENSITIVE).asPredicate();
+
+    private static final Pattern PATTERN_CREATE_TABLE = Pattern.compile(
+            "CREATE\\s+TABLE\\s+`(\\w+)`", Pattern.CASE_INSENSITIVE);
+
+    private static final Predicate<String> PREDICATE_CREATE_TABLE = Pattern.compile(
+            ".*CREATE\\s+TABLE.*", Pattern.CASE_INSENSITIVE).asPredicate();
+
+    private static final Pattern PATTERN_COLUMN_NAME = Pattern.compile(
+            "^\\s*`(\\w+)`");
+
+    private static final Pattern PATTERN_COMMENT = Pattern.compile(
+            "COMMENT\\s+'.*:(.+)'", Pattern.CASE_INSENSITIVE);
+
 
     @Override
     protected void action(AnActionEvent e) throws Exception {
@@ -60,7 +78,7 @@ public class NewEnumCodeAction extends BaseAnAction {
     public void update(@NotNull AnActionEvent e) {
         ActionShowHelper.of(e)
                 .fileNameMatch(".*\\.sql")
-                .and(() -> getLineText(e).matches("\\s*`\\w+`\\s+TINYINT\\(1\\)\\s+.*COMMENT\\s+'.+:.*'.*"))
+                .and(() -> PREDICATE_UPDATE.test(getLineText(e)))
                 .update();
     }
 
@@ -85,8 +103,7 @@ public class NewEnumCodeAction extends BaseAnAction {
      */
     @Var
     private String name(String lineText) {
-        Pattern pattern = Pattern.compile("^\\s*`(\\w+)`");
-        Matcher matcher = pattern.matcher(lineText);
+        Matcher matcher = PATTERN_COLUMN_NAME.matcher(lineText);
         return matcher.find() ? matcher.group(1) : null;
     }
 
@@ -95,8 +112,7 @@ public class NewEnumCodeAction extends BaseAnAction {
      */
     @Var
     private String comment(String lineText) {
-        Pattern pattern = Pattern.compile("COMMENT\\s+'.*:(.+)'");
-        Matcher matcher = pattern.matcher(lineText);
+        Matcher matcher = PATTERN_COMMENT.matcher(lineText);
         return matcher.find() ? matcher.group(1) : null;
     }
 
@@ -134,20 +150,30 @@ public class NewEnumCodeAction extends BaseAnAction {
                 .collect(Collectors.toList());
 
         // 翻译
-        try {
-            String separator = ".";
-            String text = items.stream().map(Item::getName).reduce((s1, s2) -> s1 + separator + s2)
-                    .orElse("");
-            String result = translateHelper.zh2En(text);
-            String[] names = StringUtils.split(result, separator);
-            for (int i = 0; i < names.length && i < items.size(); i++) {
-                String name = names[i];
-                if (StringUtils.isNotEmpty(name)) {
-                    items.get(i).setName(name.trim().toUpperCase().replaceAll("[^\\w]+", "_"));
-                }
+        boolean needTranslate = false;
+        // 如果没有中文则不需要翻译
+        for (Item item : items) {
+            if (MyStringUtils.hasChinese(item.getName())) {
+                needTranslate = true;
+                break;
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        }
+
+        if (needTranslate) {
+            try {
+                String text = items.stream().map(Item::getName).reduce((s1, s2) -> s1 + "。" + s2)
+                        .orElse("");
+                String result = translateHelper.zh2En(text);
+                String[] names = StringUtils.split(result, '.');
+                for (int i = 0; i < names.length && i < items.size(); i++) {
+                    String name = names[i];
+                    if (StringUtils.isNotEmpty(name)) {
+                        items.get(i).setName(name.trim().toUpperCase().replaceAll("[^\\w]+", "_"));
+                    }
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
         return items;
@@ -161,15 +187,13 @@ public class NewEnumCodeAction extends BaseAnAction {
         CaretModel caretModel = editor.getCaretModel();
         int line = caretModel.getLogicalPosition().line;
         Document document = editor.getDocument();
-        Pattern pattern = Pattern.compile("CREATE\\s+TABLE\\s+`(\\w+)`");
-
         while (line > 0) {
             String text = EditorUtils.getLineText(document, --line);
             if (text == null) {
                 return null;
             }
-            if (text.matches(".*CREATE\\s+TABLE.*")) {
-                Matcher matcher = pattern.matcher(text);
+            if (PREDICATE_CREATE_TABLE.test(text)) {
+                Matcher matcher = PATTERN_CREATE_TABLE.matcher(text);
                 return matcher.find() ? matcher.group(1) : null;
             }
         }
@@ -182,9 +206,10 @@ public class NewEnumCodeAction extends BaseAnAction {
     @Var
     private PsiFile file(FuncAction<PsiFile> createJavaFile, String filename,
                          Project project, PsiDirectory directory) {
-        if (directory.findFile(filename + ".java") != null) {
+        String path = filename + ".java";
+        if (directory.findFile(path) != null) {
             NotificationHelper.info("%s已存在", filename).show();
-            FileUtils.navigateFile(project, directory, filename + ".java");
+            FileUtils.navigateFile(project, directory, path);
             return null;
         }
         return createJavaFile.get(TemplateName.ENUM_CODE, filename);

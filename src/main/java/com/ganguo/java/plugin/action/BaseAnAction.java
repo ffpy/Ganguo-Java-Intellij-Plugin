@@ -25,7 +25,9 @@ public abstract class BaseAnAction extends AnAction implements DumbAware {
             action(event);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            NotificationHelper.error(e.getMessage()).show();
+            if (e.getMessage() != null) {
+                NotificationHelper.error(e.getMessage()).show();
+            }
         } finally {
             this.mEvent = null;
         }

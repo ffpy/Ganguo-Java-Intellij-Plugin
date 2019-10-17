@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,6 +91,9 @@ public class MyStringUtils {
         if (StringUtils.isEmpty(separator)) {
             throw new IllegalArgumentException("separator cannot be empty");
         }
+        if (StringUtils.isEmpty(excludeFlags)) {
+            throw new IllegalArgumentException("excludeFlags cannot be empty");
+        }
 
         List<String> list = new ArrayList<>();
         char flagChar = 0;
@@ -127,21 +131,84 @@ public class MyStringUtils {
      * @param excludeFlags 忽略的包裹字符
      * @return 子字符串在原字符串的位置，-1代表没有找到
      */
-    public static int indexOf(String str, String subStr, int fromIndex, String excludeFlags) {
-        return indexOf(str.toCharArray(), subStr, fromIndex, excludeFlags);
+    public static int indexOf(String str, String subStr, int fromIndex,
+                              String excludeFlags) {
+        return indexOf(str, subStr, fromIndex, excludeFlags, false);
     }
 
     /**
      * 查找子字符串的位置
      *
-     * @param chars        字符数组
+     * @param str             原字符串
+     * @param subStr          子字符串
+     * @param fromIndex       开始查找的位置
+     * @param excludeFlags    忽略的包裹字符
+     * @param caseInsensitive 是否忽略大小写
+     * @return 子字符串在原字符串的位置，-1代表没有找到
+     */
+    public static int indexOf(String str, String subStr, int fromIndex,
+                              String excludeFlags, boolean caseInsensitive) {
+        if (StringUtils.isEmpty(str) || StringUtils.isEmpty(subStr)) {
+            return -1;
+        }
+
+        return indexOf(str.toCharArray(), subStr, fromIndex, excludeFlags, caseInsensitive);
+    }
+
+    /**
+     * 查找子字符串的位置
+     *
+     * @param charArray    字符数组
      * @param subStr       子字符串
      * @param fromIndex    开始查找的位置
      * @param excludeFlags 忽略的包裹字符
      * @return 子字符串在原字符串的位置，-1代表没有找到
      */
-    public static int indexOf(char[] chars, String subStr, int fromIndex, String excludeFlags) {
+    public static int indexOf(char[] charArray, String subStr, int fromIndex, String excludeFlags) {
+        return indexOf(charArray, subStr, fromIndex, excludeFlags, false);
+    }
 
+    /**
+     * 查找子字符串的位置
+     *
+     * @param charArray       字符数组
+     * @param subStr          子字符串
+     * @param fromIndex       开始查找的位置
+     * @param excludeFlags    忽略的包裹字符
+     * @param caseInsensitive 是否忽略大小写
+     * @return 子字符串在原字符串的位置，-1代表没有找到
+     */
+    public static int indexOf(char[] charArray, String subStr, int fromIndex,
+                              String excludeFlags, boolean caseInsensitive) {
+        if (Objects.requireNonNull(charArray).length == 0 || StringUtils.isEmpty(subStr)) {
+            return -1;
+        }
+        if (fromIndex < 0 || fromIndex >= charArray.length) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (StringUtils.isEmpty(excludeFlags)) {
+            throw new IllegalArgumentException("excludeFlags cannot be empty");
+        }
+
+        char flagChar = 0;
+        for (int i = fromIndex; i < charArray.length; i++) {
+            char ch = charArray[i];
+            if (excludeFlags.indexOf(ch) != -1) {
+                if (flagChar == 0) {
+                    flagChar = ch;
+                } else if (ch == flagChar) {
+                    flagChar = 0;
+                }
+            } else if (flagChar == 0) {
+                int end = i + 1;
+                if (end >= subStr.length()) {
+                    if (subEquals(charArray, subStr, end - subStr.length(), end, caseInsensitive)) {
+                        return end - subStr.length();
+                    }
+                }
+            }
+        }
+        return -1;
     }
 
     /**
@@ -154,6 +221,20 @@ public class MyStringUtils {
      * @return true相同，false不同
      */
     public static boolean subEquals(char[] chars, String other, int start, int end) {
+        return subEquals(chars, other, start, end, false);
+    }
+
+    /**
+     * 判断字符数组指定范围的字符串是否与给定字符串相同
+     *
+     * @param chars           字符数组
+     * @param other           要比较的子字符串
+     * @param start           开始位置
+     * @param end             结束位置，不包括
+     * @param caseInsensitive 是否忽略大小写
+     * @return true相同，false不同
+     */
+    public static boolean subEquals(char[] chars, String other, int start, int end, boolean caseInsensitive) {
         if (start < 0 || end < 0 || start > end) {
             throw new StringIndexOutOfBoundsException();
         }
@@ -163,8 +244,14 @@ public class MyStringUtils {
         }
 
         for (int i = start; i < end; i++) {
-            if (chars[i] != other.charAt(i - start)) {
-                return false;
+            if (caseInsensitive) {
+                if (Character.toLowerCase(chars[i]) != Character.toLowerCase(other.charAt(i - start))) {
+                    return false;
+                }
+            } else {
+                if (chars[i] != other.charAt(i - start)) {
+                    return false;
+                }
             }
         }
         return true;
@@ -192,18 +279,30 @@ public class MyStringUtils {
     }
 
     /**
-     * 统计包括中文字符串的显示长度，一个中文字符的显示长度约为1.5个英文字符的显示长度
+     * 统计包括中文字符串的显示长度，一个中文字符的显示长度约为1.665个英文字符的显示长度
      *
      * @param str 字符串
      * @return 显示长度
      */
-    public static int lengthWithChinese(String str) {
+    public static int width(String str) {
         Pattern pattern = Pattern.compile("([\\u4E00-\\u9FA5]|[\\uFE30-\\uFFA0])");
         Matcher matcher = pattern.matcher(str);
         int n = 0;
         while (matcher.find()) {
             n++;
         }
-        return str.length() + (int) (n * 0.5);
+        return str.length() + (int) Math.round(n * 0.665);
+    }
+
+    /**
+     * 判断字符串中是否有中文（汉字/中文标点符号）
+     *
+     * @param str 字符串
+     * @return true为有，false为没有
+     */
+    public static boolean hasChinese(String str) {
+        Pattern pattern = Pattern.compile("([\\u4E00-\\u9FA5]|[\\uFE30-\\uFFA0])");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
     }
 }

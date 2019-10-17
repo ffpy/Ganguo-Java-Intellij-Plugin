@@ -73,6 +73,10 @@
                     class="com.ganguo.java.plugin.action.menu.NewEnumCodeAction"
                     text="生成EnumCode"/>
 
+            <action id="com.ganguo.java.plugin.action.menu.FormatSqlAction"
+                    class="com.ganguo.java.plugin.action.menu.FormatSqlAction"
+                    text="格式化SQL脚本"/>
+
         </group>
 
         <group id="Ganguo.Popup"
