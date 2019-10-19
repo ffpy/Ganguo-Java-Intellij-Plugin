@@ -137,7 +137,7 @@ public class FormatSqlAction extends BaseAnAction {
 
         valuesStr = StringUtils.join(values.stream()
                 .map(item -> MyStringUtils.wrapWithBrackets(StringUtils.join(item, ", ")))
-                .toArray(String[]::new), ",\n");
+                .toArray(String[]::new), ",\n").trim();
         if (StringUtils.isNotEmpty(valuesStr)) {
             valuesStr += ";";
         }
@@ -165,16 +165,16 @@ public class FormatSqlAction extends BaseAnAction {
                     if (line.startsWith("(")) {
                         line = line.substring(1);
                     }
-                    if (line.endsWith(");") || line.endsWith("),")) {
+                    if (line.endsWith(");")) {
                         line = line.substring(0, line.length() - 2);
-                    }
-                    if (line.endsWith(")")) {
+                    } else if (line.endsWith(")")) {
                         line = line.substring(0, line.length() - 1);
                     }
                     return line;
                 })
                 .map(String::trim)
-                .map(it -> Arrays.stream(MyStringUtils.split(it, ",", "'\"", 0))
+                .map(it -> Arrays.stream(
+                        MyStringUtils.split(it, ",", "'\"", 0))
                         .map(String::trim)
                         .toArray(String[]::new))
                 .collect(Collectors.toList());

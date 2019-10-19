@@ -186,8 +186,6 @@ public class GenerateRepositoryMethodAction extends BaseGenerateAction {
                     .param("return", hasReturn ? "return " : "")
                     .toString();
 
-            System.out.println("block: " + newCodeBlockText);
-
             PsiCodeBlock newCodeBlock = elementFactory.createCodeBlockFromText(newCodeBlockText, method);
 
             WriteCommandAction.runWriteCommandAction(project, () -> {
