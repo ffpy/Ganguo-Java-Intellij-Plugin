@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -127,9 +128,10 @@ public class FormatSqlAction extends BaseAnAction {
         String[] columns = getColumns(columnsStr);
         List<String[]> values = getValues(valuesStr);
         int[] widths = getWidths(columns, values);
+        boolean[] isLeftAlign = getIsLeftAlign(values);
 
         fillColumnsBlank(columns, widths);
-        fillValuesBlank(values, widths);
+        fillValuesBlank(values, widths, isLeftAlign);
 
         columnsStr = MyStringUtils.wrapWithBrackets(StringUtils.join(columns, ", "));
 
@@ -157,15 +159,46 @@ public class FormatSqlAction extends BaseAnAction {
      * 获取值列表
      */
     private List<String[]> getValues(String valuesStr) {
-        return Arrays.stream(MyStringUtils.split(valuesStr, "),", "'\""))
+        return Arrays.stream(MyStringUtils.split(valuesStr, ",", "'\"", 0))
                 .map(String::trim)
-                .map(it -> Arrays.stream(MyStringUtils.split(it, ",", "'\""))
-                        .map(String::trim)
-                        .map(str -> str.startsWith("(") ? str.substring(1) : str)
-                        .map(str -> str.endsWith(");") ? str.substring(0, str.length() - 2) : str)
+                .map(line -> {
+                    if (line.startsWith("(")) {
+                        line = line.substring(1);
+                    }
+                    if (line.endsWith(");") || line.endsWith("),")) {
+                        line = line.substring(0, line.length() - 2);
+                    }
+                    if (line.endsWith(")")) {
+                        line = line.substring(0, line.length() - 1);
+                    }
+                    return line;
+                })
+                .map(String::trim)
+                .map(it -> Arrays.stream(MyStringUtils.split(it, ",", "'\"", 0))
                         .map(String::trim)
                         .toArray(String[]::new))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 判断列是否为字符串类型
+     */
+    private boolean[] getIsLeftAlign(List<String[]> values) {
+        if (CollectionUtils.isEmpty(values)) {
+            return new boolean[0];
+        }
+
+        boolean[] arrays = new boolean[values.get(0).length];
+        for (String[] value : values) {
+            for (int i = 0; i < value.length && i < arrays.length; i++) {
+                String item = value[i];
+                if (!"NULL".equalsIgnoreCase(item) && !item.matches("\\d+")) {
+                    arrays[i] = true;
+                }
+            }
+        }
+
+        return arrays;
     }
 
     /**
@@ -200,14 +233,14 @@ public class FormatSqlAction extends BaseAnAction {
     /**
      * 填充值空白
      */
-    private void fillValuesBlank(List<String[]> values, int[] lengths) {
+    private void fillValuesBlank(List<String[]> values, int[] lengths, boolean[] isLeftAlign) {
         values.forEach(value -> {
             for (int i = 0; i < value.length; i++) {
                 String item = value[i];
                 int len = lengths[i];
                 int n = len - MyStringUtils.width(item);
                 if (n > 0) {
-                    if (item.contains("'") || item.contains("\"")) {
+                    if (i < isLeftAlign.length && isLeftAlign[i]) {
                         value[i] = item + StringUtils.repeat(' ', n);
                     } else {
                         value[i] = StringUtils.repeat(' ', n) + item;
