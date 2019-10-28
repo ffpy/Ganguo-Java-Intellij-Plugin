@@ -68,8 +68,12 @@
                     class="com.ganguo.java.plugin.action.menu.ApiModelAutoPosition"
                     text="ApiModel自动编号"/>
 
-            <action id="com.ganguo.java.plugin.action.menu.GenerateSetterCaller"
-                    class="com.ganguo.java.plugin.action.menu.GenerateSetterCaller"
+            <action id="com.ganguo.java.plugin.action.menu.GenerateGetterCallerAction"
+                    class="com.ganguo.java.plugin.action.menu.GenerateGetterCallerAction"
+                    text="生成Getter调用"/>
+
+            <action id="com.ganguo.java.plugin.action.menu.GenerateSetterCallerAction"
+                    class="com.ganguo.java.plugin.action.menu.GenerateSetterCallerAction"
                     text="生成Setter调用"/>
 
             <action id="com.ganguo.java.plugin.action.menu.NewEnumCodeAction"
