@@ -24,11 +24,11 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 /**
- * 修改接口URL，并同步修改测试类
+ * 修改接口方法URL，并同步修改测试类
  */
 @Slf4j
 @ImportFrom({JavaFileContext.class, ControllerContext.class})
-public class ModifyApiUrlAction extends BaseGenerateAction {
+public class ModifyApiMethodUrlAction extends BaseGenerateAction {
 
     @Override
     protected void action(AnActionEvent e) throws Exception {

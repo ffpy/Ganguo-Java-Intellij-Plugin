@@ -97,12 +97,12 @@
                     class="com.ganguo.java.plugin.action.generate.GotoApiTestClassAction"
                     text="跳转到测试类"/>
 
-            <action id="com.ganguo.java.plugin.action.generate.ModifyApiUrlAction"
-                    class="com.ganguo.java.plugin.action.generate.ModifyApiUrlAction"
-                    text="修改URL"/>
+            <action id="com.ganguo.java.plugin.action.generate.ModifyApiMethodUrlAction"
+                    class="com.ganguo.java.plugin.action.generate.ModifyApiMethodUrlAction"
+                    text="修改方法URL"/>
 
-            <action id="com.ganguo.java.plugin.action.generate.ModifyApiNameAction"
-                    class="com.ganguo.java.plugin.action.generate.ModifyApiNameAction"
+            <action id="com.ganguo.java.plugin.action.generate.ModifyApiMethodNameAction"
+                    class="com.ganguo.java.plugin.action.generate.ModifyApiMethodNameAction"
                     text="修改方法名称"/>
 
             <action id="com.ganguo.java.plugin.action.generate.GotoApiMethodAction"
