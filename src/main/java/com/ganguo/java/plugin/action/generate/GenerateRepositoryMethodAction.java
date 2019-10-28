@@ -75,18 +75,16 @@ public class GenerateRepositoryMethodAction extends BaseGenerateAction {
                     addMethod2Class(implClass, method, implPrevMethod, implNextMethod)));
         }
 
-        // 跳转到DAO对应的方法处
-        writeActions.add(() -> {
-            FileUtils.navigateFileInEditor(project, daoClass.getContainingFile().getVirtualFile());
+        writeActions.run();
 
-            getDaoEditor.exec().ifPresent(editor -> Optional
-                    .ofNullable(daoClass.findMethodBySignature(curMethod, false))
-                    .map(PsiElement::getTextOffset)
-                    .ifPresent(offset -> {
-                        editor.getCaretModel().moveToOffset(offset);
-                        editor.getScrollingModel().scrollToCaret(ScrollType.CENTER);
-                    }));
-        }).run();
+        // 跳转到DAO对应的方法处
+        writeActions.add(() -> FileUtils.navigateFileInEditor(project, daoClass.getContainingFile().getVirtualFile()));
+        writeActions.add(() -> getDaoEditor.exec().ifPresent(editor ->
+                Optional.ofNullable(daoClass.findMethodBySignature(curMethod, false))
+                        .map(method -> PsiTreeUtil.getChildOfType(method, PsiCodeBlock.class))
+                        .map(PsiElement::getTextOffset)
+                        .ifPresent(offset -> EditorUtils.moveToOffset(editor, offset))))
+                .run();
     }
 
     @Var

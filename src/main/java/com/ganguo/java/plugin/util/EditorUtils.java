@@ -5,6 +5,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.LogicalPosition;
+import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.util.TextRange;
 
 import java.util.regex.Pattern;
@@ -76,5 +77,16 @@ public class EditorUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * 光标移动到指定位置
+     *
+     * @param editor 编辑器
+     * @param offset 位置
+     */
+    public static void moveToOffset(Editor editor, int offset) {
+        editor.getCaretModel().moveToOffset(offset);
+        editor.getScrollingModel().scrollToCaret(ScrollType.CENTER);
     }
 }
