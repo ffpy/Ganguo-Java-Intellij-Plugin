@@ -6,10 +6,13 @@ import com.ganguo.java.plugin.constant.TemplateName;
 import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.context.NewContext;
 import com.ganguo.java.plugin.ui.dialog.ModuleAndNameDialog;
+import com.ganguo.java.plugin.util.EditorUtils;
 import com.ganguo.java.plugin.util.FileUtils;
 import com.ganguo.java.plugin.util.IndexUtils;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
@@ -29,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 创建Service接口及实现类
@@ -39,7 +43,15 @@ public class NewServiceAction extends BaseAnAction {
 
     @Override
     public void action(@NotNull AnActionEvent e) {
-        new ModuleAndNameDialog(e, "New Service", true, "api", this::doAction).show();
+        // 如果当前打开的文件包名路径包含admin，则新建Service默认路径为admin，否则为api
+        String path = Optional.ofNullable(e.getData(LangDataKeys.HOST_EDITOR))
+                .map(Editor::getDocument)
+                .filter(doc -> doc.getLineCount() > 0)
+                .map(doc -> EditorUtils.getLineText(doc, 0))
+                .map(firstLineText -> firstLineText.contains(".admin.") ? "admin" : null)
+                .orElse("api");
+
+        new ModuleAndNameDialog(e, "New Service", true, path, this::doAction).show();
     }
 
     private boolean doAction(AnActionEvent event, String path, String module, String name) {
