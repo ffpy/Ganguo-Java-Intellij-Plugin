@@ -1,12 +1,12 @@
 package com.ganguo.java.plugin.action.menu;
 
+import com.ganguo.java.plugin.action.BaseAnAction;
 import com.ganguo.java.plugin.constant.Paths;
 import com.ganguo.java.plugin.constant.TemplateName;
-import com.ganguo.java.plugin.context.NewContext;
-import com.ganguo.java.plugin.util.FileUtils;
-import com.ganguo.java.plugin.action.BaseAnAction;
 import com.ganguo.java.plugin.context.JavaFileContext;
-import com.ganguo.java.plugin.ui.dialog.ModuleAndNameDialog;
+import com.ganguo.java.plugin.context.NewContext;
+import com.ganguo.java.plugin.ui.dialog.NewValidationDialog;
+import com.ganguo.java.plugin.util.FileUtils;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
@@ -32,14 +32,15 @@ public class NewValidationAction extends BaseAnAction {
 
     @Override
     protected void action(AnActionEvent e) throws Exception {
-        new ModuleAndNameDialog(e, "New Validation", false, this::doAction).show();
+        new NewValidationDialog(e, this::doAction).show();
     }
 
-    private boolean doAction(AnActionEvent event, String path, String module, String name) {
+    private boolean doAction(AnActionEvent event, String path, String name, String type) {
         return ContextBuilder.of(this)
                 .put("event", event)
-                .put("module", module)
+                .put("module", path)
                 .put("name", name)
+                .put("type", type)
                 .build()
                 .execVoid("writeFile")
                 .isPresent();
@@ -64,10 +65,11 @@ public class NewValidationAction extends BaseAnAction {
      * 模板参数
      */
     @Var
-    private Map<String, Object> params(String name, String packageName) {
+    private Map<String, Object> params(String name, String packageName, String type) {
         Map<String, Object> params = new HashMap<>();
         params.put("name", StringUtils.uncapitalize(name));
         params.put("Name", StringUtils.capitalize(name));
+        params.put("type", type);
         params.put("packageName", packageName);
         return params;
     }

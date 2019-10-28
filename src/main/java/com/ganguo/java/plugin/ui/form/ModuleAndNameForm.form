@@ -21,7 +21,7 @@
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="模块名"/>
+          <text value="名称"/>
         </properties>
       </component>
       <component id="17160" class="javax.swing.JTextField" binding="nameField">
@@ -37,15 +37,15 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="名称"/>
+          <text value="类型"/>
         </properties>
       </component>
-      <component id="a5f75" class="javax.swing.JLabel" binding="pathLabel">
+      <component id="a5f75" class="javax.swing.JLabel">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="路径"/>
+          <text value="模块名"/>
         </properties>
       </component>
       <component id="120b" class="javax.swing.JTextField" binding="pathField">
