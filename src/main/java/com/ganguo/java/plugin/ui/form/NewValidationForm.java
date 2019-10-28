@@ -10,5 +10,5 @@ public class NewValidationForm implements BaseForm {
     private JTextField pathField;
     private JPanel mainPanel;
     private JTextField nameField;
-    private JTextField typeField;
+    private JPanel typeFieldPanel;
 }

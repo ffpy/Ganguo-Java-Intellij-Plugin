@@ -51,7 +51,7 @@ public class NewServiceAction extends BaseAnAction {
                 .map(firstLineText -> firstLineText.contains(".admin.") ? "admin" : null)
                 .orElse("api");
 
-        new ModuleAndNameDialog(e, "New Service", true, path, this::doAction).show();
+        new ModuleAndNameDialog(e, "生成Service", true, path, this::doAction).show();
     }
 
     private boolean doAction(AnActionEvent event, String path, String module, String name) {

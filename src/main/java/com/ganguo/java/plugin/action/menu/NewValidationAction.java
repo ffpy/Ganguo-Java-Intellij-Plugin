@@ -65,11 +65,12 @@ public class NewValidationAction extends BaseAnAction {
      * 模板参数
      */
     @Var
-    private Map<String, Object> params(String name, String packageName, String type) {
+    private Map<String, Object> params(String name, String packageName, String simpleType, String importType) {
         Map<String, Object> params = new HashMap<>();
         params.put("name", StringUtils.uncapitalize(name));
         params.put("Name", StringUtils.capitalize(name));
-        params.put("type", type);
+        params.put("type", simpleType);
+        params.put("importType", importType);
         params.put("packageName", packageName);
         return params;
     }
@@ -96,5 +97,25 @@ public class NewValidationAction extends BaseAnAction {
     @Var
     private PsiDirectory moduleDir(FuncAction<PsiDirectory> createModuleDir) {
         return createModuleDir.get(Paths.VALIDATION);
+    }
+
+    /**
+     * 类型的简写
+     */
+    @Var
+    private String simpleType(String type) {
+        int index = type.lastIndexOf(".");
+        if (index != -1) {
+            type = type.substring(index + 1);
+        }
+        return type;
+    }
+
+    /**
+     * 需要导入的类型
+     */
+    @Var
+    private String importType(String type) {
+        return type.startsWith("java.lang") ? "" : type;
     }
 }

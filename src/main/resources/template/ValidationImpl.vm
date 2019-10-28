@@ -1,5 +1,9 @@
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+#if(${importType} != "")
+
+import ${importType};
+#end
 
 public class ${Name}ValidatorImpl implements ConstraintValidator<${Name}, ${type}> {
 

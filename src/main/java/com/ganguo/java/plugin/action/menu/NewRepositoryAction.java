@@ -1,14 +1,14 @@
 package com.ganguo.java.plugin.action.menu;
 
+import com.ganguo.java.plugin.action.BaseAnAction;
 import com.ganguo.java.plugin.constant.TemplateName;
+import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.context.NewContext;
 import com.ganguo.java.plugin.context.RepositoryContext;
+import com.ganguo.java.plugin.ui.dialog.NewRepositoryDialog;
 import com.ganguo.java.plugin.util.FileUtils;
 import com.ganguo.java.plugin.util.IndexUtils;
 import com.ganguo.java.plugin.util.MyStringUtils;
-import com.ganguo.java.plugin.action.BaseAnAction;
-import com.ganguo.java.plugin.context.JavaFileContext;
-import com.ganguo.java.plugin.ui.dialog.NewRepositoryDialog;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
@@ -38,7 +38,7 @@ public class NewRepositoryAction extends BaseAnAction {
 
     @Override
     public void action(@NotNull AnActionEvent e) {
-        new NewRepositoryDialog(e, "New Repository", this::doAction).show();
+        new NewRepositoryDialog(e, this::doAction).show();
     }
 
     private boolean doAction(AnActionEvent event, String table, String module, String name) {

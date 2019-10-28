@@ -37,9 +37,9 @@
 4. com.ganguomob.dev.xxxx.infrastructure.repository.db.impl.UserDAO
 
 #### 生成校验注解
-选择`顶部菜单栏->Ganguo->生成校验注解`，在弹出的输入框中输入`模块名`和`名称`，
+选择`顶部菜单栏->Ganguo->生成校验注解`，在弹出的输入框中输入`路径`、`名称`和`类型`，
 按确定键后即可生成对应的Validator注解和ValidatorImpl实现类。<br>
-例如：输入`(user, UserExists)`，即可生成如下文件:
+例如：输入`(user, UserExists, java.lang.Long)`，即可生成如下文件:
 1. com.ganguomob.dev.xxxx.infrastructure.validation.user.UserExists
 2. com.ganguomob.dev.xxxx.infrastructure.validation.user.UserExistsValidatorImpl
 
@@ -168,5 +168,5 @@ user.setPhone();
 可同时修改方法名和对应的测试类名。
 
 #### 修改接口URL
-在Controller类中右键点击`接口方法名`，在弹出的菜单中选择`甘果->修改URL`，输入新的URL，
+在Controller类中右键点击`接口方法名`，在弹出的菜单中选择`甘果->修改方法URL`，输入新的URL，
 可同时修改方法的URL和对应的测试类中引用的URL。
