@@ -134,6 +134,20 @@ CREATE TABLE `user`
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
+#### 生成Getter调用
+右键类名，选择`Copy Reference`，然后双击选中变量名，选择`顶部菜单栏->Ganguo->生成Getter调用`。
+```java
+User user = new User();
+```
+结果
+```java
+User user = new User();
+user.getId();
+user.getName();
+user.getPassword();
+user.getPhone();
+```
+
 #### 生成Setter调用
 右键类名，选择`Copy Reference`，然后双击选中变量名，选择`顶部菜单栏->Ganguo->生成Setter调用`。
 ```java
