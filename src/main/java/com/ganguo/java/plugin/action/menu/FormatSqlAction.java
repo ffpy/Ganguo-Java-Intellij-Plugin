@@ -28,6 +28,7 @@ public class FormatSqlAction extends BaseAnAction {
     private static final Pattern PATTERN_FORMAT_INSERT = Pattern.compile(
             "^([^(]*?)\\(([\\s\\S]*)\\)\\s*(VALUES)\\s*([\\s\\S]*)$",
             Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final boolean[] EMPTY_BOOLEAN_ARRAY = new boolean[0];
 
     @Override
     protected void action(AnActionEvent e) throws Exception {
@@ -43,7 +44,7 @@ public class FormatSqlAction extends BaseAnAction {
         int selectionEnd;
         String text;
         if (hasSelection) {
-            // 选中模式
+            // 选择模式
             selectionStart = selectionModel.getSelectionStart();
             selectionEnd = selectionModel.getSelectionEnd();
             text = selectionModel.getSelectedText();
@@ -81,16 +82,31 @@ public class FormatSqlAction extends BaseAnAction {
      * @return 处理结果文本
      */
     private String applyInsert(String text) {
+        final String endStr = ");";
+        final String insertStatement = "INSERT";
         StringBuilder resultText = new StringBuilder();
-        String endStr = ");";
         int index = 0;
         int from = 0;
         do {
-            index = MyStringUtils.indexOf(text, "INSERT", index, "\"'", true);
+            index = MyStringUtils.indexOf(text, insertStatement, index, "\"'", true);
             if (index != -1) {
+                // 忽略注释
+                if (MyStringUtils.lineStartsWith(text, "--", index) ||
+                        MyStringUtils.lineStartsWith(text, "#", index)) {
+                    index += insertStatement.length();
+                    continue;
+                }
 
                 int start = index;
-                int end = MyStringUtils.indexOf(text, endStr, index, "\"'", false);
+                int end = index;
+                do {
+                    end = MyStringUtils.indexOf(text, endStr, end, "\"'", false);
+                    if (!MyStringUtils.lineStartsWith(text, "--", end) &&
+                            !MyStringUtils.lineStartsWith(text, "#", end)) {
+                        break;
+                    }
+                } while (end != -1);
+
                 if (end != -1) {
                     resultText.append(text, from, index);
 
@@ -100,7 +116,7 @@ public class FormatSqlAction extends BaseAnAction {
                     String sql = text.substring(start, end);
                     resultText.append(formatInsert(sql));
                 } else {
-                    index = -1;
+                    break;
                 }
             }
         } while (index >= 0 && index < text.length());
@@ -114,7 +130,7 @@ public class FormatSqlAction extends BaseAnAction {
     /**
      * 格式化INSERT语句
      */
-    public String formatInsert(String sql) {
+    private String formatInsert(String sql) {
         Matcher matcher = PATTERN_FORMAT_INSERT.matcher(sql);
         if (!matcher.find()) {
             return sql;
@@ -185,7 +201,7 @@ public class FormatSqlAction extends BaseAnAction {
      */
     private boolean[] getIsLeftAlign(List<String[]> values) {
         if (CollectionUtils.isEmpty(values)) {
-            return new boolean[0];
+            return EMPTY_BOOLEAN_ARRAY;
         }
 
         boolean[] arrays = new boolean[values.get(0).length];

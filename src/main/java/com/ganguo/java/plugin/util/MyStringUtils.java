@@ -91,10 +91,10 @@ public class MyStringUtils {
     /**
      * 分隔字符串
      *
-     * @param str          要分隔的字符串
-     * @param separator    分隔符
-     * @param excludeFlags 要忽略的包裹字符，如"'，分隔的时候会忽略包裹字符
-     *                     如split("abd'1,2'cd124,56", ",", "'") => [ "abd'1,2'cd124", "56" ]
+     * @param str             要分隔的字符串
+     * @param separator       分隔符
+     * @param excludeFlags    要忽略的包裹字符，如"'，分隔的时候会忽略包裹字符
+     *                        如split("abd'1,2'cd124,56", ",", "'") => [ "abd'1,2'cd124", "56" ]
      * @param maxBracketDepth 生效的括号深度，-1表示忽略此选项
      * @return 分隔结果
      */
@@ -328,5 +328,29 @@ public class MyStringUtils {
         Pattern pattern = Pattern.compile("([\\u4E00-\\u9FA5]|[\\uFE30-\\uFFA0])");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
+    }
+
+    /**
+     * 判断指定位置所在行的前缀是否为子串
+     *
+     * @param str        字符串
+     * @param prefix     前缀字符串
+     * @param index      位置
+     * @return true为是，false为否
+     */
+    public static boolean lineStartsWith(String str, String prefix, int index) {
+        int lineStart = 0;
+        for (int i = index; i >= 0; i--) {
+            if (str.charAt(i) == '\n') {
+                lineStart = i + 1;
+                break;
+            }
+        }
+
+        if (lineStart >= str.length()) {
+            return false;
+        }
+
+        return str.startsWith(prefix, lineStart);
     }
 }
