@@ -208,7 +208,7 @@ public class FormatSqlAction extends BaseAnAction {
         for (String[] value : values) {
             for (int i = 0; i < value.length && i < arrays.length; i++) {
                 String item = value[i];
-                if (!"NULL".equalsIgnoreCase(item) && !item.matches("\\d+")) {
+                if (!"NULL".equalsIgnoreCase(item) && !item.matches("[\\d.]+")) {
                     arrays[i] = true;
                 }
             }
