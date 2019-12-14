@@ -23,7 +23,7 @@ public class ${Name}DAO extends BaseDAO implements I${Name}DbStrategy {
     }
 
     @Override
-    public List<${pojoCls}> findAll() {
+    public List<${pojoCls}> listAll() {
         return mDSLContext.selectFrom(${table})
 #if($hasActive)
                 .where(${table}.ACTIVE.isTrue())
@@ -42,20 +42,6 @@ public class ${Name}DAO extends BaseDAO implements I${Name}DbStrategy {
     @Override
     public int updateById(Long id, ${recordCls} ${pojoName}) {
         return mDSLContext.executeUpdate(${pojoName}, ${table}.ID.eq(id));
-    }
-
-    @Override
-    public int deleteById(Long id) {
-#if($hasActive)
-        return mDSLContext.update(${table})
-                .set(${table}.ACTIVE, false)
-                .where(${table}.ID.eq(id))
-                .execute();
-#else
-        return mDSLContext.deleteFrom(${table})
-                .where(${table}.ID.eq(id))
-                .execute();
-#end
     }
 
     @Override

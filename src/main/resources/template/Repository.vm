@@ -22,8 +22,8 @@ public class ${Name}Repository implements I${Name}Repository {
     }
 
     @Override
-    public List<${pojoCls}> findAll() {
-        return ${name}DbStrategy.findAll();
+    public List<${pojoCls}> listAll() {
+        return ${name}DbStrategy.listAll();
     }
 
     @Override
@@ -37,12 +37,11 @@ public class ${Name}Repository implements I${Name}Repository {
     }
 
     @Override
-    public int deleteById(Long id) {
-        return ${name}DbStrategy.deleteById(id);
-    }
-
-    @Override
     public int deleteByIds(List<Long> ids) {
+        if (ids.isEmpty()) {
+            return 0;
+        }
+
         return ${name}DbStrategy.deleteByIds(ids);
     }
 
