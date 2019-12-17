@@ -10,7 +10,9 @@ import com.intellij.psi.PsiMethod;
 import org.dependcode.dependcode.anno.Func;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * 方法排序
@@ -19,11 +21,11 @@ public class SortMethodAction extends BaseSortAction {
 
     @Func
     private void doAction(Project project, PsiClass selectedClass, WriteActions writeActions) {
-        sortClasses(project, new PsiClass[]{selectedClass}, writeActions);
+        sortClasses(project, Collections.singletonList(selectedClass), writeActions);
         writeActions.run();
     }
 
-    protected void sortClasses(Project project, PsiClass[] psiClasses, WriteActions writeActions) {
+    protected void sortClasses(Project project, List<PsiClass> psiClasses, WriteActions writeActions) {
         PsiElement whiteSpace = PsiUtils.createWhiteSpace(project);
 
         for (PsiClass psiClass : psiClasses) {

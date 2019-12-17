@@ -12,7 +12,10 @@ import org.dependcode.dependcode.anno.Func;
 import org.dependcode.dependcode.anno.ImportFrom;
 import org.dependcode.dependcode.anno.Nla;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * Repository方法排序
@@ -48,13 +51,22 @@ public class SortRepositoryAction extends SortMethodAction {
 
     @Func
     private void sortSelectedClass(Project project, PsiClass selectedClass, WriteActions writeActions) {
-        sortClasses(project, new PsiClass[]{selectedClass}, writeActions);
+        sortClasses(project, Collections.singletonList(selectedClass), writeActions);
     }
 
     @Func
-    private void sortRepositoryClasses(Project project, PsiClass selectedClass, PsiClass daoClass, PsiClass implClass,
+    private void sortRepositoryClasses(Project project, PsiClass selectedClass,
+                                       @Nla PsiClass daoClass, @Nla PsiClass implClass,
                                        WriteActions writeActions) {
-        sortClasses(project, new PsiClass[]{selectedClass, implClass, daoClass}, writeActions);
+        List<PsiClass> psiClasses = new ArrayList<>(3);
+        psiClasses.add(selectedClass);
+        if (daoClass != null) {
+            psiClasses.add(daoClass);
+        }
+        if (implClass != null) {
+            psiClasses.add(implClass);
+        }
+        sortClasses(project, psiClasses, writeActions);
     }
 
     @Override
