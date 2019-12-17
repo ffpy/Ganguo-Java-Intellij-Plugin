@@ -1,4 +1,4 @@
-package com.ganguo.java.plugin.action.menu;
+package com.ganguo.java.plugin.action.menu.format;
 
 import com.ganguo.java.plugin.action.BaseAnAction;
 import com.ganguo.java.plugin.util.ActionShowHelper;
@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +28,7 @@ public class FormatSqlAction extends BaseAnAction {
     private static final Pattern PATTERN_FORMAT_INSERT = Pattern.compile(
             "^([^(]*?)\\(([\\s\\S]*)\\)\\s*(VALUES)\\s*([\\s\\S]*)$",
             Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    private static final boolean[] EMPTY_BOOLEAN_ARRAY = new boolean[0];
 
     @Override
     protected void action(AnActionEvent e) throws Exception {
@@ -42,7 +44,7 @@ public class FormatSqlAction extends BaseAnAction {
         int selectionEnd;
         String text;
         if (hasSelection) {
-            // 选中模式
+            // 选择模式
             selectionStart = selectionModel.getSelectionStart();
             selectionEnd = selectionModel.getSelectionEnd();
             text = selectionModel.getSelectedText();
@@ -80,16 +82,31 @@ public class FormatSqlAction extends BaseAnAction {
      * @return 处理结果文本
      */
     private String applyInsert(String text) {
+        final String endStr = ");";
+        final String insertStatement = "INSERT";
         StringBuilder resultText = new StringBuilder();
-        String endStr = ");";
         int index = 0;
         int from = 0;
         do {
-            index = MyStringUtils.indexOf(text, "INSERT", index, "\"'", true);
+            index = MyStringUtils.indexOf(text, insertStatement, index, "\"'", true);
             if (index != -1) {
+                // 忽略注释
+                if (MyStringUtils.lineStartsWith(text, "--", index) ||
+                        MyStringUtils.lineStartsWith(text, "#", index)) {
+                    index += insertStatement.length();
+                    continue;
+                }
 
                 int start = index;
-                int end = MyStringUtils.indexOf(text, endStr, index, "\"'", false);
+                int end = index;
+                do {
+                    end = MyStringUtils.indexOf(text, endStr, end, "\"'", false);
+                    if (!MyStringUtils.lineStartsWith(text, "--", end) &&
+                            !MyStringUtils.lineStartsWith(text, "#", end)) {
+                        break;
+                    }
+                } while (end != -1);
+
                 if (end != -1) {
                     resultText.append(text, from, index);
 
@@ -99,7 +116,7 @@ public class FormatSqlAction extends BaseAnAction {
                     String sql = text.substring(start, end);
                     resultText.append(formatInsert(sql));
                 } else {
-                    index = -1;
+                    break;
                 }
             }
         } while (index >= 0 && index < text.length());
@@ -113,7 +130,7 @@ public class FormatSqlAction extends BaseAnAction {
     /**
      * 格式化INSERT语句
      */
-    public String formatInsert(String sql) {
+    private String formatInsert(String sql) {
         Matcher matcher = PATTERN_FORMAT_INSERT.matcher(sql);
         if (!matcher.find()) {
             return sql;
@@ -127,15 +144,16 @@ public class FormatSqlAction extends BaseAnAction {
         String[] columns = getColumns(columnsStr);
         List<String[]> values = getValues(valuesStr);
         int[] widths = getWidths(columns, values);
+        boolean[] isLeftAlign = getIsLeftAlign(values);
 
         fillColumnsBlank(columns, widths);
-        fillValuesBlank(values, widths);
+        fillValuesBlank(values, widths, isLeftAlign);
 
         columnsStr = MyStringUtils.wrapWithBrackets(StringUtils.join(columns, ", "));
 
         valuesStr = StringUtils.join(values.stream()
                 .map(item -> MyStringUtils.wrapWithBrackets(StringUtils.join(item, ", ")))
-                .toArray(String[]::new), ",\n");
+                .toArray(String[]::new), ",\n").trim();
         if (StringUtils.isNotEmpty(valuesStr)) {
             valuesStr += ";";
         }
@@ -157,14 +175,46 @@ public class FormatSqlAction extends BaseAnAction {
      * 获取值列表
      */
     private List<String[]> getValues(String valuesStr) {
-        return Arrays.stream(MyStringUtils.split(valuesStr, "),", "'\""))
+        return Arrays.stream(MyStringUtils.split(valuesStr, ",", "'\"", 0))
                 .map(String::trim)
-                .map(it -> Arrays.stream(MyStringUtils.split(it, ",", "'\""))
+                .map(line -> {
+                    if (line.startsWith("(")) {
+                        line = line.substring(1);
+                    }
+                    if (line.endsWith(");")) {
+                        line = line.substring(0, line.length() - 2);
+                    } else if (line.endsWith(")")) {
+                        line = line.substring(0, line.length() - 1);
+                    }
+                    return line;
+                })
+                .map(String::trim)
+                .map(it -> Arrays.stream(
+                        MyStringUtils.split(it, ",", "'\"", 0))
                         .map(String::trim)
-                        .map(str -> str.startsWith("(") ? str.substring(1) : str)
-                        .map(str -> str.endsWith(");") ? str.substring(0, str.length() - 2) : str)
                         .toArray(String[]::new))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 判断列是否为字符串类型
+     */
+    private boolean[] getIsLeftAlign(List<String[]> values) {
+        if (CollectionUtils.isEmpty(values)) {
+            return EMPTY_BOOLEAN_ARRAY;
+        }
+
+        boolean[] arrays = new boolean[values.get(0).length];
+        for (String[] value : values) {
+            for (int i = 0; i < value.length && i < arrays.length; i++) {
+                String item = value[i];
+                if (!"NULL".equalsIgnoreCase(item) && !item.matches("[\\d.]+")) {
+                    arrays[i] = true;
+                }
+            }
+        }
+
+        return arrays;
     }
 
     /**
@@ -199,14 +249,14 @@ public class FormatSqlAction extends BaseAnAction {
     /**
      * 填充值空白
      */
-    private void fillValuesBlank(List<String[]> values, int[] lengths) {
+    private void fillValuesBlank(List<String[]> values, int[] lengths, boolean[] isLeftAlign) {
         values.forEach(value -> {
             for (int i = 0; i < value.length; i++) {
                 String item = value[i];
                 int len = lengths[i];
                 int n = len - MyStringUtils.width(item);
                 if (n > 0) {
-                    if (item.contains("'") || item.contains("\"")) {
+                    if (i < isLeftAlign.length && isLeftAlign[i]) {
                         value[i] = item + StringUtils.repeat(' ', n);
                     } else {
                         value[i] = StringUtils.repeat(' ', n) + item;

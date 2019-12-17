@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAware;
 import lombok.extern.slf4j.Slf4j;
 import org.dependcode.dependcode.anno.ForceImportFrom;
+import org.dependcode.dependcode.anno.ImportFrom;
 import org.jetbrains.annotations.NotNull;
 
 @Slf4j

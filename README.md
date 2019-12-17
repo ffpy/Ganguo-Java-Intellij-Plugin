@@ -37,9 +37,9 @@
 4. com.ganguomob.dev.xxxx.infrastructure.repository.db.impl.UserDAO
 
 #### 生成校验注解
-选择`顶部菜单栏->Ganguo->生成校验注解`，在弹出的输入框中输入`模块名`和`名称`，
+选择`顶部菜单栏->Ganguo->生成校验注解`，在弹出的输入框中输入`路径`、`名称`和`类型`，
 按确定键后即可生成对应的Validator注解和ValidatorImpl实现类。<br>
-例如：输入`(user, UserExists)`，即可生成如下文件:
+例如：输入`(user, UserExists, java.lang.Long)`，即可生成如下文件:
 1. com.ganguomob.dev.xxxx.infrastructure.validation.user.UserExists
 2. com.ganguomob.dev.xxxx.infrastructure.validation.user.UserExistsValidatorImpl
 
@@ -102,6 +102,37 @@ VALUES
 (   3, '小花' , '8613414850001');
 ```
 
+#### 字段排序
+打开要格式化的Java文件，选择`顶部菜单栏->Ganguo->字段排序`，即可给Java文件的顶部类的字段排序。
+也可以通过把光标移到要格式化的类名上来格式化指定的类。<br>
+排序规则为:
+1. 有`static`修饰符
+2. 有`final`修饰符
+3. `public`, `protected`, `default`, `private`
+4. 字段名字符串顺序
+
+#### 方法排序
+打开要格式化的Java文件，选择`顶部菜单栏->Ganguo->方法排序`，即可给Java文件的顶部类的方法排序。
+也可以通过把光标移到要格式化的类名上来格式化指定的类。<br>
+排序规则为:
+1. 有`abstract`修饰符
+2. 有`static`修饰符
+3. 有`final`修饰符
+4. `public`, `protected`, `default`, `private`
+5. 方法名字符串顺序
+
+#### Repository方法排序
+打开要格式化的Java文件，选择`顶部菜单栏->Ganguo->Repository方法排序`，即可给Repository类的方法排序。
+也可以通过把光标移到要格式化的类名上来格式化指定的类。<br>
+排序规则为:
+1. 有`abstract`修饰符
+2. 有`static`修饰符
+3. 有`final`修饰符
+4. `public`, `protected`, `default`, `private`
+5. 前缀顺序: `insert`, `batchInsert`, `update`, `batchUpdate`, `delete`, `query`, `find`, `get`, `list`, 
+`page`, `exists`, `count`, `sum`
+6. 方法名字符串顺序
+
 ### 其他
 
 #### 插入当前时间戳
@@ -132,6 +163,20 @@ CREATE TABLE `user`
     `updated_at` BIGINT(13) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+#### 生成Getter调用
+右键类名，选择`Copy Reference`，然后双击选中变量名，选择`顶部菜单栏->Ganguo->生成Getter调用`。
+```java
+User user = new User();
+```
+结果
+```java
+User user = new User();
+user.getId();
+user.getName();
+user.getPassword();
+user.getPhone();
 ```
 
 #### 生成Setter调用
@@ -168,5 +213,5 @@ user.setPhone();
 可同时修改方法名和对应的测试类名。
 
 #### 修改接口URL
-在Controller类中右键点击`接口方法名`，在弹出的菜单中选择`甘果->修改URL`，输入新的URL，
+在Controller类中右键点击`接口方法名`，在弹出的菜单中选择`甘果->修改方法URL`，输入新的URL，
 可同时修改方法的URL和对应的测试类中引用的URL。

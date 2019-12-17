@@ -1,6 +1,7 @@
 package com.ganguo.java.plugin.util;
 
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiComment;
@@ -10,7 +11,10 @@ import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiModifierList;
+import com.intellij.psi.PsiParserFacade;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.codeStyle.CodeStyleManager;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,12 +25,28 @@ import java.util.stream.Stream;
 
 public class PsiUtils {
 
+    /**
+     * 获取文件的第一个类
+     *
+     * @param file Java文件
+     * @return PsiClass
+     */
     public static PsiClass getClassByFile(PsiJavaFile file) {
         PsiClass[] classes = file.getClasses();
         if (classes.length > 0) {
             return classes[0];
         }
         return null;
+    }
+
+    /**
+     * 获取元素所属的类
+     *
+     * @param element PsiElement
+     * @return PsiClass
+     */
+    public static PsiClass getClassByElement(PsiElement element) {
+        return PsiTreeUtil.getParentOfType(element, PsiClass.class);
     }
 
     /**
@@ -158,5 +178,23 @@ public class PsiUtils {
                         return name;
                     }
                 });
+    }
+
+    /**
+     * 创建空行
+     */
+    public static PsiWhiteSpace createWhiteSpace(Project project) {
+        return (PsiWhiteSpace) PsiParserFacade.SERVICE.getInstance(project).createWhiteSpaceFromText("\n\n");
+    }
+
+    /**
+     * 创建换行
+     */
+    public static PsiWhiteSpace createWhiteSpace(Project project, int n) {
+        if (n < 1) {
+            throw new IllegalArgumentException("n must be greater than zero.");
+        }
+        return (PsiWhiteSpace) PsiParserFacade.SERVICE.getInstance(project)
+                .createWhiteSpaceFromText(StringUtils.repeat("\n", n));
     }
 }

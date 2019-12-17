@@ -13,7 +13,7 @@ public class AddMsgDialog extends BaseDialog<AddMsgForm, AddMsgDialog.Action> {
     private AnActionEvent mEvent;
 
     public AddMsgDialog(AnActionEvent e, Action action) {
-        super("Add Msg", new AddMsgForm(), action);
+        super("添加ExceptionMsg", new AddMsgForm(), action);
         mEvent = e;
         initComponent();
     }

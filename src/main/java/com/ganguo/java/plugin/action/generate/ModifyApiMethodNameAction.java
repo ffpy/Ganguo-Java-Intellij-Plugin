@@ -29,7 +29,7 @@ import java.util.Optional;
  */
 @Slf4j
 @ImportFrom({JavaFileContext.class, ControllerContext.class})
-public class ModifyApiNameAction extends BaseGenerateAction {
+public class ModifyApiMethodNameAction extends BaseGenerateAction {
 
     @Override
     protected void action(AnActionEvent e) throws Exception {

@@ -1,7 +1,11 @@
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+#if(${importType} != "")
 
-public class ${Name}ValidatorImpl implements ConstraintValidator<${Name}, Long> {
+import ${importType};
+#end
+
+public class ${Name}ValidatorImpl implements ConstraintValidator<${Name}, ${type}> {
 
     @Override
     public void initialize(${Name} constraintAnnotation) {
@@ -11,7 +15,7 @@ public class ${Name}ValidatorImpl implements ConstraintValidator<${Name}, Long> 
      * 校验
      */
     @Override
-    public boolean isValid(Long value, ConstraintValidatorContext context) {
+    public boolean isValid(${type} value, ConstraintValidatorContext context) {
         return false;
     }
 }

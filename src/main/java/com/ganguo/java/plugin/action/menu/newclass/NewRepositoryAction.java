@@ -1,14 +1,14 @@
-package com.ganguo.java.plugin.action.menu;
+package com.ganguo.java.plugin.action.menu.newclass;
 
+import com.ganguo.java.plugin.action.BaseAnAction;
 import com.ganguo.java.plugin.constant.TemplateName;
+import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.context.NewContext;
-import com.ganguo.java.plugin.context.RepositoryContext;
+import com.ganguo.java.plugin.context.RepositoryDirectoryContext;
+import com.ganguo.java.plugin.ui.dialog.NewRepositoryDialog;
 import com.ganguo.java.plugin.util.FileUtils;
 import com.ganguo.java.plugin.util.IndexUtils;
 import com.ganguo.java.plugin.util.MyStringUtils;
-import com.ganguo.java.plugin.action.BaseAnAction;
-import com.ganguo.java.plugin.context.JavaFileContext;
-import com.ganguo.java.plugin.ui.dialog.NewRepositoryDialog;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
@@ -31,14 +31,14 @@ import java.util.Optional;
  * 创建Repository接口及实现类
  */
 @Slf4j
-@ImportFrom({NewContext.class, RepositoryContext.class, JavaFileContext.class})
+@ImportFrom({NewContext.class, RepositoryDirectoryContext.class, JavaFileContext.class})
 public class NewRepositoryAction extends BaseAnAction {
 
     private static final String FIELD_ACTIVE = "ACTIVE";
 
     @Override
     public void action(@NotNull AnActionEvent e) {
-        new NewRepositoryDialog(e, "New Repository", this::doAction).show();
+        new NewRepositoryDialog(e, this::doAction).show();
     }
 
     private boolean doAction(AnActionEvent event, String table, String module, String name) {

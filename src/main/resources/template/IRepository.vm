@@ -6,17 +6,15 @@ import ${packageName}.jooq.tables.records.${recordCls};
 
 public interface I${Name}Repository {
 
-    Optional<${pojoCls}> findById(Long id);
-
-    List<${pojoCls}> findAll();
-
     ${pojoCls} insert(${pojoCls} ${pojoName});
 
     int updateById(Long id, ${recordCls} ${pojoName});
 
-    int deleteById(Long id);
-
     int deleteByIds(List<Long> ids);
+
+    Optional<${pojoCls}> findById(Long id);
+
+    List<${pojoCls}> listAll();
 
     boolean existsById(Long id);
 }

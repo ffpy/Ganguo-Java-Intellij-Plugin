@@ -17,8 +17,8 @@ public class NewRepositoryDialog extends BaseDialog<NewRepositoryForm, NewReposi
     private InputLimit mTabletLimit;
     private AnActionEvent mEvent;
 
-    public NewRepositoryDialog(AnActionEvent e, String title, Action action) {
-        super(title, new NewRepositoryForm(), action);
+    public NewRepositoryDialog(AnActionEvent e, Action action) {
+        super("生成Repository", new NewRepositoryForm(), action);
         mEvent = e;
         initComponent();
     }

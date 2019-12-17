@@ -85,6 +85,20 @@ public class MyStringUtils {
      * @return 分隔结果
      */
     public static String[] split(String str, String separator, String excludeFlags) {
+        return split(str, separator, excludeFlags, -1);
+    }
+
+    /**
+     * 分隔字符串
+     *
+     * @param str             要分隔的字符串
+     * @param separator       分隔符
+     * @param excludeFlags    要忽略的包裹字符，如"'，分隔的时候会忽略包裹字符
+     *                        如split("abd'1,2'cd124,56", ",", "'") => [ "abd'1,2'cd124", "56" ]
+     * @param maxBracketDepth 生效的括号深度，-1表示忽略此选项
+     * @return 分隔结果
+     */
+    public static String[] split(String str, String separator, String excludeFlags, int maxBracketDepth) {
         if (StringUtils.isEmpty(str)) {
             return new String[0];
         }
@@ -98,9 +112,11 @@ public class MyStringUtils {
         List<String> list = new ArrayList<>();
         char flagChar = 0;
         int start = 0;
+        int bracketDepth = 0;
         char[] charArray = str.toCharArray();
         for (int i = 0; i < charArray.length; i++) {
             char ch = charArray[i];
+
             if (excludeFlags.indexOf(ch) != -1) {
                 if (flagChar == 0) {
                     flagChar = ch;
@@ -108,11 +124,19 @@ public class MyStringUtils {
                     flagChar = 0;
                 }
             } else if (flagChar == 0) {
-                int end = i + 1;
-                if (end >= separator.length()) {
-                    if (subEquals(charArray, separator, end - separator.length(), end)) {
-                        list.add(str.substring(start, end - separator.length()));
-                        start = end;
+                if (ch == '(') {
+                    bracketDepth++;
+                } else if (ch == ')') {
+                    bracketDepth--;
+                }
+
+                if (maxBracketDepth != -1 && maxBracketDepth >= bracketDepth) {
+                    int end = i + 1;
+                    if (end >= separator.length()) {
+                        if (subEquals(charArray, separator, end - separator.length(), end)) {
+                            list.add(str.substring(start, end - separator.length()));
+                            start = end;
+                        }
                     }
                 }
             }
@@ -304,5 +328,29 @@ public class MyStringUtils {
         Pattern pattern = Pattern.compile("([\\u4E00-\\u9FA5]|[\\uFE30-\\uFFA0])");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
+    }
+
+    /**
+     * 判断指定位置所在行的前缀是否为子串
+     *
+     * @param str        字符串
+     * @param prefix     前缀字符串
+     * @param index      位置
+     * @return true为是，false为否
+     */
+    public static boolean lineStartsWith(String str, String prefix, int index) {
+        int lineStart = 0;
+        for (int i = index; i >= 0; i--) {
+            if (str.charAt(i) == '\n') {
+                lineStart = i + 1;
+                break;
+            }
+        }
+
+        if (lineStart >= str.length()) {
+            return false;
+        }
+
+        return str.startsWith(prefix, lineStart);
     }
 }

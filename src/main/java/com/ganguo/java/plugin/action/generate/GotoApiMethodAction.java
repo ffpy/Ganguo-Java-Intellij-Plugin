@@ -3,15 +3,12 @@ package com.ganguo.java.plugin.action.generate;
 import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.util.ActionShowHelper;
 import com.ganguo.java.plugin.util.EditorUtils;
-import com.ganguo.java.plugin.util.FileUtils;
 import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.WriteActions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiNamedElement;
@@ -99,15 +96,7 @@ public class GotoApiMethodAction extends BaseGenerateAction {
     }
 
     private void showClass(String apiMethodName, Project project, PsiClass psiClass, WriteActions writeActions) {
-        Arrays.stream(psiClass.findMethodsByName(apiMethodName, false))
-                .findFirst()
-                .ifPresent(method -> writeActions.add(() -> {
-                    FileUtils.navigateFileInEditor(project, psiClass.getContainingFile().getVirtualFile());
-                    Optional.ofNullable(EditorUtils.getEditorByClassName(psiClass.getName()))
-                            .ifPresent(editor -> {
-                                editor.getCaretModel().moveToOffset(method.getTextOffset());
-                                editor.getScrollingModel().scrollToCaret(ScrollType.CENTER);
-                            });
-                }).run());
+        Arrays.stream(psiClass.findMethodsByName(apiMethodName, false)).findFirst()
+                .ifPresent(method -> EditorUtils.moveToClassOffset(psiClass, method.getTextOffset(), writeActions));
     }
 }

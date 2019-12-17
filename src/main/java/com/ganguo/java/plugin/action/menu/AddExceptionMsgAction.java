@@ -174,10 +174,7 @@ public class AddExceptionMsgAction extends BaseAnAction {
         }
 
         PsiEnumConstant psiEnumConstant = elementFactory.createEnumConstantFromText(key, null);
-
-        PsiElement whiteSpace = PsiParserFacade.SERVICE.getInstance(project)
-                .createWhiteSpaceFromText("\n\n");
-
+        PsiElement whiteSpace = PsiUtils.createWhiteSpace(project);
 
         WriteCommandAction.runWriteCommandAction(project, () -> {
             psiEnumConstant.addBefore(PsiUtils.createPsiDocComment(elementFactory, value),

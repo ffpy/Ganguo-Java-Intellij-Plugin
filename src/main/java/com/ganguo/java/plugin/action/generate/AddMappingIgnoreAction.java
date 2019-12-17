@@ -50,7 +50,7 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
     @Override
     protected boolean isShow(AnActionEvent e) {
         return ActionShowHelper.of(e)
-                .fileNameMatch(".*Assembler\\.java")
+                .fileNameMatch(".*(Assembler|Mapper)\\.java")
                 .classWithAnnotation(AnnotationNames.MAPPER)
                 .elementType(PsiMethod.class)
                 .isShow();
@@ -110,9 +110,14 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
             PsiClass parameterClass = IndexUtils.getClassByQualifiedName(project,
                     parameter.getType().getCanonicalText());
 
+//            boolean isCustomClass = Optional.ofNullable(parameterClass)
+//                    .map(PsiClass::getQualifiedName)
+//                    .map(name -> name.startsWith(Constant.BASE_PACKAGE_NAME))
+//                    .orElse(false);
+
             boolean isCustomClass = Optional.ofNullable(parameterClass)
                     .map(PsiClass::getQualifiedName)
-                    .map(name -> name.startsWith(Constant.BASE_PACKAGE_NAME))
+                    .map(name -> !name.startsWith("java.lang"))
                     .orElse(false);
 
             if (isCustomClass) {

@@ -40,26 +40,26 @@
                     class="com.ganguo.java.plugin.action.menu.AddExceptionMsgAction"
                     text="添加ExceptionMsg"/>
 
-            <action id="com.ganguo.java.plugin.action.menu.NewServiceAction"
-                    class="com.ganguo.java.plugin.action.menu.NewServiceAction"
+            <action id="com.ganguo.java.plugin.action.menu.newclass.NewServiceAction"
+                    class="com.ganguo.java.plugin.action.menu.newclass.NewServiceAction"
                     text="生成Service"/>
 
-            <action id="com.ganguo.java.plugin.action.menu.NewRepositoryAction"
-                    class="com.ganguo.java.plugin.action.menu.NewRepositoryAction"
+            <action id="com.ganguo.java.plugin.action.menu.newclass.NewRepositoryAction"
+                    class="com.ganguo.java.plugin.action.menu.newclass.NewRepositoryAction"
                     text="生成Repository"/>
 
-            <action id="com.ganguo.java.plugin.action.menu.NewValidationAction"
-                    class="com.ganguo.java.plugin.action.menu.NewValidationAction"
+            <action id="com.ganguo.java.plugin.action.menu.newclass.NewValidationAction"
+                    class="com.ganguo.java.plugin.action.menu.newclass.NewValidationAction"
                     text="生成校验注解"/>
 
-            <action id="com.ganguo.java.plugin.action.menu.CaseFormatAction"
-                    class="com.ganguo.java.plugin.action.menu.CaseFormatAction"
+            <action id="com.ganguo.java.plugin.action.menu.format.CaseFormatAction"
+                    class="com.ganguo.java.plugin.action.menu.format.CaseFormatAction"
                     text="驼峰-下划线互转">
                 <keyboard-shortcut keymap="$default" first-keystroke="shift meta MINUS"/>
             </action>
 
-            <action id="com.ganguo.java.plugin.action.menu.WrapBackquoteAction"
-                    class="com.ganguo.java.plugin.action.menu.WrapBackquoteAction"
+            <action id="com.ganguo.java.plugin.action.menu.format.WrapBackquoteAction"
+                    class="com.ganguo.java.plugin.action.menu.format.WrapBackquoteAction"
                     text="SQL字段用反引号包裹">
                 <keyboard-shortcut keymap="$default" first-keystroke="shift meta BACK_QUOTE"/>
             </action>
@@ -68,17 +68,33 @@
                     class="com.ganguo.java.plugin.action.menu.ApiModelAutoPosition"
                     text="ApiModel自动编号"/>
 
-            <action id="com.ganguo.java.plugin.action.menu.GenerateSetterCaller"
-                    class="com.ganguo.java.plugin.action.menu.GenerateSetterCaller"
+            <action id="com.ganguo.java.plugin.action.menu.settergetter.GenerateGetterCallerAction"
+                    class="com.ganguo.java.plugin.action.menu.settergetter.GenerateGetterCallerAction"
+                    text="生成Getter调用"/>
+
+            <action id="com.ganguo.java.plugin.action.menu.settergetter.GenerateSetterCallerAction"
+                    class="com.ganguo.java.plugin.action.menu.settergetter.GenerateSetterCallerAction"
                     text="生成Setter调用"/>
 
-            <action id="com.ganguo.java.plugin.action.menu.NewEnumCodeAction"
-                    class="com.ganguo.java.plugin.action.menu.NewEnumCodeAction"
+            <action id="com.ganguo.java.plugin.action.menu.newclass.NewEnumCodeAction"
+                    class="com.ganguo.java.plugin.action.menu.newclass.NewEnumCodeAction"
                     text="生成EnumCode"/>
 
-            <action id="com.ganguo.java.plugin.action.menu.FormatSqlAction"
-                    class="com.ganguo.java.plugin.action.menu.FormatSqlAction"
+            <action id="com.ganguo.java.plugin.action.menu.format.FormatSqlAction"
+                    class="com.ganguo.java.plugin.action.menu.format.FormatSqlAction"
                     text="格式化SQL脚本"/>
+
+            <action id="com.ganguo.java.plugin.action.menu.format.sort.SortFieldAction"
+                    class="com.ganguo.java.plugin.action.menu.format.sort.SortFieldAction"
+                    text="字段排序"/>
+
+            <action id="com.ganguo.java.plugin.action.menu.format.sort.SortMethodAction"
+                    class="com.ganguo.java.plugin.action.menu.format.sort.SortMethodAction"
+                    text="方法排序"/>
+
+            <action id="com.ganguo.java.plugin.action.menu.format.sort.SortRepositoryAction"
+                    class="com.ganguo.java.plugin.action.menu.format.sort.SortRepositoryAction"
+                    text="Repository方法排序"/>
 
         </group>
 
@@ -97,12 +113,12 @@
                     class="com.ganguo.java.plugin.action.generate.GotoApiTestClassAction"
                     text="跳转到测试类"/>
 
-            <action id="com.ganguo.java.plugin.action.generate.ModifyApiUrlAction"
-                    class="com.ganguo.java.plugin.action.generate.ModifyApiUrlAction"
-                    text="修改URL"/>
+            <action id="com.ganguo.java.plugin.action.generate.ModifyApiMethodUrlAction"
+                    class="com.ganguo.java.plugin.action.generate.ModifyApiMethodUrlAction"
+                    text="修改方法URL"/>
 
-            <action id="com.ganguo.java.plugin.action.generate.ModifyApiNameAction"
-                    class="com.ganguo.java.plugin.action.generate.ModifyApiNameAction"
+            <action id="com.ganguo.java.plugin.action.generate.ModifyApiMethodNameAction"
+                    class="com.ganguo.java.plugin.action.generate.ModifyApiMethodNameAction"
                     text="修改方法名称"/>
 
             <action id="com.ganguo.java.plugin.action.generate.GotoApiMethodAction"

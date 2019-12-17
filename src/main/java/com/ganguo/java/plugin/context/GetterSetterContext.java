@@ -1,62 +1,29 @@
-package com.ganguo.java.plugin.action.menu;
+package com.ganguo.java.plugin.context;
 
-import com.ganguo.java.plugin.action.BaseAnAction;
-import com.ganguo.java.plugin.util.ActionShowHelper;
 import com.ganguo.java.plugin.util.EditorUtils;
 import com.ganguo.java.plugin.util.IndexUtils;
-import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.StringHelper;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
-import lombok.extern.slf4j.Slf4j;
-import org.dependcode.dependcode.ContextBuilder;
+import com.intellij.psi.PsiMethod;
 import org.dependcode.dependcode.anno.Func;
 import org.dependcode.dependcode.anno.Var;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-/**
- * 生成Setter调用代码
- */
-@Slf4j
-public class GenerateSetterCaller extends BaseAnAction {
+public class GetterSetterContext {
 
     private static final Pattern INDENT_PATTERN = Pattern.compile("(\\s*).*");
-
-    @Override
-    protected void action(AnActionEvent e) throws Exception {
-        ContextBuilder.of(this)
-                .put("event", e)
-                .build()
-                .execVoid("doAction");
-    }
-
-    @Override
-    public void update(@NotNull AnActionEvent e) {
-        Transferable contents = CopyPasteManager.getInstance().getContents();
-        //noinspection ConstantConditions
-        ActionShowHelper.of(e)
-                .and(() -> contents != null)
-                .and(() -> contents.isDataFlavorSupported(DataFlavor.stringFlavor))
-                .and(() -> Optional.ofNullable(e.getData(LangDataKeys.EDITOR))
-                        .map(Editor::getSelectionModel)
-                        .map(SelectionModel::hasSelection)
-                        .orElse(false))
-                .update();
-    }
 
     @Var
     private PsiClass targetClass(Project project) {
@@ -97,8 +64,8 @@ public class GenerateSetterCaller extends BaseAnAction {
     }
 
     @Var
-    private String callers(PsiClass targetClass, String indent, String varName) {
-        String callers = PsiUtils.getAllSetter(targetClass)
+    private String callers(Stream<PsiMethod> methodStream, String indent, String varName) {
+        String callers = methodStream
                 .map(method -> StringHelper.of("{var}.{methodName}();")
                         .param("var", varName)
                         .param("methodName", method.getName())

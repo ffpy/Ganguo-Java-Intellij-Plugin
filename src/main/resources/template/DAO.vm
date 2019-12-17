@@ -13,26 +13,6 @@ import static ${packageName}.jooq.Tables.${table};
 public class ${Name}DAO extends BaseDAO implements I${Name}DbStrategy {
 
     @Override
-    public Optional<${pojoCls}> findById(Long id) {
-        return mDSLContext.selectFrom(${table})
-                .where(${table}.ID.eq(id))
-#if($hasActive)
-                .and(${table}.ACTIVE.isTrue())
-#end
-                .fetchOptionalInto(${pojoCls}.class);
-    }
-
-    @Override
-    public List<${pojoCls}> findAll() {
-        return mDSLContext.selectFrom(${table})
-#if($hasActive)
-                .where(${table}.ACTIVE.isTrue())
-#end
-                .orderBy(${table}.ID.asc())
-                .fetchInto(${pojoCls}.class);
-    }
-
-    @Override
     public ${pojoCls} insert(${pojoCls} ${pojoName}) {
         ${recordCls} record = mDSLContext.newRecord(${table}, ${pojoName});
         record.insert();
@@ -42,20 +22,6 @@ public class ${Name}DAO extends BaseDAO implements I${Name}DbStrategy {
     @Override
     public int updateById(Long id, ${recordCls} ${pojoName}) {
         return mDSLContext.executeUpdate(${pojoName}, ${table}.ID.eq(id));
-    }
-
-    @Override
-    public int deleteById(Long id) {
-#if($hasActive)
-        return mDSLContext.update(${table})
-                .set(${table}.ACTIVE, false)
-                .where(${table}.ID.eq(id))
-                .execute();
-#else
-        return mDSLContext.deleteFrom(${table})
-                .where(${table}.ID.eq(id))
-                .execute();
-#end
     }
 
     @Override
@@ -70,6 +36,26 @@ public class ${Name}DAO extends BaseDAO implements I${Name}DbStrategy {
                 .where(${table}.ID.in(ids))
                 .execute();
 #end
+    }
+
+    @Override
+    public Optional<${pojoCls}> findById(Long id) {
+        return mDSLContext.selectFrom(${table})
+                .where(${table}.ID.eq(id))
+        #if($hasActive)
+            .and(${table}.ACTIVE.isTrue())
+        #end
+        .fetchOptionalInto(${pojoCls}.class);
+    }
+
+    @Override
+    public List<${pojoCls}> listAll() {
+            return mDSLContext.selectFrom(${table})
+        #if($hasActive)
+                .where(${table}.ACTIVE.isTrue())
+        #end
+        .orderBy(${table}.ID.asc())
+                .fetchInto(${pojoCls}.class);
     }
 
     @Override
