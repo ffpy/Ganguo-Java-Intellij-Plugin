@@ -106,20 +106,32 @@ VALUES
 打开要格式化的Java文件，选择`顶部菜单栏->Ganguo->字段排序`，即可给Java文件的顶部类的字段排序。
 也可以通过把光标移到要格式化的类名上来格式化指定的类。<br>
 排序规则为:
-1. 有static修饰符
-2. 有final修饰符
-3. [public], [protected], [default], [private]
+1. 有`static`修饰符
+2. 有`final`修饰符
+3. `public`, `protected`, `default`, `private`
 4. 字段名字符串顺序
 
 #### 方法排序
 打开要格式化的Java文件，选择`顶部菜单栏->Ganguo->方法排序`，即可给Java文件的顶部类的方法排序。
 也可以通过把光标移到要格式化的类名上来格式化指定的类。<br>
 排序规则为:
-1. 有abstract修饰符
-2. 有static修饰符
-3. 有final修饰符
-4. [public], [protected], [default], [private]
+1. 有`abstract`修饰符
+2. 有`static`修饰符
+3. 有`final`修饰符
+4. `public`, `protected`, `default`, `private`
 5. 方法名字符串顺序
+
+#### Repository方法排序
+打开要格式化的Java文件，选择`顶部菜单栏->Ganguo->Repository方法排序`，即可给Repository类的方法排序。
+也可以通过把光标移到要格式化的类名上来格式化指定的类。<br>
+排序规则为:
+1. 有`abstract`修饰符
+2. 有`static`修饰符
+3. 有`final`修饰符
+4. `public`, `protected`, `default`, `private`
+5. 前缀顺序: `insert`, `batchInsert`, `update`, `batchUpdate`, `delete`, `query`, `find`, `get`, `list`, 
+`page`, `exists`, `count`, `sum`
+6. 方法名字符串顺序
 
 ### 其他
 

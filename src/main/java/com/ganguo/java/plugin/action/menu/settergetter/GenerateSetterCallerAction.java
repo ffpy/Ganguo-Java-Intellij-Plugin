@@ -1,4 +1,4 @@
-package com.ganguo.java.plugin.action.menu;
+package com.ganguo.java.plugin.action.menu.settergetter;
 
 import com.ganguo.java.plugin.util.PsiUtils;
 import com.intellij.psi.PsiClass;

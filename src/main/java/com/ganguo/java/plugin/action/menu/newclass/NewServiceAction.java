@@ -1,4 +1,4 @@
-package com.ganguo.java.plugin.action.menu;
+package com.ganguo.java.plugin.action.menu.newclass;
 
 import com.ganguo.java.plugin.action.BaseAnAction;
 import com.ganguo.java.plugin.constant.Paths;

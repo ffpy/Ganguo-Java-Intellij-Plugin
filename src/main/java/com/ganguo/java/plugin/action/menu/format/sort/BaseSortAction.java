@@ -1,18 +1,17 @@
-package com.ganguo.java.plugin.action.menu;
+package com.ganguo.java.plugin.action.menu.format.sort;
 
 import com.ganguo.java.plugin.action.BaseAnAction;
+import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.util.ActionShowHelper;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiModifierList;
 import org.dependcode.dependcode.ContextBuilder;
+import org.dependcode.dependcode.anno.ImportFrom;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author wenlongsheng
- * @date 2019/12/17
- */
-public abstract class BaseSortAction extends BaseAnAction {
+@ImportFrom(JavaFileContext.class)
+abstract class BaseSortAction extends BaseAnAction {
 
     @Override
     protected void action(AnActionEvent e) throws Exception {

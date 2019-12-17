@@ -1,4 +1,4 @@
-package com.ganguo.java.plugin.action.menu;
+package com.ganguo.java.plugin.action.menu.settergetter;
 
 import com.ganguo.java.plugin.action.BaseAnAction;
 import com.ganguo.java.plugin.context.GetterSetterContext;
@@ -17,7 +17,7 @@ import java.awt.datatransfer.Transferable;
 import java.util.Optional;
 
 @ForceImportFrom(GetterSetterContext.class)
-public class BaseSetterGetterAction extends BaseAnAction {
+class BaseSetterGetterAction extends BaseAnAction {
 
     @Override
     protected void action(AnActionEvent e) throws Exception {

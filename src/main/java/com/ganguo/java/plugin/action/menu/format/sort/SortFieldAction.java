@@ -1,6 +1,5 @@
-package com.ganguo.java.plugin.action.menu;
+package com.ganguo.java.plugin.action.menu.format.sort;
 
-import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.WriteActions;
 import com.intellij.openapi.project.Project;
@@ -12,10 +11,8 @@ import com.intellij.psi.PsiEnumConstant;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.dependcode.dependcode.FuncAction;
 import org.dependcode.dependcode.anno.Func;
-import org.dependcode.dependcode.anno.ImportFrom;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,8 +25,6 @@ import java.util.stream.Collectors;
 /**
  * 字段排序
  */
-@Slf4j
-@ImportFrom(JavaFileContext.class)
 public class SortFieldAction extends BaseSortAction {
 
     @Func
@@ -94,10 +89,8 @@ public class SortFieldAction extends BaseSortAction {
         PsiElement lBrace = selectedClass.getLBrace();
 
         Arrays.stream(selectedClass.getFields())
-                .sorted(Comparator.comparing(this::getFieldOrder)
-                        .reversed()
-                        .thenComparing(PsiField::getName)
-                        .reversed())
+                .sorted(Comparator.comparing(this::getFieldOrder).reversed()
+                        .thenComparing(PsiField::getName).reversed())
                 .forEachOrdered(field -> writeActions.add(() -> {
                     selectedClass.addAfter(field.copy(), lBrace);
                     selectedClass.addAfter(whiteSpace.copy(), lBrace);
