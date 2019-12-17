@@ -84,6 +84,14 @@
                     class="com.ganguo.java.plugin.action.menu.FormatSqlAction"
                     text="格式化SQL脚本"/>
 
+            <action id="com.ganguo.java.plugin.action.menu.SortFieldAction"
+                    class="com.ganguo.java.plugin.action.menu.SortFieldAction"
+                    text="字段排序"/>
+
+            <action id="com.ganguo.java.plugin.action.menu.SortMethodAction"
+                    class="com.ganguo.java.plugin.action.menu.SortMethodAction"
+                    text="方法排序"/>
+
         </group>
 
         <group id="Ganguo.Popup"

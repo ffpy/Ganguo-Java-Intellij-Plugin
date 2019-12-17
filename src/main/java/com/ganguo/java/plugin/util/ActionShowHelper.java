@@ -98,6 +98,15 @@ public class ActionShowHelper {
         return this;
     }
 
+    public ActionShowHelper isJavaFile() {
+        if (enable) {
+            enable = Optional.ofNullable(event.getData(LangDataKeys.PSI_FILE))
+                    .map(file -> file instanceof PsiJavaFile)
+                    .orElse(false);
+        }
+        return this;
+    }
+
     public ActionShowHelper isControllerApiMethod() {
         if (enable) {
             return fileNameMatch(".*Controller.java")
