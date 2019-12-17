@@ -19,18 +19,25 @@ public class SortMethodAction extends BaseSortAction {
 
     @Func
     private void doAction(Project project, PsiClass selectedClass, WriteActions writeActions) {
-        PsiField[] fields = selectedClass.getFields();
-        PsiElement locateElement = fields.length == 0 ? selectedClass.getLBrace() : fields[fields.length - 1];
+        sortClasses(project, new PsiClass[]{selectedClass}, writeActions);
+        writeActions.run();
+    }
+
+    protected void sortClasses(Project project, PsiClass[] psiClasses, WriteActions writeActions) {
         PsiElement whiteSpace = PsiUtils.createWhiteSpace(project);
 
-        Arrays.stream(selectedClass.getMethods())
-                .sorted(getComparator())
-                .forEachOrdered(method -> writeActions.add(() -> {
-                    PsiElement e = selectedClass.addAfter(method.copy(), locateElement);
-                    selectedClass.addBefore(whiteSpace, e);
-                    method.delete();
-                }));
-        writeActions.run();
+        for (PsiClass psiClass : psiClasses) {
+            PsiField[] fields = psiClass.getFields();
+            PsiElement locateElement = fields.length == 0 ? psiClass.getLBrace() : fields[fields.length - 1];
+
+            Arrays.stream(psiClass.getMethods())
+                    .sorted(getComparator())
+                    .forEachOrdered(method -> writeActions.add(() -> {
+                        PsiElement e = psiClass.addAfter(method.copy(), locateElement);
+                        psiClass.addBefore(whiteSpace, e);
+                        method.delete();
+                    }));
+        }
     }
 
     protected Comparator<PsiMethod> getComparator() {

@@ -1,24 +1,20 @@
 package com.ganguo.java.plugin.action.generate;
 
 import com.ganguo.java.plugin.context.JavaFileContext;
+import com.ganguo.java.plugin.context.RepositoryContext;
 import com.ganguo.java.plugin.util.ActionShowHelper;
 import com.ganguo.java.plugin.util.EditorUtils;
-import com.ganguo.java.plugin.util.FileUtils;
 import com.ganguo.java.plugin.util.StringHelper;
 import com.ganguo.java.plugin.util.WriteActions;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiCodeBlock;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiKeyword;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiNamedElement;
@@ -36,11 +32,9 @@ import org.dependcode.dependcode.anno.Var;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Slf4j
-@ImportFrom(JavaFileContext.class)
+@ImportFrom({JavaFileContext.class, RepositoryContext.class})
 public class GenerateRepositoryMethodAction extends BaseGenerateAction {
 
     @Override
@@ -184,34 +178,6 @@ public class GenerateRepositoryMethodAction extends BaseGenerateAction {
         }
 
         return method;
-    }
-
-    @Var
-    private String moduleName(PsiJavaFile curFile) {
-        Matcher matcher = Pattern.compile("I(.*)Repository.java").matcher(curFile.getName());
-        return matcher.find() ? StringUtils.capitalize(matcher.group(1)) : null;
-    }
-
-    @Var
-    private PsiJavaFile daoFile(String moduleName, FuncAction<PsiFile> getFilesByName) {
-        PsiFile file = getFilesByName.get(moduleName + "DAO.java");
-        return file instanceof PsiJavaFile ? (PsiJavaFile) file : null;
-    }
-
-    @Var
-    private PsiJavaFile implFile(String moduleName, FuncAction<PsiFile> getFilesByName) {
-        PsiFile file = getFilesByName.get(moduleName + "Repository.java");
-        return file instanceof PsiJavaFile ? (PsiJavaFile) file : null;
-    }
-
-    @Var
-    private PsiClass daoClass(PsiJavaFile daoFile) {
-        return Arrays.stream(daoFile.getClasses()).findFirst().orElse(null);
-    }
-
-    @Var
-    private PsiClass implClass(PsiJavaFile implFile) {
-        return Arrays.stream(implFile.getClasses()).findFirst().orElse(null);
     }
 
     /**

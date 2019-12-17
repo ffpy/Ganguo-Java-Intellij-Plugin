@@ -50,6 +50,7 @@ public class IndexUtils {
 
     public static PsiClass getClassByQualifiedName(Project project, String qualifiedName, GlobalSearchScope scope) {
         return JavaFullClassNameIndex.getInstance().get(qualifiedName.hashCode(), project, scope).stream()
+                .filter(psiClass -> qualifiedName.equals(psiClass.getQualifiedName()))
                 .findFirst()
                 .orElse(null);
     }

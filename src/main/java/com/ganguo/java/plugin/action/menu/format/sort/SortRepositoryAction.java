@@ -1,14 +1,23 @@
 package com.ganguo.java.plugin.action.menu.format.sort;
 
+import com.ganguo.java.plugin.context.RepositoryContext;
+import com.ganguo.java.plugin.util.WriteActions;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import org.dependcode.dependcode.FuncAction;
+import org.dependcode.dependcode.anno.Func;
+import org.dependcode.dependcode.anno.ImportFrom;
+import org.dependcode.dependcode.anno.Nla;
 
 import java.util.Comparator;
 
 /**
  * Repository方法排序
  */
+@ImportFrom(RepositoryContext.class)
 public class SortRepositoryAction extends SortMethodAction {
     private static final Order[] ORDERS = {
             Order.next("insert"),
@@ -25,6 +34,28 @@ public class SortRepositoryAction extends SortMethodAction {
             Order.next("count"),
             Order.next("sum"),
     };
+
+    @Func
+    private void doAction(FuncAction<Void> sortSelectedClass, FuncAction<Void> sortRepositoryClasses,
+                          WriteActions writeActions, @Nla String moduleName) {
+        if (moduleName != null) {
+            sortRepositoryClasses.exec();
+        } else {
+            sortSelectedClass.exec();
+        }
+        writeActions.run();
+    }
+
+    @Func
+    private void sortSelectedClass(Project project, PsiClass selectedClass, WriteActions writeActions) {
+        sortClasses(project, new PsiClass[]{selectedClass}, writeActions);
+    }
+
+    @Func
+    private void sortRepositoryClasses(Project project, PsiClass selectedClass, PsiClass daoClass, PsiClass implClass,
+                                       WriteActions writeActions) {
+        sortClasses(project, new PsiClass[]{selectedClass, implClass, daoClass}, writeActions);
+    }
 
     @Override
     protected Comparator<PsiMethod> getComparator() {

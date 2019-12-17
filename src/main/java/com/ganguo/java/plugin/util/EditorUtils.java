@@ -6,7 +6,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.ScrollType;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiClass;
 
@@ -96,9 +95,9 @@ public class EditorUtils {
      * @param offset   位置
      */
     public static void moveToClassOffset(PsiClass psiClass, int offset, WriteActions writeActions) {
-        writeActions.add(() -> {
-            FileUtils.navigateFileInEditor(psiClass.getProject(), psiClass.getContainingFile().getVirtualFile());
-            getEditorByClassName(psiClass.getName()).ifPresent(editor -> moveToOffset(editor, offset));
-        }).run();
+        writeActions.add(() -> FileUtils.navigateFileInEditor(
+                psiClass.getProject(), psiClass.getContainingFile().getVirtualFile()))
+                .add(() -> getEditorByClassName(psiClass.getName()).ifPresent(editor -> moveToOffset(editor, offset)))
+                .run();
     }
 }
