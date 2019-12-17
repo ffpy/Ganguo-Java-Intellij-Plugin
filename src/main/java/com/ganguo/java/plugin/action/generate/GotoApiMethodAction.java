@@ -3,7 +3,6 @@ package com.ganguo.java.plugin.action.generate;
 import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.util.ActionShowHelper;
 import com.ganguo.java.plugin.util.EditorUtils;
-import com.ganguo.java.plugin.util.FileUtils;
 import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.WriteActions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -97,12 +96,7 @@ public class GotoApiMethodAction extends BaseGenerateAction {
     }
 
     private void showClass(String apiMethodName, Project project, PsiClass psiClass, WriteActions writeActions) {
-        Arrays.stream(psiClass.findMethodsByName(apiMethodName, false))
-                .findFirst()
-                .ifPresent(method -> writeActions
-                        .add(() -> FileUtils.navigateFileInEditor(project, psiClass.getContainingFile().getVirtualFile()))
-                        .add(() -> Optional.ofNullable(EditorUtils.getEditorByClassName(psiClass.getName()))
-                                .ifPresent(editor -> EditorUtils.moveToOffset(editor, method.getTextOffset())))
-                        .run());
+        Arrays.stream(psiClass.findMethodsByName(apiMethodName, false)).findFirst()
+                .ifPresent(method -> EditorUtils.moveToClassOffset(psiClass, method.getTextOffset(), writeActions));
     }
 }

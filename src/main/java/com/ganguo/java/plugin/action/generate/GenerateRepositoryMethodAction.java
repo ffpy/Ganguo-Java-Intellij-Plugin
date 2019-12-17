@@ -62,7 +62,7 @@ public class GenerateRepositoryMethodAction extends BaseGenerateAction {
     @Func
     private void doAction(Project project, PsiMethod curMethod, PsiClass daoClass, PsiClass implClass,
                           FuncAction<PsiMethod> createMethodForDao, FuncAction<PsiMethod> createMethodForImpl,
-                          FuncAction<Editor> getDaoEditor, WriteActions writeActions,
+                          WriteActions writeActions,
                           @Nla PsiMethod daoPrevMethod, @Nla PsiMethod implPrevMethod,
                           @Nla PsiMethod daoNextMethod, @Nla PsiMethod implNextMethod) {
         if (daoClass.findMethodBySignature(curMethod, false) == null) {
@@ -78,13 +78,10 @@ public class GenerateRepositoryMethodAction extends BaseGenerateAction {
         writeActions.run();
 
         // 跳转到DAO对应的方法处
-        writeActions.add(() -> FileUtils.navigateFileInEditor(project, daoClass.getContainingFile().getVirtualFile()));
-        writeActions.add(() -> getDaoEditor.exec().ifPresent(editor ->
-                Optional.ofNullable(daoClass.findMethodBySignature(curMethod, false))
-                        .map(method -> PsiTreeUtil.getChildOfType(method, PsiCodeBlock.class))
-                        .map(PsiElement::getTextOffset)
-                        .ifPresent(offset -> EditorUtils.moveToOffset(editor, offset))))
-                .run();
+        Optional.ofNullable(daoClass.findMethodBySignature(curMethod, false))
+                .map(method -> PsiTreeUtil.getChildOfType(method, PsiCodeBlock.class))
+                .map(PsiElement::getTextOffset)
+                .ifPresent(offset -> EditorUtils.moveToClassOffset(daoClass, offset, writeActions));
     }
 
     @Var
@@ -123,11 +120,6 @@ public class GenerateRepositoryMethodAction extends BaseGenerateAction {
         return Optional.ofNullable(nextMethod)
                 .map(method -> implClass.findMethodBySignature(method, false))
                 .orElse(null);
-    }
-
-    @Func
-    private Editor getDaoEditor(PsiClass daoClass) {
-        return EditorUtils.getEditorByClassName(daoClass.getName());
     }
 
     @Func

@@ -6,13 +6,14 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.ScrollType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiClass;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class EditorUtils {
-
-    private static Pattern GET_EDITOR_PATTERN;
 
     /**
      * 获取光标所在行的文本
@@ -64,19 +65,17 @@ public class EditorUtils {
      * @param className 顶部类类名
      * @return Editor，找不到则为null
      */
-    public static Editor getEditorByClassName(String className) {
-        if (GET_EDITOR_PATTERN == null) {
-            GET_EDITOR_PATTERN = Pattern.compile("^public\\s+class\\s+" + className, Pattern.MULTILINE);
-        }
-
+    public static Optional<Editor> getEditorByClassName(String className) {
+        Pattern pattern = Pattern.compile("^public\\s+class\\s+" + className, Pattern.MULTILINE);
         Editor[] editors = EditorFactory.getInstance().getAllEditors();
+
         for (int i = editors.length - 1; i >= 0; i--) {
             Editor editor = editors[i];
-            if (GET_EDITOR_PATTERN.matcher(editor.getDocument().getText()).find()) {
-                return editor;
+            if (pattern.matcher(editor.getDocument().getText()).find()) {
+                return Optional.of(editor);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -88,5 +87,18 @@ public class EditorUtils {
     public static void moveToOffset(Editor editor, int offset) {
         editor.getCaretModel().moveToOffset(offset);
         editor.getScrollingModel().scrollToCaret(ScrollType.CENTER);
+    }
+
+    /**
+     * 光标移动到类的指定位置
+     *
+     * @param psiClass 类
+     * @param offset   位置
+     */
+    public static void moveToClassOffset(PsiClass psiClass, int offset, WriteActions writeActions) {
+        writeActions.add(() -> {
+            FileUtils.navigateFileInEditor(psiClass.getProject(), psiClass.getContainingFile().getVirtualFile());
+            getEditorByClassName(psiClass.getName()).ifPresent(editor -> moveToOffset(editor, offset));
+        }).run();
     }
 }

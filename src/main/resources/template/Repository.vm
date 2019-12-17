@@ -17,16 +17,6 @@ public class ${Name}Repository implements I${Name}Repository {
     private I${Name}DbStrategy ${name}DbStrategy;
 
     @Override
-    public Optional<${pojoCls}> findById(Long id) {
-        return ${name}DbStrategy.findById(id);
-    }
-
-    @Override
-    public List<${pojoCls}> listAll() {
-        return ${name}DbStrategy.listAll();
-    }
-
-    @Override
     public ${pojoCls} insert(${pojoCls} ${pojoName}) {
         return ${name}DbStrategy.insert(${pojoName});
     }
@@ -43,6 +33,16 @@ public class ${Name}Repository implements I${Name}Repository {
         }
 
         return ${name}DbStrategy.deleteByIds(ids);
+    }
+
+    @Override
+    public Optional<${pojoCls}> findById(Long id) {
+        return ${name}DbStrategy.findById(id);
+    }
+
+    @Override
+    public List<${pojoCls}> listAll() {
+        return ${name}DbStrategy.listAll();
     }
 
     @Override
