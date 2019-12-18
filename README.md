@@ -1,5 +1,5 @@
 ## 安装
-1. 下载最新版的插件文件: [ganguo-java-intellij-plugin-v1.4](https://github.com/ffpy/Ganguo-Java-Intellij-Plugin/releases/download/v1.4/ganguo-java-intellij-plugin-1.4.zip)
+1. 下载最新版的插件文件: [releases](https://github.com/ffpy/Ganguo-Java-Intellij-Plugin/releases)
 2. 打开IntelliJ IDEA，选择Intellij IDEA->Preferences->Plugin->Install Plugin from Disk，
 选择下载的插件文件
 3. 重启IDEA
