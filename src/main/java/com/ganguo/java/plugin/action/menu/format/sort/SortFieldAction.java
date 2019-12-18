@@ -1,5 +1,7 @@
 package com.ganguo.java.plugin.action.menu.format.sort;
 
+import com.ganguo.java.plugin.util.MsgUtils;
+import com.ganguo.java.plugin.util.NotificationHelper;
 import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.WriteActions;
 import com.intellij.openapi.project.Project;
@@ -20,6 +22,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -86,14 +90,15 @@ public class SortFieldAction extends BaseSortAction {
     @Func
     private void sortClass(Project project, PsiClass selectedClass, WriteActions writeActions) {
         PsiElement whiteSpace = PsiUtils.createWhiteSpace(project);
-        PsiElement lBrace = selectedClass.getLBrace();
+        PsiElement locateElement = selectedClass.getLBrace();
 
         Arrays.stream(selectedClass.getFields())
                 .sorted(Comparator.comparing(this::getFieldOrder).reversed()
                         .thenComparing(PsiField::getName).reversed())
+                .filter(PsiElement::isPhysical)
                 .forEachOrdered(field -> writeActions.add(() -> {
-                    selectedClass.addAfter(field.copy(), lBrace);
-                    selectedClass.addAfter(whiteSpace.copy(), lBrace);
+                    selectedClass.addAfter(field.copy(), locateElement);
+                    selectedClass.addAfter(whiteSpace.copy(), locateElement);
                     field.delete();
                 }));
         writeActions.run();

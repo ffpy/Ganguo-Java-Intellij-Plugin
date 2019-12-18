@@ -16,15 +16,8 @@
         </encoder>
     </appender>
 
-    <logger name="com.ganguo.plugin" level="ERROR" additivity="true">
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
-    </logger>
-
-    <logger name="com.ganguo.plugin" level="DEBUG" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
-
-    <root level="DEBUG">
-        <appender-ref ref="STDOUT" />
     </root>
 </configuration>

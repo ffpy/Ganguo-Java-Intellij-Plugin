@@ -1,5 +1,6 @@
 package com.ganguo.java.plugin.action.menu.format.sort;
 
+import com.ganguo.java.plugin.util.MsgUtils;
 import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.WriteActions;
 import com.intellij.openapi.project.Project;
@@ -29,10 +30,14 @@ public class SortMethodAction extends BaseSortAction {
         PsiElement whiteSpace = PsiUtils.createWhiteSpace(project);
 
         for (PsiClass psiClass : psiClasses) {
-            PsiField[] fields = psiClass.getFields();
-            PsiElement locateElement = fields.length == 0 ? psiClass.getLBrace() : fields[fields.length - 1];
+            PsiElement locateElement = Arrays.stream(psiClass.getFields())
+                    .filter(PsiElement::isPhysical)
+                    .reduce((field1, field2) -> field2)
+                    .map(field -> (PsiElement) field)
+                    .orElseGet(psiClass::getLBrace);
 
             Arrays.stream(psiClass.getMethods())
+                    .filter(PsiElement::isPhysical)
                     .sorted(getComparator())
                     .forEachOrdered(method -> writeActions.add(() -> {
                         PsiElement e = psiClass.addAfter(method.copy(), locateElement);
@@ -48,6 +53,10 @@ public class SortMethodAction extends BaseSortAction {
     }
 
     protected int getMethodOrder(PsiMethod method) {
-        return getOrder(method.getModifierList());
+        int order = getOrder(method.getModifierList());
+        if (method.hasAnnotation("org.springframework.scheduling.annotation.Scheduled")) {
+            order += 50;
+        }
+        return order;
     }
 }
