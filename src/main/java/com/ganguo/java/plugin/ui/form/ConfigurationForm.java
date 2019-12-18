@@ -37,9 +37,6 @@ public class ConfigurationForm implements BaseForm {
     @Getter
     private JTextField translateSecretField;
 
-    @Getter
-    private JTextField logFilePath;
-
     private Map<TemplateName, Editor> editorMap = new HashMap<>();
 
     private EditorFactory editorFactory;

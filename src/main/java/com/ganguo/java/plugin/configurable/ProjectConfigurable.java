@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -52,8 +51,6 @@ public class ProjectConfigurable implements SearchableConfigurable {
 
         translateAppId = settingService.getTranslateAppId();
         translateSecret = settingService.getTranslateSecret();
-
-        form.getLogFilePath().setText(new File("log/GanguoPlugin.log").getAbsolutePath());
 
         form.onReset(e -> {
             if (Messages.showYesNoDialog("确认恢复默认设置？", "提示",

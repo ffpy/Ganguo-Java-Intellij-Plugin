@@ -1,7 +1,5 @@
 package com.ganguo.java.plugin.action.menu.format.sort;
 
-import com.ganguo.java.plugin.util.MsgUtils;
-import com.ganguo.java.plugin.util.NotificationHelper;
 import com.ganguo.java.plugin.util.PsiUtils;
 import com.ganguo.java.plugin.util.WriteActions;
 import com.intellij.openapi.project.Project;
@@ -22,8 +20,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -48,7 +44,8 @@ public class SortFieldAction extends BaseSortAction {
         Collection<PsiEnumConstant> originalConstants = PsiTreeUtil.findChildrenOfType(
                 selectedClass, PsiEnumConstant.class);
         List<PsiEnumConstant> sortedConstants = originalConstants.stream()
-                .sorted(Comparator.comparing(PsiField::getName))
+                .sorted(Comparator.comparing(this::getEnumGroupName)
+                        .thenComparing(PsiField::getName))
                 .map(constant -> (PsiEnumConstant) constant.copy())
                 .collect(Collectors.toList());
         PsiComment comment = elementFactory.createCommentFromText("/**/", null);
