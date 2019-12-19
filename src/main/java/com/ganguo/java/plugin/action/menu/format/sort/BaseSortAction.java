@@ -5,10 +5,12 @@ import com.ganguo.java.plugin.context.JavaFileContext;
 import com.ganguo.java.plugin.util.ActionShowHelper;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiModifierList;
+import com.intellij.psi.PsiModifierListOwner;
 import org.dependcode.dependcode.ContextBuilder;
 import org.dependcode.dependcode.anno.ImportFrom;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 @ImportFrom(JavaFileContext.class)
 abstract class BaseSortAction extends BaseAnAction {
@@ -28,33 +30,22 @@ abstract class BaseSortAction extends BaseAnAction {
                 .update();
     }
 
-    protected int getOrder(PsiModifierList modifierList) {
-        if (modifierList == null) {
-            return 0;
-        }
-        int order = 0;
+    protected boolean hasModifierProperty(PsiModifierListOwner owner, String name) {
+        return Optional.ofNullable(owner.getModifierList())
+                .map(list -> list.hasModifierProperty(name))
+                .orElse(false);
+    }
 
-        if (modifierList.hasModifierProperty(PsiModifier.ABSTRACT)) {
-            order += 10000;
+    protected int getAccessOrder(PsiModifierListOwner owner) {
+        if (hasModifierProperty(owner, PsiModifier.PUBLIC)) {
+            return 4;
         }
-        if (modifierList.hasModifierProperty(PsiModifier.STATIC)) {
-            order += 1000;
+        if (hasModifierProperty(owner, PsiModifier.PROTECTED)) {
+            return 3;
         }
-        if (modifierList.hasModifierProperty(PsiModifier.FINAL)) {
-            order += 100;
+        if (hasModifierProperty(owner, PsiModifier.PRIVATE)) {
+            return 1;
         }
-
-        // public protected default private
-        if (modifierList.hasModifierProperty(PsiModifier.PUBLIC)) {
-            order += 10;
-        } else if (modifierList.hasModifierProperty(PsiModifier.PROTECTED)) {
-            order += 9;
-        } else if (modifierList.hasModifierProperty(PsiModifier.PRIVATE)) {
-            order += 7;
-        } else {
-            order += 8;
-        }
-
-        return order;
+        return 2;
     }
 }

@@ -31,6 +31,7 @@ public class SortRepositoryAction extends SortMethodAction {
             Order.next("query"),
             Order.next("find"),
             Order.next("get"),
+            Order.next("select"),
             Order.next("list"),
             Order.next("page"),
             Order.next("exists"),
@@ -71,9 +72,8 @@ public class SortRepositoryAction extends SortMethodAction {
 
     @Override
     protected Comparator<PsiMethod> getComparator() {
-        return Comparator.comparing(this::getMethodOrder).reversed()
-                .thenComparing(this::getNameTypeOrder)
-                .thenComparing(PsiMethod::getName).reversed();
+        return super.getComparator()
+                .thenComparing(this::getNameTypeOrder);
     }
 
     private int getNameTypeOrder(PsiMethod method) {

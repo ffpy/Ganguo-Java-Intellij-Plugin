@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiEnumConstant;
 import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.dependcode.dependcode.FuncAction;
@@ -90,8 +91,7 @@ public class SortFieldAction extends BaseSortAction {
         PsiElement locateElement = selectedClass.getLBrace();
 
         Arrays.stream(selectedClass.getFields())
-                .sorted(Comparator.comparing(this::getFieldOrder).reversed()
-                        .thenComparing(PsiField::getName).reversed())
+                .sorted(getComparator())
                 .filter(PsiElement::isPhysical)
                 .forEachOrdered(field -> writeActions.add(() -> {
                     selectedClass.addAfter(field.copy(), locateElement);
@@ -107,7 +107,10 @@ public class SortFieldAction extends BaseSortAction {
         return i == -1 ? name : name.substring(0, i);
     }
 
-    private int getFieldOrder(PsiField field) {
-        return getOrder(field.getModifierList());
+    protected Comparator<PsiField> getComparator() {
+        return Comparator.comparing((PsiField o) -> hasModifierProperty(o, PsiModifier.STATIC))
+                .thenComparing((PsiField o) -> hasModifierProperty(o, PsiModifier.FINAL))
+                .thenComparingInt(this::getAccessOrder).reversed()
+                .thenComparing(PsiField::getName).reversed();
     }
 }
