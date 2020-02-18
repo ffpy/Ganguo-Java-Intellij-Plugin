@@ -107,17 +107,17 @@ public class AddExceptionMsgAction extends BaseAnAction {
     @Func
     private Status add2Properties(VirtualFile msgFile, SafeProperties properties, String key, String value,
                                   WriteActions writeActions) {
-        // 检查Value是否已存在
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            if (value.equals(entry.getValue())) {
-                CopyPasteUtils.putString(entry.getValue().toString());
-                CopyPasteUtils.putString(entry.getKey().toString());
-
-                NotificationHelper.info("发现%s已存在，已放入粘贴板", entry.getValue()).show();
-
-                return Status.EXISTS;
-            }
-        }
+//        // 检查Value是否已存在
+//        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+//            if (value.equals(entry.getValue())) {
+//                CopyPasteUtils.putString(entry.getValue().toString());
+//                CopyPasteUtils.putString(entry.getKey().toString());
+//
+//                NotificationHelper.info("发现%s已存在，已放入粘贴板", entry.getValue()).show();
+//
+//                return Status.EXISTS;
+//            }
+//        }
 
         // 检查Key是否已存在
         if (properties.containsKey(key)) {

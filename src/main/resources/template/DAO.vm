@@ -42,19 +42,19 @@ public class ${Name}DAO extends BaseDAO implements I${Name}DbStrategy {
     public Optional<${pojoCls}> findById(Long id) {
         return mDSLContext.selectFrom(${table})
                 .where(${table}.ID.eq(id))
-        #if($hasActive)
-            .and(${table}.ACTIVE.isTrue())
-        #end
-        .fetchOptionalInto(${pojoCls}.class);
+#if($hasActive)
+                .and(${table}.ACTIVE.isTrue())
+#end
+                .fetchOptionalInto(${pojoCls}.class);
     }
 
     @Override
     public List<${pojoCls}> listAll() {
-            return mDSLContext.selectFrom(${table})
-        #if($hasActive)
+        return mDSLContext.selectFrom(${table})
+#if($hasActive)
                 .where(${table}.ACTIVE.isTrue())
-        #end
-        .orderBy(${table}.ID.asc())
+#end
+                .orderBy(${table}.ID.asc())
                 .fetchInto(${pojoCls}.class);
     }
 
