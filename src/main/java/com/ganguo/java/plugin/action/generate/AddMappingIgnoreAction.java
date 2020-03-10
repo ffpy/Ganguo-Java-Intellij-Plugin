@@ -11,6 +11,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
@@ -50,7 +51,6 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
     @Override
     protected boolean isShow(AnActionEvent e) {
         return ActionShowHelper.of(e)
-                .fileNameMatch(".*(Assembler|Mapper)\\.java")
                 .classWithAnnotation(AnnotationNames.MAPPER)
                 .elementType(PsiMethod.class)
                 .isShow();
@@ -59,10 +59,15 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
     @Func
     private void doAction(Set<String> ignoreFields, PsiModifierList curMethodModifierList,
                           PsiElementFactory elementFactory, WriteActions writeActions) {
+        PsiElement firstChild = curMethodModifierList.getFirstChild();
         ignoreFields.forEach(field -> {
             PsiAnnotation anno = elementFactory.createAnnotationFromText(
                     "@Mapping(target = \"" + field + "\", ignore = true)", null);
-            writeActions.add(() -> curMethodModifierList.add(anno));
+            if (firstChild == null) {
+                writeActions.add(() -> curMethodModifierList.add(anno));
+            } else {
+                writeActions.add(() -> curMethodModifierList.addBefore(anno, firstChild));
+            }
         });
         writeActions.run();
     }
@@ -109,11 +114,6 @@ public class AddMappingIgnoreAction extends BaseGenerateAction {
         for (PsiParameter parameter : curMethod.getParameterList().getParameters()) {
             PsiClass parameterClass = IndexUtils.getClassByQualifiedName(project,
                     parameter.getType().getCanonicalText());
-
-//            boolean isCustomClass = Optional.ofNullable(parameterClass)
-//                    .map(PsiClass::getQualifiedName)
-//                    .map(name -> name.startsWith(Constant.BASE_PACKAGE_NAME))
-//                    .orElse(false);
 
             boolean isCustomClass = Optional.ofNullable(parameterClass)
                     .map(PsiClass::getQualifiedName)
