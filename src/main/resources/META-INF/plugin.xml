@@ -55,13 +55,13 @@
             <action id="com.ganguo.java.plugin.action.menu.format.CaseFormatAction"
                     class="com.ganguo.java.plugin.action.menu.format.CaseFormatAction"
                     text="驼峰-下划线互转">
-                <keyboard-shortcut keymap="$default" first-keystroke="shift meta MINUS"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="shift alt MINUS"/>
             </action>
 
             <action id="com.ganguo.java.plugin.action.menu.format.WrapBackquoteAction"
                     class="com.ganguo.java.plugin.action.menu.format.WrapBackquoteAction"
                     text="SQL字段用反引号包裹">
-                <keyboard-shortcut keymap="$default" first-keystroke="shift meta BACK_QUOTE"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="shift alt BACK_QUOTE"/>
             </action>
 
             <action id="com.ganguo.java.plugin.action.menu.ApiModelAutoPosition"
